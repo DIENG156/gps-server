@@ -11,6 +11,9 @@ from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = "gps_tracker_secret_key_2026"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_HTTPONLY"] = True
 CORS(app)
 DATABASE = "gps_data.db"
 
