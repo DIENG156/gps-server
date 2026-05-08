@@ -11,10 +11,6 @@ from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = "gps_tracker_secret_key_2026"
-app.secret_key = "gps_tracker_secret_key_2026"
-app.config["SESSION_COOKIE_SECURE"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SECURE"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
@@ -965,7 +961,7 @@ tbody tr:last-child td{border-bottom:none}
       <div class="fg"><label>Prénom *</label><input id="pp" placeholder="Saliou"/></div>
     </div>
     <div class="fg"><label>Email *</label><input type="email" id="pe" placeholder="Saliou@email.com"/></div>
-    <div class="fg"><label>Téléphone *</label><input id="pt" placeholder="+221 77 229 22 03"/></div>
+    <div class="fg"><label>Téléphone *</label><input id="p-tel" placeholder="+221 77 229 22 03"/></div>
     <div class="fg"><label>Mot de passe *</label><input type="password" id="pw" placeholder="Minimum 6 caractères"/></div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('mp')">Annuler</button>
@@ -1065,7 +1061,7 @@ async function creerP(){
   const e=document.getElementById("ep"),o=document.getElementById("op");
   e.style.display=o.style.display="none";
   const body={nom:document.getElementById("pn").value.trim(),prenom:document.getElementById("pp").value.trim(),
-    email:document.getElementById("pe").value.trim(),telephone:document.getElementById("pt").value.trim(),
+    email:document.getElementById("pe").value.trim(),telephone:document.getElementById("p-tel").value.trim(),
     mot_de_passe:document.getElementById("pw").value};
   if(!body.nom||!body.prenom||!body.email||!body.telephone||!body.mot_de_passe){
     e.textContent="Tous les champs sont obligatoires.";e.style.display="block";return;}
