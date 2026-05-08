@@ -1571,7 +1571,12 @@ loadVehicules();
 # ─────────────────────────────────────────────────────────────
 #  DÉMARRAGE
 # ─────────────────────────────────────────────────────────────
+# Initialiser la BDD au démarrage (même avec gunicorn)
+with app.app_context():
+    init_db()
 
+if __name__ == "__main__":
+    ...
 if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", 5000))
