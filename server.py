@@ -1,12 +1,13 @@
 # ============================================================
 #  server.py — GPS Tracker v3
 #  Design : Ocean Blue + Violet — Style Stripe Premium
+#  DB      : PostgreSQL (psycopg2)
 # ============================================================
 
 from flask import Flask, jsonify, request, session, redirect
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3, os
+import psycopg2, psycopg2.extras, os
 from functools import wraps
 
 app = Flask(__name__)
@@ -15,30 +16,30 @@ app.config["SESSION_COOKIE_SECURE"] = os.environ.get("RENDER") is not None
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 CORS(app)
-DATABASE = "gps_data.db"
+
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
 # ─────────────────────────────────────────────────────────────
-#  BASE DE DONNÉES
+#  BASE DE DONNÉES — PostgreSQL
 # ─────────────────────────────────────────────────────────────
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
     return conn
 
 def init_db():
     conn = get_db()
     c = conn.cursor()
     c.execute("""CREATE TABLE IF NOT EXISTS utilisateurs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         nom TEXT NOT NULL, prenom TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE, mot_de_passe TEXT NOT NULL,
         telephone TEXT, role TEXT NOT NULL DEFAULT 'user',
         actif INTEGER NOT NULL DEFAULT 1,
-        date_creation TEXT DEFAULT (datetime('now')),
+        date_creation TEXT DEFAULT (NOW()::text),
         derniere_connexion TEXT)""")
     c.execute("""CREATE TABLE IF NOT EXISTS vehicules (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         proprietaire_id INTEGER NOT NULL,
         marque TEXT NOT NULL, modele TEXT NOT NULL,
         immatriculation TEXT NOT NULL UNIQUE,
@@ -46,21 +47,23 @@ def init_db():
         couleur TEXT, annee INTEGER,
         device_id TEXT NOT NULL UNIQUE,
         actif INTEGER NOT NULL DEFAULT 1,
-        date_ajout TEXT DEFAULT (datetime('now')),
+        date_ajout TEXT DEFAULT (NOW()::text),
         FOREIGN KEY (proprietaire_id) REFERENCES utilisateurs(id))""")
     c.execute("""CREATE TABLE IF NOT EXISTS positions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         vehicule_id INTEGER NOT NULL,
         latitude REAL NOT NULL, longitude REAL NOT NULL,
         vitesse REAL DEFAULT 0, altitude REAL DEFAULT 0,
         satellites INTEGER DEFAULT 0, timestamp TEXT,
-        created_at TEXT DEFAULT (datetime('now')),
+        created_at TEXT DEFAULT (NOW()::text),
         FOREIGN KEY (vehicule_id) REFERENCES vehicules(id))""")
-    if not c.execute("SELECT id FROM utilisateurs WHERE role='admin'").fetchone():
-        c.execute("INSERT INTO utilisateurs (nom,prenom,email,mot_de_passe,role) VALUES (?,?,?,?,?)",
+    c.execute("SELECT id FROM utilisateurs WHERE role='admin'")
+    if not c.fetchone():
+        c.execute(
+            "INSERT INTO utilisateurs (nom,prenom,email,mot_de_passe,role) VALUES (%s,%s,%s,%s,%s)",
             ("Admin","GPS","admin@gps.com",generate_password_hash("admin123"),"admin"))
         print("[DB] Admin créé → admin@gps.com / admin123")
-    conn.commit(); conn.close()
+    conn.commit(); c.close(); conn.close()
     print("[DB] Base initialisée ✅")
 
 # ─────────────────────────────────────────────────────────────
@@ -94,16 +97,17 @@ def login():
     data = request.get_json()
     if not data or not data.get("email") or not data.get("mot_de_passe"):
         return jsonify({"error": "Email et mot de passe requis"}), 400
-    conn = get_db()
-    user = conn.execute("SELECT * FROM utilisateurs WHERE email=?", (data["email"],)).fetchone()
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT * FROM utilisateurs WHERE email=%s", (data["email"],))
+    user = c.fetchone()
     if not user or not user["actif"]:
-        conn.close()
+        c.close(); conn.close()
         return jsonify({"error": "Compte introuvable ou désactivé"}), 401
     if not check_password_hash(user["mot_de_passe"], data["mot_de_passe"]):
-        conn.close()
+        c.close(); conn.close()
         return jsonify({"error": "Email ou mot de passe incorrect"}), 401
-    conn.execute("UPDATE utilisateurs SET derniere_connexion=datetime('now') WHERE id=?", (user["id"],))
-    conn.commit(); conn.close()
+    c.execute("UPDATE utilisateurs SET derniere_connexion=NOW()::text WHERE id=%s", (user["id"],))
+    conn.commit(); c.close(); conn.close()
     session["user_id"] = user["id"]
     session["role"]    = user["role"]
     session["nom"]     = user["nom"]
@@ -118,11 +122,12 @@ def logout():
 @app.route("/api/me", methods=["GET"])
 @login_required
 def me():
-    conn = get_db()
-    user = conn.execute(
-        "SELECT id,nom,prenom,email,telephone,role,date_creation,derniere_connexion FROM utilisateurs WHERE id=?",
-        (session["user_id"],)).fetchone()
-    conn.close()
+    conn = get_db(); c = conn.cursor()
+    c.execute(
+        "SELECT id,nom,prenom,email,telephone,role,date_creation,derniere_connexion FROM utilisateurs WHERE id=%s",
+        (session["user_id"],))
+    user = c.fetchone()
+    c.close(); conn.close()
     return jsonify(dict(user)), 200
 
 # ─────────────────────────────────────────────────────────────
@@ -132,94 +137,99 @@ def me():
 @app.route("/api/admin/proprietaires", methods=["GET"])
 @admin_required
 def get_proprietaires():
-    conn = get_db()
-    rows = conn.execute("""
+    conn = get_db(); c = conn.cursor()
+    c.execute("""
         SELECT u.id,u.nom,u.prenom,u.email,u.telephone,u.actif,u.date_creation,
                COUNT(v.id) as nb_vehicules
         FROM utilisateurs u
         LEFT JOIN vehicules v ON v.proprietaire_id=u.id
-        WHERE u.role='user' GROUP BY u.id ORDER BY u.date_creation DESC""").fetchall()
-    conn.close()
+        WHERE u.role='user' GROUP BY u.id ORDER BY u.date_creation DESC""")
+    rows = c.fetchall()
+    c.close(); conn.close()
     return jsonify([dict(r) for r in rows]), 200
 
 @app.route("/api/admin/proprietaires", methods=["POST"])
 @admin_required
 def creer_proprietaire():
     data = request.get_json()
-    for c in ["nom","prenom","email","mot_de_passe","telephone"]:
-        if not data.get(c): return jsonify({"error":f"Champ manquant : {c}"}), 400
-    conn = get_db()
-    if conn.execute("SELECT id FROM utilisateurs WHERE email=?", (data["email"],)).fetchone():
-        conn.close(); return jsonify({"error":"Email déjà utilisé"}), 409
-    conn.execute("INSERT INTO utilisateurs (nom,prenom,email,mot_de_passe,telephone,role) VALUES (?,?,?,?,?,'user')",
+    for ch in ["nom","prenom","email","mot_de_passe","telephone"]:
+        if not data.get(ch): return jsonify({"error":f"Champ manquant : {ch}"}), 400
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id FROM utilisateurs WHERE email=%s", (data["email"],))
+    if c.fetchone():
+        c.close(); conn.close(); return jsonify({"error":"Email déjà utilisé"}), 409
+    c.execute(
+        "INSERT INTO utilisateurs (nom,prenom,email,mot_de_passe,telephone,role) VALUES (%s,%s,%s,%s,%s,'user') RETURNING id",
         (data["nom"],data["prenom"],data["email"],generate_password_hash(data["mot_de_passe"]),data["telephone"]))
-    conn.commit()
-    new_id = conn.execute("SELECT last_insert_rowid() as id").fetchone()["id"]
-    conn.close()
+    new_id = c.fetchone()["id"]
+    conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok","id":new_id}), 201
 
 @app.route("/api/admin/proprietaires/<int:uid>/toggle", methods=["POST"])
 @admin_required
 def toggle_proprietaire(uid):
-    conn = get_db()
-    user = conn.execute("SELECT actif FROM utilisateurs WHERE id=? AND role='user'", (uid,)).fetchone()
-    if not user: conn.close(); return jsonify({"error":"Introuvable"}), 404
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT actif FROM utilisateurs WHERE id=%s AND role='user'", (uid,))
+    user = c.fetchone()
+    if not user: c.close(); conn.close(); return jsonify({"error":"Introuvable"}), 404
     nouvel = 0 if user["actif"] else 1
-    conn.execute("UPDATE utilisateurs SET actif=? WHERE id=?", (nouvel, uid))
-    conn.commit(); conn.close()
+    c.execute("UPDATE utilisateurs SET actif=%s WHERE id=%s", (nouvel, uid))
+    conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok","actif":nouvel}), 200
 
 @app.route("/api/admin/vehicules", methods=["GET"])
 @admin_required
 def get_all_vehicules():
-    conn = get_db()
-    rows = conn.execute("""
+    conn = get_db(); c = conn.cursor()
+    c.execute("""
         SELECT v.*,u.nom||' '||u.prenom as proprietaire_nom
         FROM vehicules v JOIN utilisateurs u ON u.id=v.proprietaire_id
-        ORDER BY v.date_ajout DESC""").fetchall()
-    conn.close()
+        ORDER BY v.date_ajout DESC""")
+    rows = c.fetchall()
+    c.close(); conn.close()
     return jsonify([dict(r) for r in rows]), 200
 
 @app.route("/api/admin/vehicules", methods=["POST"])
 @admin_required
 def creer_vehicule():
     data = request.get_json()
-    for c in ["proprietaire_id","marque","modele","immatriculation","type_vehicule","device_id"]:
-        if not data.get(c): return jsonify({"error":f"Champ manquant : {c}"}), 400
-    conn = get_db()
+    for ch in ["proprietaire_id","marque","modele","immatriculation","type_vehicule","device_id"]:
+        if not data.get(ch): return jsonify({"error":f"Champ manquant : {ch}"}), 400
+    conn = get_db(); c = conn.cursor()
     try:
-        conn.execute("""INSERT INTO vehicules
+        c.execute("""INSERT INTO vehicules
             (proprietaire_id,marque,modele,immatriculation,type_vehicule,couleur,annee,device_id)
-            VALUES (?,?,?,?,?,?,?,?)""",
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id""",
             (data["proprietaire_id"],data["marque"],data["modele"],data["immatriculation"],
              data["type_vehicule"],data.get("couleur",""),data.get("annee",2024),data["device_id"]))
-        conn.commit()
-        new_id = conn.execute("SELECT last_insert_rowid() as id").fetchone()["id"]
-        conn.close()
+        new_id = c.fetchone()["id"]
+        conn.commit(); c.close(); conn.close()
         return jsonify({"status":"ok","id":new_id}), 201
-    except sqlite3.IntegrityError:
-        conn.close()
+    except Exception:
+        conn.rollback(); c.close(); conn.close()
         return jsonify({"error":"Immatriculation ou device_id déjà utilisé"}), 409
 
 @app.route("/api/admin/vehicules/<int:vid>/toggle", methods=["POST"])
 @admin_required
 def toggle_vehicule(vid):
-    conn = get_db()
-    v = conn.execute("SELECT actif FROM vehicules WHERE id=?", (vid,)).fetchone()
-    if not v: conn.close(); return jsonify({"error":"Introuvable"}), 404
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT actif FROM vehicules WHERE id=%s", (vid,))
+    v = c.fetchone()
+    if not v: c.close(); conn.close(); return jsonify({"error":"Introuvable"}), 404
     nouvel = 0 if v["actif"] else 1
-    conn.execute("UPDATE vehicules SET actif=? WHERE id=?", (nouvel, vid))
-    conn.commit(); conn.close()
+    c.execute("UPDATE vehicules SET actif=%s WHERE id=%s", (nouvel, vid))
+    conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok","actif":nouvel}), 200
 
 @app.route("/api/user/vehicules", methods=["GET"])
 @login_required
 def get_user_vehicules():
-    conn = get_db()
-    rows = conn.execute("""
-        SELECT * FROM vehicules WHERE proprietaire_id=? AND actif=1
-        ORDER BY date_ajout DESC""", (session["user_id"],)).fetchall()
-    conn.close()
+    conn = get_db(); c = conn.cursor()
+    c.execute("""
+        SELECT * FROM vehicules WHERE proprietaire_id=%s AND actif=1
+        ORDER BY date_ajout DESC""", (session["user_id"],))
+    rows = c.fetchall()
+    c.close(); conn.close()
     return jsonify([dict(r) for r in rows]), 200
 
 @app.route("/api/position", methods=["POST"])
@@ -227,27 +237,30 @@ def receive_position():
     data = request.get_json()
     if not data or not data.get("device_id"):
         return jsonify({"error":"device_id manquant"}), 400
-    conn = get_db()
-    v = conn.execute("SELECT id FROM vehicules WHERE device_id=? AND actif=1", (data["device_id"],)).fetchone()
-    if not v: conn.close(); return jsonify({"error":"Véhicule inconnu"}), 404
-    conn.execute("""INSERT INTO positions (vehicule_id,latitude,longitude,vitesse,altitude,satellites,timestamp)
-        VALUES (?,?,?,?,?,?,?)""",
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id FROM vehicules WHERE device_id=%s AND actif=1", (data["device_id"],))
+    v = c.fetchone()
+    if not v: c.close(); conn.close(); return jsonify({"error":"Véhicule inconnu"}), 404
+    c.execute("""INSERT INTO positions (vehicule_id,latitude,longitude,vitesse,altitude,satellites,timestamp)
+        VALUES (%s,%s,%s,%s,%s,%s,%s)""",
         (v["id"],data["lat"],data["lng"],data.get("speed",0),
          data.get("altitude",0),data.get("satellites",0),data.get("timestamp","")))
-    conn.commit(); conn.close()
+    conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok"}), 200
 
 @app.route("/api/positions/<int:vid>", methods=["GET"])
 @login_required
 def get_positions(vid):
     limit = request.args.get("limit", 200, type=int)
-    conn = get_db()
+    conn = get_db(); c = conn.cursor()
     if session.get("role") != "admin":
-        v = conn.execute("SELECT id FROM vehicules WHERE id=? AND proprietaire_id=?",
-            (vid, session["user_id"])).fetchone()
-        if not v: conn.close(); return jsonify({"error":"Accès refusé"}), 403
-    rows = conn.execute("SELECT * FROM positions WHERE vehicule_id=? ORDER BY id DESC LIMIT ?", (vid, limit)).fetchall()
-    conn.close()
+        c.execute("SELECT id FROM vehicules WHERE id=%s AND proprietaire_id=%s",
+            (vid, session["user_id"]))
+        if not c.fetchone():
+            c.close(); conn.close(); return jsonify({"error":"Accès refusé"}), 403
+    c.execute("SELECT * FROM positions WHERE vehicule_id=%s ORDER BY id DESC LIMIT %s", (vid, limit))
+    rows = c.fetchall()
+    c.close(); conn.close()
     result = [dict(r) for r in rows]
     result.reverse()
     return jsonify(result), 200
@@ -255,9 +268,10 @@ def get_positions(vid):
 @app.route("/api/positions/<int:vid>/last", methods=["GET"])
 @login_required
 def get_last_position(vid):
-    conn = get_db()
-    row = conn.execute("SELECT * FROM positions WHERE vehicule_id=? ORDER BY id DESC LIMIT 1", (vid,)).fetchone()
-    conn.close()
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT * FROM positions WHERE vehicule_id=%s ORDER BY id DESC LIMIT 1", (vid,))
+    row = c.fetchone()
+    c.close(); conn.close()
     if not row: return jsonify({"error":"Aucune position"}), 404
     return jsonify(dict(row)), 200
 
@@ -1172,7 +1186,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
   background:var(--surface);border-right:1px solid var(--border);
   display:flex;flex-direction:column;z-index:100;
-  transition:left 0.25s ease
+  transition:left 0.25s ease;overflow-y:auto
 }
 .sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:160px;
   background:linear-gradient(180deg,rgba(124,58,237,0.05),transparent);pointer-events:none}
@@ -1286,20 +1300,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 
 /* ══ RESPONSIVE MOBILE ══ */
 @media(max-width:768px){
-  body{overflow:auto}
-  .sidebar{left:calc(-1 * var(--sidebar-w));box-shadow:none}
+  body{overflow:auto;height:auto;display:block}
+  .sidebar{left:calc(-1 * var(--sidebar-w));box-shadow:none;bottom:0;height:100vh}
   .sidebar.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.15)}
-  .main{margin-left:0!important;height:100vh}
+  .main{margin-left:0!important;height:100vh;display:flex;flex-direction:column}
   .menu-btn{display:inline-flex;align-items:center;justify-content:center}
-  .topbar{padding:0 12px}
+  .topbar{padding:0 12px;flex-shrink:0}
   .tb-title{font-size:13px}
   .upd{display:none}
-  .infobar{height:auto!important;padding:8px 12px;flex-wrap:wrap;gap:8px}
+
+  /* Carte : hauteur fixe, pas 100% */
+  #tab-carte{height:calc(100vh - 56px);flex-direction:column;overflow:hidden}
+  #map-wrap{flex:1;min-height:0;overflow:hidden}
+  #map{height:100%!important}
+
+  .infobar{height:auto!important;padding:6px 12px;flex-wrap:wrap;gap:6px;flex-shrink:0}
   .isep{display:none}
-  .iitem{flex-direction:row;align-items:center;gap:6px}
+  .iitem{flex-direction:row;align-items:center;gap:5px}
   .ilbl{font-size:9px}
-  .ival{font-size:13px}
-  .usec{padding:14px}
+  .ival{font-size:12px}
+
+  .usec{padding:14px;height:calc(100vh - 56px);overflow-y:auto}
   .h-filters{flex-direction:column}
   .h-select{width:100%}
 }
@@ -1510,7 +1531,8 @@ async function selV(id,label,immat){
   initMap();
   if(poly)poly.setLatLngs([]);
   if(marker){map.removeLayer(marker);marker=null;}
-  setTimeout(()=>map.invalidateSize(),100);
+  setTimeout(()=>map.invalidateSize(),150);
+  setTimeout(()=>map.invalidateSize(),400);
   const hist=await fetch(`/api/positions/${id}?limit=200`).then(r=>r.json());
   if(hist.length)poly.setLatLngs(hist.map(p=>[p.latitude,p.longitude]));
   if(interval)clearInterval(interval);
