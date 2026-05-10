@@ -7,9 +7,10 @@
 from flask import Flask, jsonify, request, session, redirect
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-import psycopg2, psycopg2.extras, os, json, threading, time
+import psycopg2, psycopg2.extras, os, json, threading, time, secrets
 from functools import wraps
 from pywebpush import webpush, WebPushException
+import urllib.request, urllib.error
 
 app = Flask(__name__)
 app.secret_key = "gps_tracker_secret_key_2026"
@@ -25,6 +26,11 @@ VAPID_PRIVATE_KEY   = os.environ.get("VAPID_PRIVATE_KEY", "")
 VAPID_PUBLIC_KEY    = os.environ.get("VAPID_PUBLIC_KEY", "")
 VAPID_CLAIMS_EMAIL  = os.environ.get("VAPID_CLAIMS_EMAIL", "admin@gps.com")
 ALERTE_MINUTES      = 5   # minutes sans position → alerte
+
+# ── Resend Email ──
+RESEND_API_KEY   = os.environ.get("RESEND_API_KEY", "")
+RESEND_FROM      = os.environ.get("RESEND_FROM_EMAIL", "onboarding@resend.dev")
+APP_URL          = os.environ.get("APP_URL", "http://localhost:5000")
 
 # ─────────────────────────────────────────────────────────────
 #  BASE DE DONNÉES — PostgreSQL
@@ -80,6 +86,13 @@ def init_db():
     c.execute("""CREATE TABLE IF NOT EXISTS alertes_envoyees (
         vehicule_id INTEGER PRIMARY KEY,
         derniere_alerte TEXT)""")
+    # Table tokens réinitialisation mot de passe
+    c.execute("""CREATE TABLE IF NOT EXISTS reset_tokens (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+        token TEXT NOT NULL UNIQUE,
+        expire_at TEXT NOT NULL,
+        utilise INTEGER NOT NULL DEFAULT 0)""")
     conn.commit(); c.close(); conn.close()
     print("[DB] Base initialisée ✅")
 
@@ -293,6 +306,193 @@ def get_last_position(vid):
     return jsonify(dict(row)), 200
 
 # ─────────────────────────────────────────────────────────────
+#  MODIFICATION PROPRIÉTAIRE & VÉHICULE
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/api/admin/proprietaires/<int:uid>", methods=["PUT"])
+@admin_required
+def modifier_proprietaire(uid):
+    data = request.get_json()
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id FROM utilisateurs WHERE id=%s AND role='user'", (uid,))
+    if not c.fetchone():
+        c.close(); conn.close(); return jsonify({"error":"Introuvable"}), 404
+    # Vérif email unique si changé
+    if data.get("email"):
+        c.execute("SELECT id FROM utilisateurs WHERE email=%s AND id!=%s", (data["email"], uid))
+        if c.fetchone():
+            c.close(); conn.close(); return jsonify({"error":"Email déjà utilisé"}), 409
+    # Construction dynamique de la requête
+    champs = []
+    valeurs = []
+    for col in ["nom","prenom","email","telephone"]:
+        if data.get(col):
+            champs.append(f"{col}=%s")
+            valeurs.append(data[col])
+    if data.get("mot_de_passe"):
+        champs.append("mot_de_passe=%s")
+        valeurs.append(generate_password_hash(data["mot_de_passe"]))
+    if not champs:
+        c.close(); conn.close(); return jsonify({"error":"Rien à modifier"}), 400
+    valeurs.append(uid)
+    c.execute(f"UPDATE utilisateurs SET {','.join(champs)} WHERE id=%s", valeurs)
+    conn.commit(); c.close(); conn.close()
+    return jsonify({"status":"ok"}), 200
+
+@app.route("/api/admin/proprietaires/<int:uid>", methods=["GET"])
+@admin_required
+def get_proprietaire(uid):
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id,nom,prenom,email,telephone FROM utilisateurs WHERE id=%s AND role='user'", (uid,))
+    row = c.fetchone()
+    c.close(); conn.close()
+    if not row: return jsonify({"error":"Introuvable"}), 404
+    return jsonify(dict(row)), 200
+
+@app.route("/api/admin/vehicules/<int:vid>", methods=["PUT"])
+@admin_required
+def modifier_vehicule(vid):
+    data = request.get_json()
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id FROM vehicules WHERE id=%s", (vid,))
+    if not c.fetchone():
+        c.close(); conn.close(); return jsonify({"error":"Introuvable"}), 404
+    champs = []
+    valeurs = []
+    for col in ["marque","modele","immatriculation","type_vehicule","couleur","device_id"]:
+        if data.get(col):
+            champs.append(f"{col}=%s")
+            valeurs.append(data[col])
+    if data.get("annee"):
+        champs.append("annee=%s")
+        valeurs.append(int(data["annee"]))
+    if not champs:
+        c.close(); conn.close(); return jsonify({"error":"Rien à modifier"}), 400
+    valeurs.append(vid)
+    try:
+        c.execute(f"UPDATE vehicules SET {','.join(champs)} WHERE id=%s", valeurs)
+        conn.commit(); c.close(); conn.close()
+        return jsonify({"status":"ok"}), 200
+    except Exception:
+        conn.rollback(); c.close(); conn.close()
+        return jsonify({"error":"Immatriculation ou device_id déjà utilisé"}), 409
+
+@app.route("/api/admin/vehicules/<int:vid>", methods=["GET"])
+@admin_required
+def get_vehicule(vid):
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT * FROM vehicules WHERE id=%s", (vid,))
+    row = c.fetchone()
+    c.close(); conn.close()
+    if not row: return jsonify({"error":"Introuvable"}), 404
+    return jsonify(dict(row)), 200
+
+# ─────────────────────────────────────────────────────────────
+#  MOT DE PASSE OUBLIÉ
+# ─────────────────────────────────────────────────────────────
+
+def envoyer_email_reset(email, prenom, lien):
+    """Envoie l'email de réinitialisation via Resend API."""
+    try:
+        payload = json.dumps({
+            "from": RESEND_FROM,
+            "to": [email],
+            "subject": "Réinitialisation de votre mot de passe — GPS Tracker",
+            "html": f"""
+            <div style="font-family:Inter,sans-serif;max-width:480px;margin:0 auto;padding:32px">
+              <div style="text-align:center;margin-bottom:28px">
+                <div style="width:56px;height:56px;border-radius:16px;
+                  background:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
+                  display:inline-flex;align-items:center;justify-content:center;
+                  font-size:24px">🛰️</div>
+                <h1 style="font-size:20px;font-weight:700;color:#111827;margin-top:12px">GPS Tracker</h1>
+              </div>
+              <h2 style="font-size:18px;font-weight:700;color:#111827;margin-bottom:8px">
+                Bonjour {prenom},
+              </h2>
+              <p style="color:#6B7280;font-size:14px;line-height:1.7;margin-bottom:24px">
+                Vous avez demandé la réinitialisation de votre mot de passe.<br>
+                Cliquez sur le bouton ci-dessous. Ce lien est valable <strong>30 minutes</strong>.
+              </p>
+              <a href="{lien}" style="display:block;text-align:center;padding:14px 24px;
+                background:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
+                color:#fff;border-radius:12px;text-decoration:none;
+                font-weight:600;font-size:15px;margin-bottom:24px">
+                Réinitialiser mon mot de passe →
+              </a>
+              <p style="color:#9CA3AF;font-size:12px;text-align:center">
+                Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.
+              </p>
+            </div>"""
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.resend.com/emails",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json"
+            }
+        )
+        urllib.request.urlopen(req)
+        return True
+    except Exception as e:
+        print(f"[EMAIL] Erreur envoi : {e}")
+        return False
+
+@app.route("/api/forgot-password", methods=["POST"])
+def forgot_password():
+    data = request.get_json()
+    if not data or not data.get("email"):
+        return jsonify({"error":"Email requis"}), 400
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id,prenom FROM utilisateurs WHERE email=%s AND role='user' AND actif=1",
+              (data["email"],))
+    user = c.fetchone()
+    if not user:
+        # Sécurité : on répond OK même si l'email n'existe pas
+        c.close(); conn.close()
+        return jsonify({"status":"ok"}), 200
+    token = secrets.token_urlsafe(32)
+    # Supprime les anciens tokens de cet utilisateur
+    c.execute("DELETE FROM reset_tokens WHERE user_id=%s", (user["id"],))
+    c.execute("""INSERT INTO reset_tokens (user_id, token, expire_at)
+        VALUES (%s, %s, (NOW() + INTERVAL '30 minutes')::text)""",
+        (user["id"], token))
+    conn.commit(); c.close(); conn.close()
+    lien = f"{APP_URL}/reset-password?token={token}"
+    envoyer_email_reset(data["email"], user["prenom"], lien)
+    return jsonify({"status":"ok"}), 200
+
+@app.route("/api/reset-password", methods=["POST"])
+def reset_password():
+    data = request.get_json()
+    if not data or not data.get("token") or not data.get("mot_de_passe"):
+        return jsonify({"error":"Données manquantes"}), 400
+    conn = get_db(); c = conn.cursor()
+    c.execute("""SELECT rt.user_id FROM reset_tokens rt
+        WHERE rt.token=%s AND rt.utilise=0
+        AND rt.expire_at::timestamp > NOW()""", (data["token"],))
+    row = c.fetchone()
+    if not row:
+        c.close(); conn.close()
+        return jsonify({"error":"Lien invalide ou expiré"}), 400
+    c.execute("UPDATE utilisateurs SET mot_de_passe=%s WHERE id=%s",
+              (generate_password_hash(data["mot_de_passe"]), row["user_id"]))
+    c.execute("UPDATE reset_tokens SET utilise=1 WHERE token=%s", (data["token"],))
+    conn.commit(); c.close(); conn.close()
+    return jsonify({"status":"ok"}), 200
+
+@app.route("/api/reset-password/check", methods=["GET"])
+def check_reset_token():
+    token = request.args.get("token","")
+    conn = get_db(); c = conn.cursor()
+    c.execute("""SELECT id FROM reset_tokens
+        WHERE token=%s AND utilise=0 AND expire_at::timestamp > NOW()""", (token,))
+    row = c.fetchone()
+    c.close(); conn.close()
+    return jsonify({"valid": row is not None}), 200
+
+# ─────────────────────────────────────────────────────────────
 #  PUSH NOTIFICATIONS
 # ─────────────────────────────────────────────────────────────
 
@@ -445,6 +645,10 @@ self.addEventListener('notificationclick', function(e){
     from flask import Response
     return Response(sw_code, mimetype="application/javascript")
 
+@app.route("/reset-password")
+def reset_password_page():
+    return RESET_PAGE
+
 @app.route("/")
 def index():
     return LOGIN_PAGE
@@ -552,10 +756,49 @@ input::placeholder{color:var(--text3)}
              onkeydown="if(event.key==='Enter')doLogin()"/></div>
   </div>
   <button class="btn" onclick="doLogin()">Se connecter →</button>
+  <div style="text-align:center;margin-top:14px">
+    <a href="#" onclick="showForgot()" style="font-size:12px;color:var(--text3);text-decoration:none;
+      transition:color 0.2s" onmouseover="this.style.color='var(--primary)'"
+      onmouseout="this.style.color='var(--text3)'">Mot de passe oublié ?</a>
+  </div>
   <div class="trust">
     <div class="trust-item"><div class="trust-dot"></div>Sécurisé</div>
     <div class="trust-item"><div class="trust-dot"></div>Temps réel</div>
     <div class="trust-item"><div class="trust-dot"></div>GPS IoT</div>
+  </div>
+</div>
+
+<!-- MODAL MOT DE PASSE OUBLIÉ -->
+<div id="forgot-bg" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,0.45);
+  backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:20px;padding:32px;width:100%;max-width:400px;
+    position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.12)">
+    <div style="position:absolute;top:0;left:20%;right:20%;height:3px;
+      background:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);border-radius:0 0 4px 4px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h3 style="font-size:16px;font-weight:700;color:#111827">Mot de passe oublié</h3>
+      <button onclick="hideForgot()" style="width:28px;height:28px;border-radius:8px;
+        border:1px solid #E5E7EB;background:transparent;cursor:pointer;font-size:14px;color:#9CA3AF">✕</button>
+    </div>
+    <p style="font-size:13px;color:#6B7280;margin-bottom:16px;line-height:1.6">
+      Entrez votre email. Vous recevrez un lien pour réinitialiser votre mot de passe.
+    </p>
+    <div id="forgot-err" style="background:#FFF1F2;border:1px solid #FECDD3;color:#F43F5E;
+      padding:10px 13px;border-radius:10px;font-size:12px;margin-bottom:12px;display:none"></div>
+    <div id="forgot-ok" style="background:#F0FDF4;border:1px solid #BBF7D0;color:#10B981;
+      padding:10px 13px;border-radius:10px;font-size:12px;margin-bottom:12px;display:none"></div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:11px;font-weight:700;color:#6B7280;
+        margin-bottom:7px;text-transform:uppercase;letter-spacing:0.7px">Email</label>
+      <input type="email" id="forgot-email" placeholder="votre@email.com"
+        style="width:100%;height:42px;padding:0 13px;background:#FAFAFA;
+          border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;
+          font-family:Inter,sans-serif;color:#111827;outline:none"
+        onkeydown="if(event.key==='Enter')doForgot()"/>
+    </div>
+    <button onclick="doForgot()" style="width:100%;height:42px;background:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
+      border:none;border-radius:10px;color:#fff;font-family:Inter,sans-serif;
+      font-size:13px;font-weight:600;cursor:pointer">Envoyer le lien →</button>
   </div>
 </div>
 <script>
@@ -571,6 +814,135 @@ async function doLogin(){
   if(res.ok){window.location.href=data.role==="admin"?"/admin":"/dashboard";}
   else{err.textContent=data.error||"Identifiants incorrects.";err.style.display="block";}
 }
+function showForgot(){
+  document.getElementById("forgot-bg").style.display="flex";
+  document.getElementById("forgot-err").style.display="none";
+  document.getElementById("forgot-ok").style.display="none";
+  document.getElementById("forgot-email").value="";
+}
+function hideForgot(){document.getElementById("forgot-bg").style.display="none";}
+async function doForgot(){
+  const email=document.getElementById("forgot-email").value.trim();
+  const err=document.getElementById("forgot-err");
+  const ok=document.getElementById("forgot-ok");
+  err.style.display=ok.style.display="none";
+  if(!email){err.textContent="Veuillez entrer votre email.";err.style.display="block";return;}
+  await fetch("/api/forgot-password",{method:"POST",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify({email})});
+  ok.textContent="Si cet email existe, vous recevrez un lien dans quelques minutes.";
+  ok.style.display="block";
+}
+</script></body></html>"""
+
+# ═════════════════════════════════════════════════════════════
+#  PAGE RESET PASSWORD
+# ═════════════════════════════════════════════════════════════
+
+RESET_PAGE = """<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPS Tracker — Nouveau mot de passe</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --grad2:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
+  --green:#10B981;--red:#F43F5E;--text:#111827;--text2:#6B7280;--text3:#9CA3AF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;
+  justify-content:center;background:linear-gradient(160deg,#EDE9FE 0%,#E0F2FE 55%,#F0FDF4 100%);
+  padding:16px}
+.card{background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.9);border-radius:24px;
+  padding:48px 40px;width:100%;max-width:420px;
+  box-shadow:0 8px 40px rgba(99,102,241,0.12)}
+@media(max-width:480px){.card{padding:32px 22px}}
+.logo{text-align:center;margin-bottom:32px}
+.logo-bg{width:64px;height:64px;border-radius:18px;background:var(--grad2);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  margin:0 auto 14px;box-shadow:0 6px 22px rgba(99,102,241,0.35)}
+.logo h1{font-size:22px;font-weight:700;
+  background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo p{color:var(--text3);font-size:13px;margin-top:4px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--text2);
+  margin-bottom:7px;text-transform:uppercase;letter-spacing:0.7px}
+.iw{position:relative}
+.ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.35;pointer-events:none}
+input{width:100%;height:44px;padding:0 14px 0 42px;background:#FAFAFA;
+  border:1.5px solid #E5E7EB;border-radius:12px;font-size:14px;
+  font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:all 0.2s}
+input:focus{border-color:#6366F1;background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,0.1)}
+.btn{width:100%;height:46px;margin-top:6px;background:var(--grad2);border:none;
+  border-radius:12px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;
+  font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,0.4);transition:all 0.2s}
+.btn:hover{transform:translateY(-1px)}
+.err{background:#FFF1F2;border:1px solid #FECDD3;color:var(--red);
+  padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none}
+.ok{background:#F0FDF4;border:1px solid #BBF7D0;color:var(--green);
+  padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none}
+.exp{background:#FFF7ED;border:1px solid #FED7AA;color:#C2410C;
+  padding:16px;border-radius:12px;text-align:center;font-size:13px;display:none}
+</style></head><body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-bg">🔑</div>
+    <h1>Nouveau mot de passe</h1>
+    <p>Choisissez un nouveau mot de passe sécurisé</p>
+  </div>
+  <div class="exp" id="exp">
+    <div style="font-size:24px;margin-bottom:8px">⏰</div>
+    <div style="font-weight:700;margin-bottom:4px">Lien expiré</div>
+    <div style="color:#9A3412">Ce lien n'est plus valide. Faites une nouvelle demande sur la page de connexion.</div>
+  </div>
+  <div id="form-wrap">
+    <div class="err" id="err"></div>
+    <div class="ok" id="ok"></div>
+    <div class="fg">
+      <label>Nouveau mot de passe</label>
+      <div class="iw"><span class="ii">🔑</span>
+        <input type="password" id="pwd1" placeholder="Minimum 6 caractères"/></div>
+    </div>
+    <div class="fg">
+      <label>Confirmer le mot de passe</label>
+      <div class="iw"><span class="ii">🔑</span>
+        <input type="password" id="pwd2" placeholder="Répétez le mot de passe"
+          onkeydown="if(event.key==='Enter')doReset()"/></div>
+    </div>
+    <button class="btn" onclick="doReset()">Enregistrer le mot de passe →</button>
+  </div>
+</div>
+<script>
+const token=new URLSearchParams(window.location.search).get("token");
+async function init(){
+  if(!token){showExpired();return;}
+  const r=await fetch(`/api/reset-password/check?token=${token}`).then(x=>x.json());
+  if(!r.valid)showExpired();
+}
+function showExpired(){
+  document.getElementById("exp").style.display="block";
+  document.getElementById("form-wrap").style.display="none";
+}
+async function doReset(){
+  const pwd1=document.getElementById("pwd1").value;
+  const pwd2=document.getElementById("pwd2").value;
+  const err=document.getElementById("err");
+  const ok=document.getElementById("ok");
+  err.style.display=ok.style.display="none";
+  if(!pwd1||!pwd2){err.textContent="Veuillez remplir les deux champs.";err.style.display="block";return;}
+  if(pwd1.length<6){err.textContent="Le mot de passe doit faire au moins 6 caractères.";err.style.display="block";return;}
+  if(pwd1!==pwd2){err.textContent="Les mots de passe ne correspondent pas.";err.style.display="block";return;}
+  const res=await fetch("/api/reset-password",{method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({token,mot_de_passe:pwd1})});
+  const data=await res.json();
+  if(res.ok){
+    ok.textContent="✓ Mot de passe modifié ! Redirection...";ok.style.display="block";
+    document.getElementById("pwd1").value="";document.getElementById("pwd2").value="";
+    setTimeout(()=>window.location.href="/",2500);
+  }else{err.textContent=data.error||"Erreur.";err.style.display="block";}
+}
+init();
 </script></body></html>"""
 
 # ═════════════════════════════════════════════════════════════
@@ -1195,7 +1567,8 @@ async function loadP(){
     <td><span style="font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${p.nb_vehicules}</span></td>
     <td style="font-size:12px;color:var(--text3)">${(p.date_creation||"").slice(0,10)}</td>
     <td><span class="badge ${p.actif?'badge-on':'badge-off'}">${p.actif?'Actif':'Inactif'}</span></td>
-    <td><button class="btn btn-sm ${p.actif?'btn-danger':'btn-success'}" onclick="toggleP(${p.id})">${p.actif?'Désactiver':'Activer'}</button></td>
+    <td><button class="btn btn-sm ${p.actif?'btn-danger':'btn-success'}" onclick="toggleP(${p.id})">${p.actif?'Désactiver':'Activer'}</button>
+    <button class="btn btn-sm" onclick="ouvrirModifP(${p.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2);margin-left:4px">✏️ Modifier</button></td>
   </tr>`).join("");
 }
 
@@ -1237,7 +1610,8 @@ async function loadV(){
     <td>${v.proprietaire_nom}</td>
     <td><span class="device">${v.device_id}</span></td>
     <td><span class="badge ${v.actif?'badge-on':'badge-off'}">${v.actif?'Actif':'Inactif'}</span></td>
-    <td><button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})">${v.actif?'Désactiver':'Activer'}</button></td>
+    <td><button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})">${v.actif?'Désactiver':'Activer'}</button>
+    <button class="btn btn-sm" onclick="ouvrirModifV(${v.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2);margin-left:4px">✏️ Modifier</button></td>
   </tr>`).join("");
 }
 
@@ -1317,9 +1691,141 @@ function openMP(){
   document.getElementById("mp").classList.add("open");
 }
 function closeM(id){document.getElementById(id).classList.remove("open");}
+
+/* ── Modification Propriétaire ── */
+async function ouvrirModifP(id){
+  const data=await fetch(`/api/admin/proprietaires/${id}`).then(r=>r.json());
+  document.getElementById("mp-id").value=id;
+  document.getElementById("mp-nom").value=data.nom||"";
+  document.getElementById("mp-prenom").value=data.prenom||"";
+  document.getElementById("mp-email").value=data.email||"";
+  document.getElementById("mp-tel").value=data.telephone||"";
+  document.getElementById("mp-pw").value="";
+  document.getElementById("emp").style.display=document.getElementById("omp").style.display="none";
+  document.getElementById("m-modif-p").classList.add("open");
+}
+async function sauvegarderP(){
+  const id=document.getElementById("mp-id").value;
+  const e=document.getElementById("emp"),o=document.getElementById("omp");
+  e.style.display=o.style.display="none";
+  const body={
+    nom:document.getElementById("mp-nom").value.trim(),
+    prenom:document.getElementById("mp-prenom").value.trim(),
+    email:document.getElementById("mp-email").value.trim(),
+    telephone:document.getElementById("mp-tel").value.trim(),
+    mot_de_passe:document.getElementById("mp-pw").value||undefined
+  };
+  if(!body.mot_de_passe)delete body.mot_de_passe;
+  const res=await fetch(`/api/admin/proprietaires/${id}`,{method:"PUT",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const data=await res.json();
+  if(res.ok){o.textContent="✓ Propriétaire modifié !";o.style.display="block";
+    setTimeout(()=>closeM("m-modif-p"),1200);loadP();}
+  else{e.textContent=data.error;e.style.display="block";}
+}
+
+/* ── Modification Véhicule ── */
+async function ouvrirModifV(id){
+  const data=await fetch(`/api/admin/vehicules/${id}`).then(r=>r.json());
+  document.getElementById("mv-id").value=id;
+  document.getElementById("mv-marque").value=data.marque||"";
+  document.getElementById("mv-modele").value=data.modele||"";
+  document.getElementById("mv-immat").value=data.immatriculation||"";
+  document.getElementById("mv-type").value=data.type_vehicule||"voiture";
+  document.getElementById("mv-couleur").value=data.couleur||"";
+  document.getElementById("mv-annee").value=data.annee||"";
+  document.getElementById("mv-device").value=data.device_id||"";
+  document.getElementById("emv").style.display=document.getElementById("omv").style.display="none";
+  document.getElementById("m-modif-v").classList.add("open");
+}
+async function sauvegarderV(){
+  const id=document.getElementById("mv-id").value;
+  const e=document.getElementById("emv"),o=document.getElementById("omv");
+  e.style.display=o.style.display="none";
+  const body={
+    marque:document.getElementById("mv-marque").value.trim(),
+    modele:document.getElementById("mv-modele").value.trim(),
+    immatriculation:document.getElementById("mv-immat").value.trim(),
+    type_vehicule:document.getElementById("mv-type").value,
+    couleur:document.getElementById("mv-couleur").value.trim(),
+    annee:document.getElementById("mv-annee").value,
+    device_id:document.getElementById("mv-device").value.trim()
+  };
+  const res=await fetch(`/api/admin/vehicules/${id}`,{method:"PUT",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const data=await res.json();
+  if(res.ok){o.textContent="✓ Véhicule modifié !";o.style.display="block";
+    setTimeout(()=>closeM("m-modif-v"),1200);loadV();}
+  else{e.textContent=data.error;e.style.display="block";}
+}
+
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadStats();
-</script></body></html>"""
+</script>
+
+<!-- MODAL MODIFICATION PROPRIÉTAIRE -->
+<div class="mbg" id="m-modif-p">
+  <div class="modal">
+    <div class="mh">
+      <h3>✏️ Modifier le propriétaire</h3>
+      <button class="mc" onclick="closeM('m-modif-p')">✕</button>
+    </div>
+    <input type="hidden" id="mp-id"/>
+    <div class="al al-e" id="emp"></div>
+    <div class="al al-o" id="omp"></div>
+    <div class="fg2">
+      <div class="fg"><label>Nom *</label><input id="mp-nom"/></div>
+      <div class="fg"><label>Prénom *</label><input id="mp-prenom"/></div>
+    </div>
+    <div class="fg"><label>Email *</label><input type="email" id="mp-email"/></div>
+    <div class="fg"><label>Téléphone *</label><input id="mp-tel"/></div>
+    <div class="fg"><label>Nouveau mot de passe <span style="color:var(--text3);font-weight:400">(laisser vide = inchangé)</span></label>
+      <input type="password" id="mp-pw" placeholder="Laisser vide pour ne pas changer"/></div>
+    <div class="ma">
+      <button class="btn btn-danger" onclick="closeM('m-modif-p')">Annuler</button>
+      <button class="btn btn-primary" onclick="sauvegarderP()">💾 Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MODIFICATION VÉHICULE -->
+<div class="mbg" id="m-modif-v">
+  <div class="modal">
+    <div class="mh">
+      <h3>✏️ Modifier le véhicule</h3>
+      <button class="mc" onclick="closeM('m-modif-v')">✕</button>
+    </div>
+    <input type="hidden" id="mv-id"/>
+    <div class="al al-e" id="emv"></div>
+    <div class="al al-o" id="omv"></div>
+    <div class="fg2">
+      <div class="fg"><label>Marque *</label><input id="mv-marque"/></div>
+      <div class="fg"><label>Modèle *</label><input id="mv-modele"/></div>
+    </div>
+    <div class="fg2">
+      <div class="fg"><label>Type *</label>
+        <select id="mv-type">
+          <option value="voiture">🚗 Voiture</option>
+          <option value="moto">🏍️ Moto</option>
+          <option value="camion">🚛 Camion</option>
+          <option value="bus">🚌 Bus</option>
+          <option value="autre">🚙 Autre</option>
+        </select>
+      </div>
+      <div class="fg"><label>Couleur</label><input id="mv-couleur"/></div>
+    </div>
+    <div class="fg2">
+      <div class="fg"><label>Immatriculation *</label><input id="mv-immat"/></div>
+      <div class="fg"><label>Année</label><input type="number" id="mv-annee"/></div>
+    </div>
+    <div class="fg"><label>Device ID (ESP32) *</label><input id="mv-device"/></div>
+    <div class="ma">
+      <button class="btn btn-danger" onclick="closeM('m-modif-v')">Annuler</button>
+      <button class="btn btn-primary" onclick="sauvegarderV()">💾 Sauvegarder</button>
+    </div>
+  </div>
+</div>
+</body></html>"""
 
 # ═════════════════════════════════════════════════════════════
 #  PAGE USER — CORRIGÉE (responsive mobile)
