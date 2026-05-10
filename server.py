@@ -7,8 +7,9 @@
 from flask import Flask, jsonify, request, session, redirect
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-import psycopg2, psycopg2.extras, os
+import psycopg2, psycopg2.extras, os, json, threading, time
 from functools import wraps
+from pywebpush import webpush, WebPushException
 
 app = Flask(__name__)
 app.secret_key = "gps_tracker_secret_key_2026"
@@ -18,6 +19,12 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 CORS(app)
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
+
+# ── VAPID Push Notifications ──
+VAPID_PRIVATE_KEY   = os.environ.get("VAPID_PRIVATE_KEY", "")
+VAPID_PUBLIC_KEY    = os.environ.get("VAPID_PUBLIC_KEY", "")
+VAPID_CLAIMS_EMAIL  = os.environ.get("VAPID_CLAIMS_EMAIL", "admin@gps.com")
+ALERTE_MINUTES      = 5   # minutes sans position → alerte
 
 # ─────────────────────────────────────────────────────────────
 #  BASE DE DONNÉES — PostgreSQL
@@ -63,6 +70,16 @@ def init_db():
             "INSERT INTO utilisateurs (nom,prenom,email,mot_de_passe,role) VALUES (%s,%s,%s,%s,%s)",
             ("Admin","GPS","admin@gps.com",generate_password_hash("admin123"),"admin"))
         print("[DB] Admin créé → admin@gps.com / admin123")
+    # Table abonnements push
+    c.execute("""CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+        subscription TEXT NOT NULL,
+        created_at TEXT DEFAULT (NOW()::text))""")
+    # Table alertes envoyées (évite le spam)
+    c.execute("""CREATE TABLE IF NOT EXISTS alertes_envoyees (
+        vehicule_id INTEGER PRIMARY KEY,
+        derniere_alerte TEXT)""")
     conn.commit(); c.close(); conn.close()
     print("[DB] Base initialisée ✅")
 
@@ -276,8 +293,157 @@ def get_last_position(vid):
     return jsonify(dict(row)), 200
 
 # ─────────────────────────────────────────────────────────────
+#  PUSH NOTIFICATIONS
+# ─────────────────────────────────────────────────────────────
+
+@app.route("/api/push/vapid-public-key", methods=["GET"])
+@login_required
+def get_vapid_public_key():
+    return jsonify({"publicKey": VAPID_PUBLIC_KEY}), 200
+
+@app.route("/api/push/subscribe", methods=["POST"])
+@login_required
+def push_subscribe():
+    data = request.get_json()
+    if not data or not data.get("subscription"):
+        return jsonify({"error": "Subscription manquante"}), 400
+    sub_str = json.dumps(data["subscription"])
+    conn = get_db(); c = conn.cursor()
+    # Supprimer ancien abonnement du même user
+    c.execute("DELETE FROM push_subscriptions WHERE user_id=%s", (session["user_id"],))
+    c.execute("INSERT INTO push_subscriptions (user_id, subscription) VALUES (%s,%s)",
+              (session["user_id"], sub_str))
+    conn.commit(); c.close(); conn.close()
+    return jsonify({"status": "ok"}), 200
+
+@app.route("/api/push/unsubscribe", methods=["POST"])
+@login_required
+def push_unsubscribe():
+    conn = get_db(); c = conn.cursor()
+    c.execute("DELETE FROM push_subscriptions WHERE user_id=%s", (session["user_id"],))
+    conn.commit(); c.close(); conn.close()
+    return jsonify({"status": "ok"}), 200
+
+@app.route("/api/push/status", methods=["GET"])
+@login_required
+def push_status():
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id FROM push_subscriptions WHERE user_id=%s", (session["user_id"],))
+    row = c.fetchone()
+    c.close(); conn.close()
+    return jsonify({"subscribed": row is not None}), 200
+
+def envoyer_push(subscription_str, titre, corps):
+    """Envoie une notification push à un abonné."""
+    try:
+        sub = json.loads(subscription_str)
+        webpush(
+            subscription_info=sub,
+            data=json.dumps({"title": titre, "body": corps}),
+            vapid_private_key=VAPID_PRIVATE_KEY,
+            vapid_claims={"sub": f"mailto:{VAPID_CLAIMS_EMAIL}"}
+        )
+        return True
+    except WebPushException as e:
+        print(f"[PUSH] Erreur envoi : {e}")
+        return False
+    except Exception as e:
+        print(f"[PUSH] Erreur inattendue : {e}")
+        return False
+
+def surveillance_vehicules():
+    """Thread : vérifie toutes les 2 minutes si un véhicule est hors réseau."""
+    print("[SURVEILLANCE] Thread démarré ✅")
+    while True:
+        time.sleep(120)  # vérifie toutes les 2 minutes
+        try:
+            conn = get_db(); c = conn.cursor()
+            # Récupère tous les véhicules actifs avec leur dernière position
+            c.execute("""
+                SELECT v.id, v.immatriculation, v.marque, v.modele,
+                       v.proprietaire_id,
+                       p.created_at as derniere_pos
+                FROM vehicules v
+                LEFT JOIN positions p ON p.id = (
+                    SELECT id FROM positions
+                    WHERE vehicule_id = v.id
+                    ORDER BY id DESC LIMIT 1
+                )
+                WHERE v.actif = 1
+            """)
+            vehicules = c.fetchall()
+            for veh in vehicules:
+                if not veh["derniere_pos"]:
+                    continue  # jamais de position, on ignore
+                # Calcul du temps depuis la dernière position
+                c.execute("""
+                    SELECT EXTRACT(EPOCH FROM (NOW() - %s::timestamp))/60 as minutes
+                """, (veh["derniere_pos"],))
+                res = c.fetchone()
+                if not res: continue
+                minutes_ecoulees = res["minutes"] or 0
+                if minutes_ecoulees < ALERTE_MINUTES:
+                    # Véhicule connecté → réinitialise l'alerte si elle existait
+                    c.execute("DELETE FROM alertes_envoyees WHERE vehicule_id=%s", (veh["id"],))
+                    conn.commit()
+                    continue
+                # Vérifie si une alerte a déjà été envoyée pour ce véhicule
+                c.execute("SELECT derniere_alerte FROM alertes_envoyees WHERE vehicule_id=%s", (veh["id"],))
+                alerte = c.fetchone()
+                if alerte:
+                    continue  # alerte déjà envoyée, on attend la reconnexion
+                # Récupère l'abonnement push du propriétaire
+                c.execute("SELECT subscription FROM push_subscriptions WHERE user_id=%s",
+                          (veh["proprietaire_id"],))
+                sub = c.fetchone()
+                if not sub:
+                    continue  # propriétaire pas abonné aux notifications
+                # Envoie la notification
+                titre = f"⚠️ Véhicule hors réseau"
+                corps = (f"{veh['immatriculation']} — {veh['marque']} {veh['modele']}\n"
+                         f"Aucun signal depuis {int(minutes_ecoulees)} minutes.")
+                succes = envoyer_push(sub["subscription"], titre, corps)
+                if succes:
+                    # Marque l'alerte comme envoyée
+                    c.execute("""
+                        INSERT INTO alertes_envoyees (vehicule_id, derniere_alerte)
+                        VALUES (%s, NOW()::text)
+                        ON CONFLICT (vehicule_id) DO UPDATE SET derniere_alerte=NOW()::text
+                    """, (veh["id"],))
+                    conn.commit()
+                    print(f"[PUSH] Alerte envoyée pour {veh['immatriculation']}")
+            c.close(); conn.close()
+        except Exception as e:
+            print(f"[SURVEILLANCE] Erreur : {e}")
+
+# ─────────────────────────────────────────────────────────────
 #  ROUTES HTML
 # ─────────────────────────────────────────────────────────────
+
+@app.route("/sw.js")
+def service_worker():
+    sw_code = """
+self.addEventListener('push', function(e){
+  const data = e.data ? e.data.json() : {};
+  const title = data.title || 'GPS Tracker';
+  const options = {
+    body: data.body || '',
+    icon: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png',
+    badge: 'https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png',
+    vibrate: [200, 100, 200],
+    tag: 'gps-alerte',
+    renotify: true
+  };
+  e.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', function(e){
+  e.notification.close();
+  e.waitUntil(clients.openWindow('/dashboard'));
+});
+"""
+    from flask import Response
+    return Response(sw_code, mimetype="application/javascript")
 
 @app.route("/")
 def index():
@@ -1450,6 +1616,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
       <div id="pcv">Chargement...</div>
     </div>
     <div class="pcard">
+      <div class="ptitle">Notifications</div>
+      <div class="psub">Alertes en temps réel sur votre téléphone</div>
+      <div id="notif-wrap">
+        <div style="font-size:12px;color:var(--text3)">Chargement...</div>
+      </div>
+    </div>
+    <div class="pcard">
       <div class="ptitle">Système</div>
       <div class="psub">Informations sur l'application</div>
       <div class="prow">
@@ -1612,6 +1785,93 @@ async function loadParams(){
         <span class="pbadge">Actif</span>
       </div>`).join("")
     :'<div style="color:var(--text3);font-size:13px">Aucun véhicule associé</div>';
+  // Affiche le statut des notifications
+  await refreshNotifStatus();
+}
+
+/* ── PUSH NOTIFICATIONS ── */
+function urlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const raw=window.atob(base64);
+  const arr=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+
+async function refreshNotifStatus(){
+  const wrap=document.getElementById("notif-wrap");
+  if(!wrap)return;
+  if(!("Notification" in window)||!("serviceWorker" in navigator)){
+    wrap.innerHTML='<div style="font-size:12px;color:var(--text3)">Notifications non supportées par ce navigateur.</div>';
+    return;
+  }
+  const res=await fetch("/api/push/status").then(r=>r.json());
+  const abonne=res.subscribed;
+  wrap.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">Notifications push</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">
+          Alertes si un véhicule perd le réseau depuis 5 min
+        </div>
+      </div>
+      <button onclick="${abonne?'desactiverNotifs':'activerNotifs'}()"
+        style="padding:8px 18px;border-radius:10px;border:none;cursor:pointer;
+          font-size:13px;font-weight:600;font-family:Inter,sans-serif;
+          background:${abonne?'rgba(244,63,94,0.08)':'linear-gradient(135deg,#7C3AED,#6366F1)'};
+          color:${abonne?'#F43F5E':'#fff'};
+          border:${abonne?'1px solid rgba(244,63,94,0.2)':'none'}">
+        ${abonne?'🔕 Désactiver':'🔔 Activer'}
+      </button>
+    </div>
+    <div id="notif-msg" style="margin-top:10px;font-size:12px;color:var(--text3)">
+      Statut : ${abonne?'<span style="color:#10B981;font-weight:600">✅ Activées</span>':'<span style="color:#9CA3AF">❌ Désactivées</span>'}
+    </div>`;
+}
+
+async function activerNotifs(){
+  const msg=document.getElementById("notif-msg");
+  try{
+    // Demande permission
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){
+      if(msg)msg.innerHTML='<span style="color:#F43F5E">Permission refusée. Autorisez les notifications dans les paramètres du navigateur.</span>';
+      return;
+    }
+    // Récupère la clé publique VAPID
+    const{publicKey}=await fetch("/api/push/vapid-public-key").then(r=>r.json());
+    // Enregistre le service worker
+    const reg=await navigator.serviceWorker.register("/sw.js");
+    await navigator.serviceWorker.ready;
+    // S'abonne aux push
+    const sub=await reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:urlBase64ToUint8Array(publicKey)
+    });
+    // Envoie l'abonnement au serveur
+    await fetch("/api/push/subscribe",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({subscription:sub.toJSON()})
+    });
+    await refreshNotifStatus();
+  }catch(e){
+    if(msg)msg.innerHTML=`<span style="color:#F43F5E">Erreur : ${e.message}</span>`;
+  }
+}
+
+async function desactiverNotifs(){
+  await fetch("/api/push/unsubscribe",{method:"POST"});
+  // Désabonne aussi le navigateur
+  try{
+    const reg=await navigator.serviceWorker.getRegistration("/sw.js");
+    if(reg){
+      const sub=await reg.pushManager.getSubscription();
+      if(sub)await sub.unsubscribe();
+    }
+  }catch(e){}
+  await refreshNotifStatus();
 }
 
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
@@ -1623,6 +1883,10 @@ loadVehicules();
 # ─────────────────────────────────────────────────────────────
 with app.app_context():
     init_db()
+
+# Démarrage du thread de surveillance
+_t = threading.Thread(target=surveillance_vehicules, daemon=True)
+_t.start()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
