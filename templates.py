@@ -655,7 +655,7 @@ tbody tr:last-child td{border-bottom:none}
           <table>
             <thead><tr>
               <th>Nom complet</th><th>Email</th><th>Téléphone</th>
-              <th>Véhicules</th><th>Depuis</th><th>Statut</th><th>Action</th>
+              <th>Véhicules</th><th>Depuis</th><th>Statut</th><th style="min-width:200px">Action</th>
             </tr></thead>
             <tbody id="tbp">
               <tr><td colspan="7"><div class="empty"><div class="empty-ico">👥</div>
@@ -680,7 +680,7 @@ tbody tr:last-child td{border-bottom:none}
           <table>
             <thead><tr>
               <th>Immatriculation</th><th>Marque / Modèle</th><th>Type</th>
-              <th>Propriétaire</th><th>Device ID</th><th>Statut</th><th>Action</th>
+              <th>Propriétaire</th><th>Device ID</th><th>Statut</th><th style="min-width:200px">Action</th>
             </tr></thead>
             <tbody id="tbv">
               <tr><td colspan="7"><div class="empty"><div class="empty-ico">🚗</div>
@@ -905,7 +905,7 @@ async function loadP(){
     <td><span style="font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${p.nb_vehicules}</span></td>
     <td style="font-size:12px;color:var(--text3)">${(p.date_creation||"").slice(0,10)}</td>
     <td><span class="badge ${p.actif?'badge-on':'badge-off'}">${p.actif?'Actif':'Inactif'}</span></td>
-    <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+    <td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center">
     <button class="btn btn-sm ${p.actif?'btn-danger':'btn-success'}" onclick="toggleP(${p.id})">${p.actif?'Désactiver':'Activer'}</button>
     <button class="btn btn-sm" onclick="ouvrirModifP(${p.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)">✏️ Modifier</button>
     </div></td>
@@ -950,7 +950,7 @@ async function loadV(){
     <td>${v.proprietaire_nom}</td>
     <td><span class="device">${v.device_id}</span></td>
     <td><span class="badge ${v.actif?'badge-on':'badge-off'}">${v.actif?'Actif':'Inactif'}</span></td>
-    <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+    <td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center">
     <button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})">${v.actif?'Désactiver':'Activer'}</button>
     <button class="btn btn-sm" onclick="ouvrirModifV(${v.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)">✏️ Modifier</button>
     </div></td>
