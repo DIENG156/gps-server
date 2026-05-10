@@ -4,3 +4,4 @@ flask-login
 gunicorn
 werkzeug
 psycopg2-binary
+pywebpush
