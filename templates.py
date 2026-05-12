@@ -1319,14 +1319,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   .sidebar.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.15)}
   .main{margin-left:0!important;height:100vh;display:flex;flex-direction:column}
   .menu-btn{display:inline-flex;align-items:center;justify-content:center}
-  .topbar{padding:0 12px;flex-shrink:0}
+  .topbar{padding:0 12px;flex-shrink:0;z-index:50;position:relative}
   .tb-title{font-size:13px}
   .upd{display:none}
 
-  /* Carte : hauteur fixe, pas 100% */
-  #tab-carte{height:calc(100vh - 56px);flex-direction:column;overflow:hidden}
-  #map-wrap{flex:1;min-height:0;overflow:hidden}
+  /* Carte : hauteur limitée, topbar toujours visible */
+  #tab-carte{
+    height:calc(100vh - 56px);
+    flex-direction:column;
+    overflow:hidden;
+    position:relative
+  }
+  #map-wrap{
+    flex:1;
+    min-height:0;
+    overflow:hidden;
+    position:relative
+  }
   #map{height:100%!important}
+
+  /* Bouton retour flottant sur la carte */
+  #btn-retour-carte{
+    display:flex;
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:1000;
+    background:linear-gradient(135deg,#7C3AED,#6366F1);
+    color:#fff;
+    border:none;
+    border-radius:99px;
+    padding:10px 22px;
+    font-size:13px;
+    font-weight:600;
+    font-family:Inter,sans-serif;
+    cursor:pointer;
+    box-shadow:0 4px 16px rgba(99,102,241,0.45);
+    align-items:center;
+    gap:7px;
+    white-space:nowrap
+  }
 
   .infobar{height:auto!important;padding:6px 12px;flex-wrap:wrap;gap:6px;flex-shrink:0}
   .isep{display:none}
@@ -1407,7 +1440,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
         <span class="ival" id="isat">—</span>
       </div>
     </div>
-    <div id="map-wrap" style="flex:1;display:none"><div id="map" style="height:100%"></div></div>
+    <div id="map-wrap" style="flex:1;display:none;position:relative">
+      <div id="map" style="height:100%"></div>
+      <button id="btn-retour-carte" onclick="toggleMenu()" style="display:none">
+        ☰ Menu
+      </button>
+    </div>
     <div class="empty-state" id="empty">
       <div class="es-ico">🗺️</div>
       <div class="es-title">Aucun véhicule sélectionné</div>
@@ -1499,6 +1537,9 @@ function showTab(n,el){
   document.getElementById("tab-carte").style.display=n==="carte"?"flex":"none";
   document.querySelectorAll(".usec").forEach(s=>s.classList.remove("active"));
   if(n!=="carte")document.getElementById("tab-"+n).classList.add("active");
+  // Cacher bouton retour si on quitte la carte
+  const btnRetour=document.getElementById("btn-retour-carte");
+  if(btnRetour)btnRetour.style.display="none";
   if(n==="historique")initUH();
   if(n==="parametres")loadParams();
   closeMenu();
@@ -1542,6 +1583,9 @@ async function selV(id,label,immat){
   document.getElementById("empty").style.display="none";
   document.getElementById("infobar").style.display="flex";
   document.getElementById("map-wrap").style.display="block";
+  // Affiche bouton retour sur mobile
+  const btnRetour = document.getElementById("btn-retour-carte");
+  if(btnRetour && window.innerWidth <= 768) btnRetour.style.display="flex";
   /* Ferme le menu sur mobile après sélection */
   closeMenu();
   /* Bascule vers l'onglet carte */
