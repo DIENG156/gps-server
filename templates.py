@@ -11,6 +11,12 @@ LOGIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GPS Tracker — Connexion</title>
+<meta name="theme-color" content="#6366F1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GPS Tracker">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -152,6 +158,12 @@ async function doLogin(){
   if(res.ok){window.location.href=data.role==="admin"?"/admin":"/dashboard";}
   else{err.textContent=data.error||"Identifiants incorrects.";err.style.display="block";}
 }
+// Enregistrement Service Worker PWA
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js', {scope:'/'})
+    .then(()=>console.log('[PWA] Service Worker enregistré'))
+    .catch(e=>console.log('[PWA] Erreur SW:', e));
+}
 function showForgot(){
   document.getElementById("forgot-bg").style.display="flex";
   document.getElementById("forgot-err").style.display="none";
@@ -180,6 +192,9 @@ RESET_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GPS Tracker — Nouveau mot de passe</title>
+<meta name="theme-color" content="#6366F1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -291,6 +306,12 @@ ADMIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GPS Tracker — Admin</title>
+<meta name="theme-color" content="#6366F1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GPS Tracker">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1177,6 +1198,12 @@ USER_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GPS Tracker — Mon suivi</title>
+<meta name="theme-color" content="#6366F1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GPS Tracker">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

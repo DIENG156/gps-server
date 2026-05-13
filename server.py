@@ -623,6 +623,49 @@ def surveillance_vehicules():
 @app.route("/sw.js")
 def service_worker():
     sw_code = """
+const CACHE_NAME = 'gps-tracker-v1';
+const URLS_TO_CACHE = ['/', '/dashboard', '/admin'];
+
+// Installation - mise en cache
+self.addEventListener('install', function(e){
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache){
+      return cache.addAll(URLS_TO_CACHE);
+    })
+  );
+  self.skipWaiting();
+});
+
+// Activation - nettoyage anciens caches
+self.addEventListener('activate', function(e){
+  e.waitUntil(
+    caches.keys().then(function(keys){
+      return Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// Fetch - réseau d'abord, cache en fallback
+self.addEventListener('fetch', function(e){
+  if(e.request.method !== 'GET') return;
+  if(e.request.url.includes('/api/')) return; // API toujours en réseau
+  e.respondWith(
+    fetch(e.request)
+      .then(function(res){
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+        return res;
+      })
+      .catch(function(){
+        return caches.match(e.request);
+      })
+  );
+});
+
+// Push notifications
 self.addEventListener('push', function(e){
   const data = e.data ? e.data.json() : {};
   const title = data.title || 'GPS Tracker';
@@ -637,13 +680,49 @@ self.addEventListener('push', function(e){
   e.waitUntil(self.registration.showNotification(title, options));
 });
 
+// Clic notification
 self.addEventListener('notificationclick', function(e){
   e.notification.close();
   e.waitUntil(clients.openWindow('/dashboard'));
 });
 """
     from flask import Response
-    return Response(sw_code, mimetype="application/javascript")
+    return Response(sw_code, mimetype="application/javascript",
+                   headers={"Service-Worker-Allowed": "/"})
+
+@app.route("/manifest.json")
+def manifest():
+    data = {
+        "name": "GPS Tracker",
+        "short_name": "GPS Tracker",
+        "description": "Suivi de véhicules en temps réel",
+        "start_url": "/dashboard",
+        "display": "standalone",
+        "background_color": "#F8F7FF",
+        "theme_color": "#6366F1",
+        "orientation": "portrait",
+        "icons": [
+            {
+                "src": "https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png",
+                "sizes": "72x72",
+                "type": "image/png"
+            },
+            {
+                "src": "https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any maskable"
+            },
+            {
+                "src": "https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable"
+            }
+        ]
+    }
+    from flask import Response
+    return Response(json.dumps(data), mimetype="application/manifest+json")
 
 @app.route("/reset-password")
 def reset_password_page():
