@@ -1,4 +1,5 @@
-# ============================================================
+# type: ignore
+# # ============================================================
 #  templates.py — GPS Tracker v4
 #  Design : Glassmorphism Premium Aurora
 #  Fonts  : Syne (display) + DM Sans (body)
