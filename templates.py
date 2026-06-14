@@ -1851,9 +1851,7 @@ function showTab(n,el){{
 function initMap(){{
   if(map)return;
   map=L.map("map",{{zoomControl:true}}).setView([14.6928,-17.4467],13);
-  L.tileLayer("https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png",{{
-    attribution:"© OpenStreetMap",maxZoom:19
-  }}).addTo(map);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map);
   poly=L.polyline([],{{
     color:"#7c5cfc",weight:3,opacity:0.8,
     dashArray:null,
