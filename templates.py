@@ -1851,11 +1851,7 @@ function showTab(n,el){{
 function initMap(){{
   if(map)return;
   map=L.map("map",{{zoomControl:true}}).setView([14.6928,-17.4467],13);
-  L.tileLayer("https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}{{r}}.png", {
-  attribution: '© OpenStreetMap © CARTO',
-  maxZoom: 19,
-  minZoom: 3
-}).addTo(map);
+  L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap France", maxZoom:20}).addTo(map);
   poly=L.polyline([],{{
     color:"#7c5cfc",weight:3,opacity:0.8,
     dashArray:null,
