@@ -1,5 +1,4 @@
-# type: ignore
-# # ============================================================
+# ============================================================
 #  templates.py — GPS Tracker v4
 #  Design : Glassmorphism Premium Aurora
 #  Fonts  : Syne (display) + DM Sans (body)
@@ -1852,7 +1851,7 @@ function showTab(n,el){{
 function initMap(){{
   if(map)return;
   map=L.map("map",{{zoomControl:true}}).setView([14.6928,-17.4467],13);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+  L.tileLayer("https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}{{r}}.png", {
   attribution: '© OpenStreetMap © CARTO',
   maxZoom: 19,
   minZoom: 3
