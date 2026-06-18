@@ -251,6 +251,48 @@ def toggle_vehicule(vid):
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok","actif":nouvel}), 200
 
+@app.route("/api/admin/vehicules/<int:vid>", methods=["DELETE"])
+@admin_required
+def supprimer_vehicule(vid):
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id FROM vehicules WHERE id=%s", (vid,))
+    if not c.fetchone():
+        c.close(); conn.close()
+        return jsonify({"error":"Véhicule introuvable"}), 404
+    # Supprimer d'abord les positions GPS
+    c.execute("DELETE FROM positions WHERE vehicule_id=%s", (vid,))
+    # Supprimer les alertes envoyées
+    c.execute("DELETE FROM alertes_envoyees WHERE vehicule_id=%s", (vid,))
+    # Supprimer le véhicule
+    c.execute("DELETE FROM vehicules WHERE id=%s", (vid,))
+    conn.commit(); c.close(); conn.close()
+    return jsonify({"status":"ok"}), 200
+
+@app.route("/api/admin/proprietaires/<int:uid>", methods=["DELETE"])
+@admin_required
+def supprimer_proprietaire(uid):
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT id FROM utilisateurs WHERE id=%s AND role='user'", (uid,))
+    if not c.fetchone():
+        c.close(); conn.close()
+        return jsonify({"error":"Propriétaire introuvable"}), 404
+    # Récupérer tous les véhicules du propriétaire
+    c.execute("SELECT id FROM vehicules WHERE proprietaire_id=%s", (uid,))
+    vehicules = c.fetchall()
+    for v in vehicules:
+        # Supprimer positions et alertes de chaque véhicule
+        c.execute("DELETE FROM positions WHERE vehicule_id=%s", (v["id"],))
+        c.execute("DELETE FROM alertes_envoyees WHERE vehicule_id=%s", (v["id"],))
+    # Supprimer les véhicules
+    c.execute("DELETE FROM vehicules WHERE proprietaire_id=%s", (uid,))
+    # Supprimer les abonnements push et tokens reset
+    c.execute("DELETE FROM push_subscriptions WHERE user_id=%s", (uid,))
+    c.execute("DELETE FROM reset_tokens WHERE user_id=%s", (uid,))
+    # Supprimer le propriétaire
+    c.execute("DELETE FROM utilisateurs WHERE id=%s", (uid,))
+    conn.commit(); c.close(); conn.close()
+    return jsonify({"status":"ok"}), 200
+
 @app.route("/api/user/vehicules", methods=["GET"])
 @login_required
 def get_user_vehicules():

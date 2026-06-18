@@ -928,6 +928,7 @@ async function loadP(){
     <td><span class="badge ${p.actif?'badge-on':'badge-off'}">${p.actif?'Actif':'Inactif'}</span></td>
     <td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center">
     <button class="btn btn-sm ${p.actif?'btn-danger':'btn-success'}" onclick="toggleP(${p.id})">${p.actif?'Désactiver':'Activer'}</button>
+    <button class="btn btn-sm" onclick="confirmerSuppressionP(${p.id},'${p.prenom} ${p.nom}')" style="background:rgba(244,63,94,0.15);color:var(--red);border:1px solid var(--red-bd)">🗑️ Supprimer</button>
     <button class="btn btn-sm" onclick="ouvrirModifP(${p.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)">✏️ Modifier</button>
     </div></td>
   </tr>`).join("");
@@ -973,6 +974,7 @@ async function loadV(){
     <td><span class="badge ${v.actif?'badge-on':'badge-off'}">${v.actif?'Actif':'Inactif'}</span></td>
     <td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center">
     <button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})">${v.actif?'Désactiver':'Activer'}</button>
+    <button class="btn btn-sm" onclick="confirmerSuppressionV(${v.id},'${v.immatriculation}')" style="background:rgba(244,63,94,0.15);color:var(--red);border:1px solid var(--red-bd)">🗑️ Supprimer</button>
     <button class="btn btn-sm" onclick="ouvrirModifV(${v.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)">✏️ Modifier</button>
     </div></td>
   </tr>`).join("");
@@ -1055,6 +1057,41 @@ function openMP(){
 }
 function closeM(id){document.getElementById(id).classList.remove("open");}
 
+/* ── Confirmation Suppression ── */
+let _supprId=null, _supprType=null;
+
+function confirmerSuppressionV(id, label){
+  _supprId=id; _supprType='vehicule';
+  document.getElementById("suppr-msg").textContent=
+    `Voulez-vous supprimer définitivement le véhicule "${label}" et toutes ses positions GPS ?`;
+  document.getElementById("m-suppr").classList.add("open");
+}
+
+function confirmerSuppressionP(id, label){
+  _supprId=id; _supprType='proprietaire';
+  document.getElementById("suppr-msg").textContent=
+    `Voulez-vous supprimer définitivement le propriétaire "${label}", tous ses véhicules et toutes ses positions GPS ?`;
+  document.getElementById("m-suppr").classList.add("open");
+}
+
+async function executerSuppression(){
+  if(!_supprId||!_supprType)return;
+  const url = _supprType==='vehicule'
+    ? `/api/admin/vehicules/${_supprId}`
+    : `/api/admin/proprietaires/${_supprId}`;
+  const res = await fetch(url,{method:"DELETE"});
+  const data = await res.json();
+  closeM("m-suppr");
+  if(res.ok){
+    if(_supprType==='vehicule') loadV();
+    else loadP();
+    loadStats();
+  } else {
+    alert(data.error||"Erreur lors de la suppression");
+  }
+  _supprId=null; _supprType=null;
+}
+
 /* ── Modification Propriétaire ── */
 async function ouvrirModifP(id){
   const data=await fetch(`/api/admin/proprietaires/${id}`).then(r=>r.json());
@@ -1125,6 +1162,29 @@ async function sauvegarderV(){
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadStats();
 </script>
+
+<!-- MODAL CONFIRMATION SUPPRESSION -->
+<div class="mbg" id="m-suppr">
+  <div class="modal" style="max-width:420px">
+    <div class="mh">
+      <h3 style="color:var(--red)">⚠️ Confirmation de suppression</h3>
+      <button class="mc" onclick="closeM('m-suppr')">✕</button>
+    </div>
+    <p id="suppr-msg" style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px"></p>
+    <div style="background:var(--red-bg);border:1px solid var(--red-bd);border-radius:10px;
+      padding:11px 14px;font-size:12px;color:var(--red);margin-bottom:20px">
+      ⚠️ Cette action est irréversible. Toutes les données seront perdues définitivement.
+    </div>
+    <div class="ma">
+      <button class="btn btn-success" onclick="closeM('m-suppr')" style="flex:1;justify-content:center">
+        Annuler
+      </button>
+      <button class="btn btn-danger" onclick="executerSuppression()" style="flex:1;justify-content:center">
+        🗑️ Supprimer définitivement
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL MODIFICATION PROPRIÉTAIRE -->
 <div class="mbg" id="m-modif-p">
