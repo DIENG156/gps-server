@@ -304,6 +304,50 @@ def get_user_vehicules():
     c.close(); conn.close()
     return jsonify([dict(r) for r in rows]), 200
 
+@app.route("/api/user/vehicules/statut", methods=["GET"])
+@login_required
+def get_user_vehicules_statut():
+    """Retourne les véhicules avec leur statut : mouvement, immobile, sans_signal"""
+    conn = get_db(); c = conn.cursor()
+    c.execute("""
+        SELECT v.id, v.immatriculation, v.marque, v.modele, v.type_vehicule,
+               v.couleur, v.annee, v.device_id,
+               p.latitude, p.longitude, p.vitesse, p.satellites,
+               p.created_at as derniere_pos
+        FROM vehicules v
+        LEFT JOIN positions p ON p.id = (
+            SELECT id FROM positions
+            WHERE vehicule_id = v.id
+            ORDER BY id DESC LIMIT 1
+        )
+        WHERE v.proprietaire_id=%s AND v.actif=1
+        ORDER BY v.date_ajout DESC""", (session["user_id"],))
+    rows = c.fetchall()
+
+    resultat = []
+    for v in rows:
+        item = dict(v)
+        if not v["derniere_pos"]:
+            item["statut"] = "sans_signal"
+            item["minutes_sans_signal"] = None
+        else:
+            c.execute("""SELECT EXTRACT(EPOCH FROM
+                (NOW() - %s::timestamp))/60 as minutes""",
+                (v["derniere_pos"],))
+            minutes = c.fetchone()["minutes"] or 0
+            item["minutes_sans_signal"] = round(minutes, 1)
+
+            if minutes >= ALERTE_MINUTES:
+                item["statut"] = "sans_signal"
+            elif (v["vitesse"] or 0) == 0:
+                item["statut"] = "immobile"
+            else:
+                item["statut"] = "mouvement"
+        resultat.append(item)
+
+    c.close(); conn.close()
+    return jsonify(resultat), 200
+
 @app.route("/api/position", methods=["POST"])
 def receive_position():
     data = request.get_json()

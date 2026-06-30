@@ -863,7 +863,9 @@ tbody tr:last-child td{border-bottom:none}
       <div class="fg"><label>Immatriculation *</label><input id="vi" placeholder="DK-1234-AB"/></div>
       <div class="fg"><label>Année</label><input type="number" id="va" placeholder="2022"/></div>
     </div>
-    <div class="fg"><label>Device ID (ESP32) *</label><input id="vd" placeholder="vehicule_01"/></div>
+    <div class="fg"><label>Device ID (ESP32) *</label><input id="vd" placeholder="DK-1234-AB"/>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">Utilisez l'immatriculation du véhicule comme identifiant</div>
+    </div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('mv')">Annuler</button>
       <button class="btn btn-primary" onclick="creerV()">Créer le véhicule</button>
@@ -1474,7 +1476,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     <div class="s-user-role">Propriétaire</div>
   </div>
   <div class="s-section">Navigation</div>
-  <div class="nav-item active" onclick="showTab('carte',this)">
+  <div class="nav-item active" onclick="showTab('dashboard',this)">
+    <span class="nav-ico">📊</span>Tableau de bord
+  </div>
+  <div class="nav-item" onclick="showTab('carte',this)">
     <span class="nav-ico">🗺️</span>Carte GPS
   </div>
   <div class="nav-item" onclick="showTab('historique',this)">
@@ -1504,8 +1509,38 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     </div>
   </div>
 
+  <!-- TABLEAU DE BORD -->
+  <div id="tab-dashboard" class="usec active">
+    <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">Vue d'ensemble de la flotte</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px" id="stat-cards">
+      <div style="background:var(--surface);border:1px solid var(--green-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden">
+        <div style="font-size:22px;margin-bottom:6px">🟢</div>
+        <div style="font-size:30px;font-weight:700;color:var(--green)" id="cnt-mouvement">0</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:500">En mouvement</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--green)"></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #FDE68A;border-radius:14px;padding:18px;position:relative;overflow:hidden">
+        <div style="font-size:22px;margin-bottom:6px">🟡</div>
+        <div style="font-size:30px;font-weight:700;color:#D97706" id="cnt-immobile">0</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:500">Immobile</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:#F59E0B"></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--red-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden">
+        <div style="font-size:22px;margin-bottom:6px">🔴</div>
+        <div style="font-size:30px;font-weight:700;color:var(--red)" id="cnt-signal">0</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:500">Sans signal</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--red)"></div>
+      </div>
+    </div>
+
+    <div id="dash-list" style="display:flex;flex-direction:column;gap:10px">
+      <div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">Chargement...</div>
+    </div>
+  </div>
+
   <!-- CARTE -->
-  <div id="tab-carte" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+  <div id="tab-carte" style="flex:1;display:none;flex-direction:column;overflow:hidden">
     <div class="infobar" id="infobar" style="display:none">
       <div class="iitem">
         <span class="ilbl">Latitude</span>
@@ -1627,16 +1662,84 @@ function showTab(n,el){
   // Cacher bouton retour si on quitte la carte
   const btnRetour=document.getElementById("btn-retour-carte");
   if(btnRetour)btnRetour.style.display="none";
+  if(n==="dashboard")loadDashboard();
   if(n==="historique")initUH();
   if(n==="parametres")loadParams();
   closeMenu();
 }
 
+/* ── Tableau de bord : mouvement / immobile / sans signal ── */
+let _dashInterval=null;
+
+async function loadDashboard(){
+  try{
+    const data = await fetch("/api/user/vehicules/statut").then(r=>r.json());
+
+    const nbMouvement = data.filter(v=>v.statut==='mouvement').length;
+    const nbImmobile  = data.filter(v=>v.statut==='immobile').length;
+    const nbSignal    = data.filter(v=>v.statut==='sans_signal').length;
+
+    document.getElementById("cnt-mouvement").textContent = nbMouvement;
+    document.getElementById("cnt-immobile").textContent  = nbImmobile;
+    document.getElementById("cnt-signal").textContent    = nbSignal;
+
+    const list = document.getElementById("dash-list");
+    if(!data.length){
+      list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">Aucun véhicule associé</div>';
+      return;
+    }
+
+    const config = {
+      mouvement:  {icone:'🟢', label:'En mouvement', couleur:'var(--green)', bg:'var(--green-bg)', bd:'var(--green-bd)'},
+      immobile:   {icone:'🟡', label:'Immobile',      couleur:'#D97706',     bg:'rgba(245,158,11,0.08)', bd:'#FDE68A'},
+      sans_signal:{icone:'🔴', label:'Sans signal',   couleur:'var(--red)',  bg:'var(--red-bg)', bd:'var(--red-bd)'}
+    };
+
+    list.innerHTML = data.map(v=>{
+      const cfg = config[v.statut];
+      const infoSignal = v.statut==='sans_signal'
+        ? (v.minutes_sans_signal!==null
+            ? `Aucun signal depuis ${Math.round(v.minutes_sans_signal)} min`
+            : 'Aucune position enregistrée')
+        : `${(v.vitesse||0).toFixed(0)} km/h · ${v.satellites||0} satellites`;
+
+      return `<div onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
+        style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+          background:var(--surface);border:1px solid var(--border);border-radius:12px;
+          padding:14px 16px;transition:all 0.15s"
+        onmouseover="this.style.borderColor='${cfg.couleur}'"
+        onmouseout="this.style.borderColor='var(--border)'">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:38px;height:38px;border-radius:10px;background:${cfg.bg};
+            display:flex;align-items:center;justify-content:center;font-size:17px">${cfg.icone}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${v.immatriculation}</div>
+            <div style="font-size:11px;color:var(--text3)">${v.marque} ${v.modele}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;
+            background:${cfg.bg};color:${cfg.couleur};border:1px solid ${cfg.bd};display:inline-block">
+            ${cfg.label}
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">${infoSignal}</div>
+        </div>
+      </div>`;
+    }).join("");
+  }catch(e){
+    console.log("Erreur dashboard:",e);
+  }
+}
+
 function initMap(){
   if(map)return;
-  map=L.map("map").setView([14.6928,-17.4467],13);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map);
-  poly=L.polyline([],{color:"#6366F1",weight:3,opacity:0.75}).addTo(map);
+  map=L.map("map").setView([14.8500,-15.8833],15);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    attribution:"© OpenStreetMap contributors",
+    maxZoom:19,
+    minZoom:3
+  }).addTo(map);
+  poly=L.polyline([],{color:"#6366F1",weight:4,opacity:0.8}).addTo(map);
 }
 
 async function loadVehicules(){
@@ -1679,7 +1782,8 @@ async function selV(id,label,immat){
   document.getElementById("tab-carte").style.display="flex";
   document.querySelectorAll(".usec").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
-  document.querySelector(".nav-item:first-of-type")&&document.querySelectorAll(".nav-item")[0].classList.add("active");
+  const navItems = document.querySelectorAll(".nav-item");
+  if(navItems[1]) navItems[1].classList.add("active"); // "Carte GPS" est en 2e position
   initMap();
   if(poly)poly.setLatLngs([]);
   if(marker){map.removeLayer(marker);marker=null;}
@@ -1855,6 +1959,8 @@ async function desactiverNotifs(){
 
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadVehicules();
+loadDashboard();
+setInterval(loadDashboard, 30000);
 </script></body></html>"""
 
 # ─────────────────────────────────────────────────────────────
