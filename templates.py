@@ -1429,7 +1429,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 
   /* Bouton retour flottant sur la carte */
   #btn-retour-carte{
-    display:flex;
+    display:none;
     position:absolute;
     bottom:20px;
     left:50%;
@@ -1449,6 +1449,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     gap:7px;
     white-space:nowrap
   }
+  #btn-retour-carte[data-active="true"]{display:flex}
 
   .infobar{height:auto!important;padding:6px 12px;flex-wrap:wrap;gap:6px;flex-shrink:0}
   .isep{display:none}
@@ -1564,7 +1565,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     </div>
     <div id="map-wrap" style="flex:1;display:none;position:relative">
       <div id="map" style="height:100%"></div>
-      <button id="btn-retour-carte" onclick="toggleMenu()" style="display:none">
+      <button id="btn-retour-carte" onclick="toggleMenu()">
         ☰ Menu
       </button>
     </div>
@@ -1661,7 +1662,7 @@ function showTab(n,el){
   if(n!=="carte")document.getElementById("tab-"+n).classList.add("active");
   // Cacher bouton retour si on quitte la carte
   const btnRetour=document.getElementById("btn-retour-carte");
-  if(btnRetour)btnRetour.style.display="none";
+  if(btnRetour)delete btnRetour.dataset.active;
   if(n==="dashboard")loadDashboard();
   if(n==="historique")initUH();
   if(n==="parametres")loadParams();
@@ -1773,9 +1774,9 @@ async function selV(id,label,immat){
   document.getElementById("empty").style.display="none";
   document.getElementById("infobar").style.display="flex";
   document.getElementById("map-wrap").style.display="block";
-  // Affiche bouton retour sur mobile
+  // Affiche bouton retour sur mobile (géré par CSS media query, juste on l'active)
   const btnRetour = document.getElementById("btn-retour-carte");
-  if(btnRetour && window.innerWidth <= 768) btnRetour.style.display="flex";
+  if(btnRetour) btnRetour.dataset.active="true";
   /* Ferme le menu sur mobile après sélection */
   closeMenu();
   /* Bascule vers l'onglet carte */
