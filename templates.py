@@ -1733,10 +1733,10 @@ async function loadDashboard(){
 
 function initMap(){
   if(map)return;
-  map=L.map("map").setView([14.8500,-15.8833],15);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    attribution:"© OpenStreetMap contributors",
-    maxZoom:19,
+  map=L.map("map",{zoomControl:true,preferCanvas:false}).setView([14.8500,-15.8833],15);
+  L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",{
+    attribution:"© OpenStreetMap France",
+    maxZoom:20,
     minZoom:3,
     subdomains:["a","b","c"]
   }).addTo(map);
