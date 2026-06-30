@@ -1734,11 +1734,11 @@ async function loadDashboard(){
 function initMap(){
   if(map)return;
   map=L.map("map").setView([14.8500,-15.8833],15);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",{
     attribution:"© OpenStreetMap © CARTO",
-    maxZoom:20,
+    maxZoom:19,
     minZoom:3,
-    subdomains:"abcd"
+    subdomains:["a","b","c","d"]
   }).addTo(map);
   poly=L.polyline([],{color:"#6366F1",weight:4,opacity:0.8}).addTo(map);
 }
