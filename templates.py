@@ -1288,7 +1288,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 .sidebar{
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
   background:var(--surface);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;z-index:100;
+  display:flex;flex-direction:column;z-index:2000;
   transition:left 0.25s ease;overflow-y:auto
 }
 .sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:160px;
