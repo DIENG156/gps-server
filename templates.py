@@ -1740,10 +1740,11 @@ function initMap(){
     minZoom:3
   }).addTo(map);
   // Couche labels (noms de rues/quartiers par dessus le satellite)
-  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png",{
+    attribution:"© OpenStreetMap © CARTO",
     maxZoom:19,
     minZoom:3,
-    opacity:0.9
+    subdomains:["a","b","c","d"]
   }).addTo(map);
   poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
 }
