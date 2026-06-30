@@ -1739,13 +1739,6 @@ function initMap(){
     maxZoom:19,
     minZoom:3
   }).addTo(map);
-  // Couche labels (noms de rues/quartiers par dessus le satellite)
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png",{
-    attribution:"© OpenStreetMap © CARTO",
-    maxZoom:19,
-    minZoom:3,
-    subdomains:["a","b","c","d"]
-  }).addTo(map);
   poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
 }
 
