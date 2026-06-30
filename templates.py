@@ -1733,14 +1733,19 @@ async function loadDashboard(){
 
 function initMap(){
   if(map)return;
-  map=L.map("map",{zoomControl:true,preferCanvas:false}).setView([14.8500,-15.8833],15);
-  L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",{
-    attribution:"© OpenStreetMap France",
-    maxZoom:20,
-    minZoom:3,
-    subdomains:["a","b","c"]
+  map=L.map("map",{zoomControl:true}).setView([14.8500,-15.8833],17);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
+    attribution:"© Esri, Maxar, Earthstar Geographics",
+    maxZoom:19,
+    minZoom:3
   }).addTo(map);
-  poly=L.polyline([],{color:"#6366F1",weight:4,opacity:0.8}).addTo(map);
+  // Couche labels (noms de rues/quartiers par dessus le satellite)
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{
+    maxZoom:19,
+    minZoom:3,
+    opacity:0.9
+  }).addTo(map);
+  poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
 }
 
 async function loadVehicules(){
@@ -1804,12 +1809,23 @@ async function refresh(){
     const p=await res.json();
     const ll=[p.latitude,p.longitude];
     const icon=L.divIcon({
-      html:`<div style="width:14px;height:14px;
-        background:linear-gradient(135deg,#7C3AED,#6366F1);
-        border:3px solid #fff;border-radius:50%;
-        box-shadow:0 2px 10px rgba(99,102,241,0.5)"></div>`,
-      iconSize:[14,14],iconAnchor:[7,7]});
-    if(!marker){marker=L.marker(ll,{icon}).addTo(map);map.setView(ll,15);}
+      html:`<div style="position:relative;width:24px;height:24px">
+        <div style="position:absolute;top:0;left:0;width:24px;height:24px;
+          background:rgba(244,63,94,0.35);border-radius:50%;
+          animation:pulseMarker 1.5s infinite"></div>
+        <div style="position:absolute;top:5px;left:5px;width:14px;height:14px;
+          background:linear-gradient(135deg,#F43F5E,#DC2626);
+          border:3px solid #fff;border-radius:50%;
+          box-shadow:0 2px 8px rgba(0,0,0,0.5)"></div>
+      </div>
+      <style>
+        @keyframes pulseMarker{
+          0%{transform:scale(0.6);opacity:0.8}
+          100%{transform:scale(1.8);opacity:0}
+        }
+      </style>`,
+      iconSize:[24,24],iconAnchor:[12,12]});
+    if(!marker){marker=L.marker(ll,{icon}).addTo(map);map.setView(ll,17);}
     else marker.setLatLng(ll);
     poly.addLatLng(ll);
     document.getElementById("ilat").textContent=p.latitude.toFixed(6)+"°";
