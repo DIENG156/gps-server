@@ -1738,6 +1738,7 @@ function initMap(){
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
     attribution:"© Esri, Maxar, Earthstar Geographics",
     maxZoom:18,
+        maxNativeZoom:17,
     minZoom:3
   }).addTo(map);
   poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
