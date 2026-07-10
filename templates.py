@@ -1735,22 +1735,12 @@ async function loadDashboard(){
 function initMap(){
   if(map)return;
   map=L.map("map",{zoomControl:true}).setView([14.8500,-15.8833],15);
-
-  const satellite=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
     attribution:"© Esri, Maxar, Earthstar Geographics",
-    maxZoom:17,
-    minZoom:3
-  });
-
-  const streets=L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
-    attribution:"© OpenStreetMap contributors © CARTO",
     maxZoom:20,
+        maxNativeZoom:17,
     minZoom:3
-  });
-
-  satellite.addTo(map);
-  L.control.layers({"Satellite":satellite,"Plan (rues)":streets}).addTo(map);
-
+  }).addTo(map);
   poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
 }
 
