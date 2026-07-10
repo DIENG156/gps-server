@@ -1737,7 +1737,7 @@ function initMap(){
   map=L.map("map",{zoomControl:true}).setView([14.8500,-15.8833],15);
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
     attribution:"© Esri, Maxar, Earthstar Geographics",
-    maxZoom:18,
+    maxZoom:20,
         maxNativeZoom:17,
     minZoom:3
   }).addTo(map);
