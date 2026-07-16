@@ -1269,7 +1269,51 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
 .btn-logout:hover{background:rgba(239,68,68,0.1);color:var(--red);border-color:rgba(239,68,68,0.2)}
  
-/* MAIN */
+/* ══ FLEET PANEL (Carte GPS — style Wialon/Samsara) ══ */
+.fleet-panel{width:320px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;height:100%;z-index:20;}
+.fleet-search{padding:16px 16px 12px;border-bottom:1px solid var(--border)}
+.fleet-search .iw input{background:var(--surface2)}
+.fleet-filters{display:flex;gap:6px;padding:12px 16px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.filter-pill{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);
+  color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;
+  display:flex;align-items:center;gap:6px;transition:all 0.2s;}
+.filter-pill:hover{border-color:var(--primary-light)}
+.filter-pill.active{background:var(--primary-dark);color:#fff;border-color:var(--primary-dark)}
+.fleet-count{padding:10px 16px;font-size:11px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.5px}
+.fleet-cards{flex:1;overflow-y:auto;padding:4px 12px 12px}
+.fleet-toggle-btn{display:none;position:absolute;top:20px;left:20px;z-index:1000;width:44px;height:44px;
+  border-radius:12px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-md);
+  align-items:center;justify-content:center;cursor:pointer;color:var(--primary-dark);font-size:16px;}
+ 
+/* ── Detail card (fiche véhicule flottante sur la carte) ── */
+.detail-card{position:absolute;bottom:24px;left:24px;z-index:1000;width:320px;max-width:calc(100% - 48px);
+  background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border:1px solid var(--border);
+  border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;animation:fadeInUp 0.3s ease;}
+.dc-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;
+  background:var(--grad);color:#fff;}
+.dc-head-info{display:flex;align-items:center;gap:12px}
+.dc-ico{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.dc-immat{font-size:15px;font-weight:700}
+.dc-model{font-size:11px;opacity:0.85;margin-top:1px}
+.dc-close{width:26px;height:26px;border-radius:8px;border:none;background:rgba(255,255,255,0.2);
+  color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.dc-close:hover{background:rgba(255,255,255,0.35)}
+.dc-body{padding:16px 18px}
+.dc-status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dc-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+.dc-item-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px}
+.dc-item-val{font-size:15px;font-weight:700;color:var(--text);margin-top:3px}
+.dc-foot{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--surface2)}
+.dc-foot button{flex:1;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);
+  color:var(--text2);font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;}
+.dc-foot button:hover{border-color:var(--primary-light);color:var(--primary-dark)}
+ 
+ 
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{height:70px;padding:0 24px;background:rgba(255,255,255,0.9);
   backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
@@ -1284,17 +1328,6 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .live-blink{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
 .upd{font-size:12px;color:var(--text3);margin-left:12px;font-weight:500;}
- 
-/* Floating Info Panel for Map */
-.infobar{position:absolute; top:20px; left:50%; transform:translateX(-50%); z-index:1000;
-  background:rgba(255,255,255,0.95); backdrop-filter:blur(10px); border:1px solid var(--border);
-  border-radius:16px; padding:12px 24px; display:flex; align-items:center; gap:20px;
-  box-shadow:var(--shadow-md);}
-.isep{width:1px;height:30px;background:var(--border);}
-.iitem{display:flex;flex-direction:column; align-items:center;}
-.ilbl{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
-.ival{font-size:16px;font-weight:700;color:var(--text);margin-top:2px}
-.ival.grad{color:var(--primary-dark);}
  
 #map{flex:1; width:100%; height:100%; z-index:1;}
 .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;
@@ -1348,14 +1381,17 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   .tb-title{font-size:16px}
   .upd{display:none}
  
-  #tab-carte{height:calc(100vh - 60px);flex-direction:column;overflow:hidden;position:relative}
+  #tab-carte{height:calc(100vh - 60px);flex-direction:row;overflow:hidden;position:relative}
   #map-wrap{flex:1;min-height:0;overflow:hidden;position:relative}
-  
-  .infobar{width:90%; border-radius:12px; padding:10px 16px; gap:10px; justify-content:space-between;}
-  .isep{display:none}
-  .iitem{flex-direction:column; gap:2px;}
-  .ilbl{font-size:9px;}
-  .ival{font-size:13px;}
+ 
+  .fleet-panel{position:fixed;top:60px;left:0;bottom:0;width:85%;max-width:320px;
+    transform:translateX(-100%);transition:transform 0.3s ease;box-shadow:none;z-index:1500;}
+  .fleet-panel.open{transform:translateX(0);box-shadow:8px 0 24px rgba(0,0,0,0.15)}
+  .fleet-toggle-btn{display:flex}
+  .detail-card{left:12px;right:12px;bottom:16px;width:auto;max-width:none}
+  .dc-grid{grid-template-columns:1fr 1fr}
+ 
+  .infobar{display:none}
  
   #btn-retour-carte{
     display:none; position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
