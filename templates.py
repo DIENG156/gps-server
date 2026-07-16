@@ -2,11 +2,11 @@
 #  templates.py — GPS Tracker v3
 #  Toutes les pages HTML (Login, Admin, User, Reset)
 # ============================================================
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE LOGIN
 # ═════════════════════════════════════════════════════════════
- 
+
 LOGIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -111,7 +111,7 @@ input::placeholder{color:var(--text3)}
     <div class="trust-item"><div class="trust-dot"></div>GPS IoT</div>
   </div>
 </div>
- 
+
 <!-- MODAL MOT DE PASSE OUBLIÉ -->
 <div id="forgot-bg" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,0.45);
   backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px">
@@ -183,11 +183,11 @@ async function doForgot(){
   ok.style.display="block";
 }
 </script></body></html>"""
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE RESET PASSWORD
 # ═════════════════════════════════════════════════════════════
- 
+
 RESET_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -297,11 +297,11 @@ async function doReset(){
 }
 init();
 </script></body></html>"""
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE ADMIN — CORRIGÉE (id="pt" → id="p-tel", responsive mobile)
 # ═════════════════════════════════════════════════════════════
- 
+
 ADMIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -326,7 +326,7 @@ ADMIN_PAGE = """<!DOCTYPE html>
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;display:flex;min-height:100vh}
- 
+
 /* ══ SIDEBAR ══ */
 .sidebar{
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
@@ -369,7 +369,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
   font-family:'Inter',sans-serif;transition:all 0.15s;
   display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-logout:hover{background:rgba(244,63,94,0.14);border-color:rgba(244,63,94,0.35)}
- 
+
 /* ══ MAIN ══ */
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{position:sticky;top:0;z-index:50;height:60px;padding:0 28px;
@@ -385,12 +385,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
   border-radius:8px;font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums;font-weight:500}
 .menu-btn{display:none;background:none;border:none;cursor:pointer;
   font-size:22px;color:var(--text);padding:4px 8px;margin-right:4px}
- 
+
 .content{padding:28px;flex:1}
 .section{display:none}
 .section.active{display:block;animation:fadeUp 0.2s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
- 
+
 /* ── Stats ── */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:16px;
@@ -407,12 +407,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--grad)}
 .stat::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;
   background:radial-gradient(circle,rgba(99,102,241,0.06),transparent);pointer-events:none}
- 
+
 /* ── Section header ── */
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
 .sh h2{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
 .sh-sub{font-size:13px;color:var(--text3);margin-top:2px}
- 
+
 /* ── Boutons ── */
 .btn{height:40px;padding:0 18px;border:none;border-radius:10px;cursor:pointer;
   font-size:13px;font-weight:600;font-family:'Inter',sans-serif;
@@ -424,7 +424,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .btn-success{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
 .btn-success:hover{background:rgba(16,185,129,0.14)}
 .btn-sm{height:30px;padding:0 13px;font-size:12px;border-radius:8px}
- 
+
 /* ── Table ── */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;
   box-shadow:0 1px 4px rgba(0,0,0,0.04)}
@@ -448,7 +448,7 @@ tbody tr:last-child td{border-bottom:none}
 .badge-on::before{background:var(--green)}
 .badge-off{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
 .badge-off::before{background:var(--red)}
- 
+
 /* ── Positions propriétaires ── */
 .prop-positions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 .pp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
@@ -459,13 +459,13 @@ tbody tr:last-child td{border-bottom:none}
 .pp-val{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-1px;
   background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .pp-lbl{font-size:12px;color:var(--text3);font-weight:500;margin-top:3px}
- 
+
 /* ── Empty ── */
 .empty{padding:52px;text-align:center}
 .empty-ico{font-size:44px;margin-bottom:12px;opacity:0.25}
 .empty-txt{font-size:14px;font-weight:600;color:var(--text2)}
 .empty-sub{font-size:12px;color:var(--text3);margin-top:4px}
- 
+
 /* ── Historique ── */
 .h-filters{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap}
 .h-select{height:38px;padding:0 13px;background:var(--surface);border:1px solid var(--border);
@@ -475,7 +475,7 @@ tbody tr:last-child td{border-bottom:none}
 .hs{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
 .hs-val{font-size:22px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hs-lbl{font-size:11px;color:var(--text3);font-weight:500;margin-top:3px}
- 
+
 /* ── Paramètres ── */
 .param-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:14px}
 .param-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
@@ -489,7 +489,7 @@ tbody tr:last-child td{border-bottom:none}
 .p-blue{background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)}
 .p-violet{background:rgba(124,58,237,0.08);color:var(--violet);border:1px solid rgba(124,58,237,0.2)}
 .p-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
- 
+
 /* ── Modal ── */
 .mbg{display:none;position:fixed;inset:0;background:rgba(17,24,39,0.45);
   backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
@@ -522,11 +522,11 @@ tbody tr:last-child td{border-bottom:none}
 .al{padding:10px 14px;border-radius:10px;font-size:12px;font-weight:500;margin-bottom:14px;display:none}
 .al-e{background:#FFF1F2;border:1px solid #FECDD3;color:var(--red)}
 .al-o{background:#F0FDF4;border:1px solid #BBF7D0;color:var(--green)}
- 
+
 /* ── Overlay mobile ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
 .overlay.open{display:block}
- 
+
 /* ══ RESPONSIVE MOBILE ══ */
 @media(max-width:768px){
   .sidebar{left:calc(-1 * var(--sidebar-w));box-shadow:none}
@@ -549,9 +549,9 @@ tbody tr:last-child td{border-bottom:none}
   .h-stats{grid-template-columns:1fr!important}
 }
 </style></head><body>
- 
+
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
- 
+
 <!-- ══ SIDEBAR ══ -->
 <div class="sidebar" id="sidebar">
   <div class="s-logo">
@@ -593,7 +593,7 @@ tbody tr:last-child td{border-bottom:none}
     <button class="btn-logout" onclick="doLogout()">🚪 Déconnexion</button>
   </div>
 </div>
- 
+
 <!-- ══ MAIN ══ -->
 <div class="main">
   <div class="topbar">
@@ -606,9 +606,9 @@ tbody tr:last-child td{border-bottom:none}
       <div class="clock" id="clk">--:--:--</div>
     </div>
   </div>
- 
+
   <div class="content">
- 
+
     <!-- DASHBOARD -->
     <div class="section active" id="s-dashboard">
       <div class="stats">
@@ -644,7 +644,7 @@ tbody tr:last-child td{border-bottom:none}
         </p>
       </div>
     </div>
- 
+
     <!-- PROPRIÉTAIRES -->
     <div class="section" id="s-proprietaires">
       <div class="prop-positions" id="prop-pos">
@@ -686,7 +686,7 @@ tbody tr:last-child td{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
     <!-- VÉHICULES -->
     <div class="section" id="s-vehicules">
       <div class="sh">
@@ -711,7 +711,7 @@ tbody tr:last-child td{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
     <!-- HISTORIQUE GPS -->
     <div class="section" id="s-historique">
       <div class="sh">
@@ -754,7 +754,7 @@ tbody tr:last-child td{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
     <!-- PARAMÈTRES -->
     <div class="section" id="s-parametres">
       <div class="sh">
@@ -806,10 +806,10 @@ tbody tr:last-child td{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
   </div>
 </div>
- 
+
 <!-- MODAL PROPRIÉTAIRE — CORRIGÉ : id="p-tel" au lieu de id="pt" -->
 <div class="mbg" id="mp">
   <div class="modal">
@@ -832,7 +832,7 @@ tbody tr:last-child td{border-bottom:none}
     </div>
   </div>
 </div>
- 
+
 <!-- MODAL VÉHICULE -->
 <div class="mbg" id="mv">
   <div class="modal">
@@ -872,13 +872,13 @@ tbody tr:last-child td{border-bottom:none}
     </div>
   </div>
 </div>
- 
+
 <script>
 const T={dashboard:"Dashboard",proprietaires:"Propriétaires",vehicules:"Véhicules",
   historique:"Historique GPS",parametres:"Paramètres"};
- 
+
 setInterval(()=>{document.getElementById("clk").textContent=new Date().toLocaleTimeString('fr-FR')},1000);
- 
+
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("open");
@@ -887,7 +887,7 @@ function closeMenu(){
   document.getElementById("sidebar").classList.remove("open");
   document.getElementById("overlay").classList.remove("open");
 }
- 
+
 function show(n,el){
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
@@ -899,7 +899,7 @@ function show(n,el){
   if(n==="vehicules")loadV();
   if(n==="historique")initHist();
 }
- 
+
 async function loadStats(){
   const[p,v]=await Promise.all([
     fetch("/api/admin/proprietaires").then(r=>r.json()),
@@ -907,7 +907,7 @@ async function loadStats(){
   document.getElementById("stp").textContent=p.length||0;
   document.getElementById("stv").textContent=v.filter(x=>x.actif).length||0;
 }
- 
+
 /* ── Propriétaires ── */
 async function loadP(){
   const data=await fetch("/api/admin/proprietaires").then(r=>r.json());
@@ -935,7 +935,7 @@ async function loadP(){
     </div></td>
   </tr>`).join("");
 }
- 
+
 async function creerP(){
   const e=document.getElementById("ep"),o=document.getElementById("op");
   e.style.display=o.style.display="none";
@@ -959,9 +959,9 @@ async function creerP(){
     loadStats();
   }else{e.textContent=data.error;e.style.display="block";}
 }
- 
+
 async function toggleP(id){await fetch(`/api/admin/proprietaires/${id}/toggle`,{method:"POST"});loadP();}
- 
+
 /* ── Véhicules ── */
 async function loadV(){
   const data=await fetch("/api/admin/vehicules").then(r=>r.json());
@@ -981,13 +981,13 @@ async function loadV(){
     </div></td>
   </tr>`).join("");
 }
- 
+
 async function openMV(){
   const data=await fetch("/api/admin/proprietaires").then(r=>r.json());
   document.getElementById("vp").innerHTML=data.map(p=>`<option value="${p.id}">${p.prenom} ${p.nom}</option>`).join("");
   document.getElementById("mv").classList.add("open");
 }
- 
+
 async function creerV(){
   const e=document.getElementById("ev"),o=document.getElementById("ov");
   e.style.display=o.style.display="none";
@@ -1007,9 +1007,9 @@ async function creerV(){
   if(res.ok){o.textContent="✓ Véhicule créé avec succès !";o.style.display="block";loadStats();}
   else{e.textContent=data.error;e.style.display="block";}
 }
- 
+
 async function toggleV(id){await fetch(`/api/admin/vehicules/${id}/toggle`,{method:"POST"});loadV();}
- 
+
 /* ── Historique ── */
 async function initHist(){
   const vehs=await fetch("/api/admin/vehicules").then(r=>r.json());
@@ -1019,7 +1019,7 @@ async function initHist(){
     vehs.filter(v=>v.actif).map(v=>`<option value="${v.id}">${v.immatriculation} — ${v.marque} ${v.modele}</option>`).join("");
   if(cur)sel.value=cur;
 }
- 
+
 async function loadHist(){
   const vid=document.getElementById("hv").value;
   const lim=document.getElementById("hl").value;
@@ -1052,30 +1052,30 @@ async function loadHist(){
     <td>${p.satellites||"—"}</td>
   </tr>`).join("");
 }
- 
+
 function openMP(){
   document.getElementById("ep").style.display=document.getElementById("op").style.display="none";
   document.getElementById("mp").classList.add("open");
 }
 function closeM(id){document.getElementById(id).classList.remove("open");}
- 
+
 /* ── Confirmation Suppression ── */
 let _supprId=null, _supprType=null;
- 
+
 function confirmerSuppressionV(id, label){
   _supprId=id; _supprType='vehicule';
   document.getElementById("suppr-msg").textContent=
     `Voulez-vous supprimer définitivement le véhicule "${label}" et toutes ses positions GPS ?`;
   document.getElementById("m-suppr").classList.add("open");
 }
- 
+
 function confirmerSuppressionP(id, label){
   _supprId=id; _supprType='proprietaire';
   document.getElementById("suppr-msg").textContent=
     `Voulez-vous supprimer définitivement le propriétaire "${label}", tous ses véhicules et toutes ses positions GPS ?`;
   document.getElementById("m-suppr").classList.add("open");
 }
- 
+
 async function executerSuppression(){
   if(!_supprId||!_supprType)return;
   const url = _supprType==='vehicule'
@@ -1093,7 +1093,7 @@ async function executerSuppression(){
   }
   _supprId=null; _supprType=null;
 }
- 
+
 /* ── Modification Propriétaire ── */
 async function ouvrirModifP(id){
   const data=await fetch(`/api/admin/proprietaires/${id}`).then(r=>r.json());
@@ -1125,7 +1125,7 @@ async function sauvegarderP(){
     setTimeout(()=>closeM("m-modif-p"),1200);loadP();}
   else{e.textContent=data.error;e.style.display="block";}
 }
- 
+
 /* ── Modification Véhicule ── */
 async function ouvrirModifV(id){
   const data=await fetch(`/api/admin/vehicules/${id}`).then(r=>r.json());
@@ -1160,11 +1160,11 @@ async function sauvegarderV(){
     setTimeout(()=>closeM("m-modif-v"),1200);loadV();}
   else{e.textContent=data.error;e.style.display="block";}
 }
- 
+
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadStats();
 </script>
- 
+
 <!-- MODAL CONFIRMATION SUPPRESSION -->
 <div class="mbg" id="m-suppr">
   <div class="modal" style="max-width:420px">
@@ -1187,7 +1187,7 @@ loadStats();
     </div>
   </div>
 </div>
- 
+
 <!-- MODAL MODIFICATION PROPRIÉTAIRE -->
 <div class="mbg" id="m-modif-p">
   <div class="modal">
@@ -1212,7 +1212,7 @@ loadStats();
     </div>
   </div>
 </div>
- 
+
 <!-- MODAL MODIFICATION VÉHICULE -->
 <div class="mbg" id="m-modif-v">
   <div class="modal">
@@ -1251,11 +1251,11 @@ loadStats();
   </div>
 </div>
 </body></html>"""
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE USER — CORRIGÉE (responsive mobile)
 # ═════════════════════════════════════════════════════════════
- 
+
 USER_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1283,7 +1283,7 @@ USER_PAGE = """<!DOCTYPE html>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   height:100vh;display:flex;overflow:hidden;font-size:14px}
- 
+
 /* SIDEBAR */
 .sidebar{
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
@@ -1336,7 +1336,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   font-size:13px;font-weight:600;font-family:'Inter',sans-serif;
   display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.15s}
 .btn-logout:hover{background:rgba(244,63,94,0.14)}
- 
+
 /* MAIN */
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{height:56px;padding:0 20px;background:rgba(255,255,255,0.92);
@@ -1351,7 +1351,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .live-blink{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
 .upd{font-size:11px;color:var(--text3);margin-left:8px}
- 
+
 .infobar{height:52px;padding:0 20px;background:var(--surface2);
   border-bottom:1px solid var(--border);display:flex;align-items:center;flex-shrink:0}
 .isep{width:1px;height:24px;background:var(--border);margin:0 16px}
@@ -1359,17 +1359,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 .ilbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
 .ival{font-size:14px;font-weight:700;color:var(--text);margin-top:1px}
 .ival.grad{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
- 
+
 #map{flex:1}
 .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:12px}
 .es-ico{font-size:60px;opacity:0.15}
 .es-title{font-size:16px;font-weight:600;color:var(--text2)}
 .es-sub{font-size:13px;color:var(--text3);text-align:center;padding:0 20px}
- 
+
 .usec{display:none;flex:1;overflow-y:auto;padding:24px}
 .usec.active{display:block}
- 
+
 /* Historique user */
 .h-filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
 .h-select{height:38px;padding:0 13px;background:var(--surface);border:1px solid var(--border);
@@ -1384,7 +1384,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 .htable td{padding:11px 14px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border)}
 .htable tr:last-child td{border-bottom:none}
 .htable tr:hover td{background:rgba(99,102,241,0.02)}
- 
+
 /* Paramètres user */
 .pcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px}
 .ptitle{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
@@ -1396,11 +1396,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 .pdesc{font-size:11px;color:var(--text3);margin-top:2px}
 .pbadge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;
   background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
- 
+
 /* Overlay mobile */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
 .overlay.open{display:block}
- 
+
 /* ══ RESPONSIVE MOBILE ══ */
 @media(max-width:768px){
   body{overflow:auto;height:auto;display:block}
@@ -1411,7 +1411,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   .topbar{padding:0 12px;flex-shrink:0;z-index:50;position:relative}
   .tb-title{font-size:13px}
   .upd{display:none}
- 
+
   /* Carte : hauteur limitée, topbar toujours visible */
   #tab-carte{
     height:calc(100vh - 56px);
@@ -1426,7 +1426,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     position:relative
   }
   #map{height:100%!important}
- 
+
   /* Bouton retour flottant sur la carte */
   #btn-retour-carte{
     display:none;
@@ -1450,21 +1450,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     white-space:nowrap
   }
   #btn-retour-carte[data-active="true"]{display:flex}
- 
+
   .infobar{height:auto!important;padding:6px 12px;flex-wrap:wrap;gap:6px;flex-shrink:0}
   .isep{display:none}
   .iitem{flex-direction:row;align-items:center;gap:5px}
   .ilbl{font-size:9px}
   .ival{font-size:12px}
- 
+
   .usec{padding:14px;height:calc(100vh - 56px);overflow-y:auto}
   .h-filters{flex-direction:column}
   .h-select{width:100%}
 }
 </style></head><body>
- 
+
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
- 
+
 <div class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-logo-row">
@@ -1497,7 +1497,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     <button class="btn-logout" onclick="doLogout()">🚪 Déconnexion</button>
   </div>
 </div>
- 
+
 <div class="main">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:4px">
@@ -1509,11 +1509,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
       <span class="upd" id="tupd">—</span>
     </div>
   </div>
- 
+
   <!-- TABLEAU DE BORD -->
   <div id="tab-dashboard" class="usec active">
     <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">Vue d'ensemble de la flotte</h2>
- 
+
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px" id="stat-cards">
       <div style="background:var(--surface);border:1px solid var(--green-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden">
         <div style="font-size:22px;margin-bottom:6px">🟢</div>
@@ -1534,12 +1534,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
         <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--red)"></div>
       </div>
     </div>
- 
+
     <div id="dash-list" style="display:flex;flex-direction:column;gap:10px">
       <div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">Chargement...</div>
     </div>
   </div>
- 
+
   <!-- CARTE -->
   <div id="tab-carte" style="flex:1;display:none;flex-direction:column;overflow:hidden">
     <div class="infobar" id="infobar" style="display:none">
@@ -1575,7 +1575,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
       <div class="es-sub">Appuyez sur ☰ puis choisissez un véhicule pour démarrer le suivi</div>
     </div>
   </div>
- 
+
   <!-- HISTORIQUE -->
   <div id="tab-historique" class="usec">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
@@ -1607,7 +1607,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
       </div>
     </div>
   </div>
- 
+
   <!-- PARAMÈTRES -->
   <div id="tab-parametres" class="usec">
     <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">Paramètres</h2>
@@ -1641,10 +1641,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     </div>
   </div>
 </div>
- 
+
 <script>
 let map=null,marker=null,poly=null,selId=null,interval=null,meD=null,vehD=[];
- 
+
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("open");
@@ -1653,7 +1653,7 @@ function closeMenu(){
   document.getElementById("sidebar").classList.remove("open");
   document.getElementById("overlay").classList.remove("open");
 }
- 
+
 function showTab(n,el){
   document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
   if(el)el.classList.add("active");
@@ -1668,34 +1668,34 @@ function showTab(n,el){
   if(n==="parametres")loadParams();
   closeMenu();
 }
- 
+
 /* ── Tableau de bord : mouvement / immobile / sans signal ── */
 let _dashInterval=null;
- 
+
 async function loadDashboard(){
   try{
     const data = await fetch("/api/user/vehicules/statut").then(r=>r.json());
- 
+
     const nbMouvement = data.filter(v=>v.statut==='mouvement').length;
     const nbImmobile  = data.filter(v=>v.statut==='immobile').length;
     const nbSignal    = data.filter(v=>v.statut==='sans_signal').length;
- 
+
     document.getElementById("cnt-mouvement").textContent = nbMouvement;
     document.getElementById("cnt-immobile").textContent  = nbImmobile;
     document.getElementById("cnt-signal").textContent    = nbSignal;
- 
+
     const list = document.getElementById("dash-list");
     if(!data.length){
       list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">Aucun véhicule associé</div>';
       return;
     }
- 
+
     const config = {
       mouvement:  {icone:'🟢', label:'En mouvement', couleur:'var(--green)', bg:'var(--green-bg)', bd:'var(--green-bd)'},
       immobile:   {icone:'🟡', label:'Immobile',      couleur:'#D97706',     bg:'rgba(245,158,11,0.08)', bd:'#FDE68A'},
       sans_signal:{icone:'🔴', label:'Sans signal',   couleur:'var(--red)',  bg:'var(--red-bg)', bd:'var(--red-bd)'}
     };
- 
+
     list.innerHTML = data.map(v=>{
       const cfg = config[v.statut];
       const infoSignal = v.statut==='sans_signal'
@@ -1703,7 +1703,7 @@ async function loadDashboard(){
             ? `Aucun signal depuis ${Math.round(v.minutes_sans_signal)} min`
             : 'Aucune position enregistrée')
         : `${(v.vitesse||0).toFixed(0)} km/h · ${v.satellites||0} satellites`;
- 
+
       return `<div onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
         style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;
           background:var(--surface);border:1px solid var(--border);border-radius:12px;
@@ -1731,7 +1731,7 @@ async function loadDashboard(){
     console.log("Erreur dashboard:",e);
   }
 }
- 
+
 function initMap(){
   if(map)return;
   map=L.map("map",{zoomControl:true}).setView([14.8500,-15.8833],15);
@@ -1743,7 +1743,7 @@ function initMap(){
   }).addTo(map);
   poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
 }
- 
+
 async function loadVehicules(){
   const[vehs,m]=await Promise.all([
     fetch("/api/user/vehicules").then(r=>r.json()),
@@ -1766,7 +1766,7 @@ async function loadVehicules(){
       </div>
     </div>`).join("");
 }
- 
+
 async function selV(id,label,immat){
   document.querySelectorAll(".veh-card").forEach(c=>c.classList.remove("sel"));
   document.getElementById("vc"+id).classList.add("sel");
@@ -1796,7 +1796,7 @@ async function selV(id,label,immat){
   if(interval)clearInterval(interval);
   refresh(); interval=setInterval(refresh,2000);
 }
- 
+
 async function refresh(){
   if(!selId)return;
   try{
@@ -1835,13 +1835,13 @@ async function refresh(){
     if(lbl)lbl.textContent="En direct";
   }catch(e){}
 }
- 
+
 function initUH(){
   const sel=document.getElementById("uhv");
   sel.innerHTML='<option value="">Sélectionnez un véhicule...</option>'+
     vehD.map(v=>`<option value="${v.id}">${v.immatriculation} — ${v.marque} ${v.modele}</option>`).join("");
 }
- 
+
 async function loadUH(){
   const vid=document.getElementById("uhv").value;
   const lim=document.getElementById("uhl").value;
@@ -1864,7 +1864,7 @@ async function loadUH(){
     <td>${p.satellites||"—"}</td>
   </tr>`).join("");
 }
- 
+
 async function loadParams(){
   if(!meD)return;
   document.getElementById("pcn").textContent=meD.prenom+" "+meD.nom;
@@ -1884,7 +1884,7 @@ async function loadParams(){
   // Affiche le statut des notifications
   await refreshNotifStatus();
 }
- 
+
 /* ── PUSH NOTIFICATIONS ── */
 function urlBase64ToUint8Array(base64String){
   const padding='='.repeat((4-base64String.length%4)%4);
@@ -1894,7 +1894,7 @@ function urlBase64ToUint8Array(base64String){
   for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
   return arr;
 }
- 
+
 async function refreshNotifStatus(){
   const wrap=document.getElementById("notif-wrap");
   if(!wrap)return;
@@ -1925,7 +1925,7 @@ async function refreshNotifStatus(){
       Statut : ${abonne?'<span style="color:#10B981;font-weight:600">✅ Activées</span>':'<span style="color:#9CA3AF">❌ Désactivées</span>'}
     </div>`;
 }
- 
+
 async function activerNotifs(){
   const msg=document.getElementById("notif-msg");
   try{
@@ -1956,7 +1956,7 @@ async function activerNotifs(){
     if(msg)msg.innerHTML=`<span style="color:#F43F5E">Erreur : ${e.message}</span>`;
   }
 }
- 
+
 async function desactiverNotifs(){
   await fetch("/api/push/unsubscribe",{method:"POST"});
   // Désabonne aussi le navigateur
@@ -1969,10 +1969,11 @@ async function desactiverNotifs(){
   }catch(e){}
   await refreshNotifStatus();
 }
- 
+
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadVehicules();
 loadDashboard();
 setInterval(loadDashboard, 30000);
 </script></body></html>"""
- 
+
+# ─────────────────────────────────────────────────────────────
