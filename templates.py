@@ -1581,24 +1581,24 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
  
   <!-- TABLEAU DE BORD -->
   <div id="tab-dashboard" class="usec active">
-    <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">Vue d'ensemble de la flotte</h2>
+    <h2 style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">Vue d'ensemble de la flotte</h2>
  
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px" id="stat-cards">
-      <div style="background:var(--surface);border:1px solid var(--green-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden">
+      <div style="background:var(--surface);border:1px solid var(--green-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 26px rgba(16,185,129,0.14)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
         <div style="font-size:22px;margin-bottom:6px">🟢</div>
-        <div style="font-size:30px;font-weight:700;color:var(--green)" id="cnt-mouvement">0</div>
+        <div style="font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--green)" id="cnt-mouvement">0</div>
         <div style="font-size:12px;color:var(--text3);font-weight:500">En mouvement</div>
         <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--green)"></div>
       </div>
-      <div style="background:var(--surface);border:1px solid #FDE68A;border-radius:14px;padding:18px;position:relative;overflow:hidden">
+      <div style="background:var(--surface);border:1px solid #FDE68A;border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 26px rgba(245,158,11,0.14)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
         <div style="font-size:22px;margin-bottom:6px">🟡</div>
-        <div style="font-size:30px;font-weight:700;color:#D97706" id="cnt-immobile">0</div>
+        <div style="font-family:var(--font-display);font-size:30px;font-weight:700;color:#D97706" id="cnt-immobile">0</div>
         <div style="font-size:12px;color:var(--text3);font-weight:500">Immobile</div>
         <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:#F59E0B"></div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--red-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden">
+      <div style="background:var(--surface);border:1px solid var(--red-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 26px rgba(244,63,94,0.14)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
         <div style="font-size:22px;margin-bottom:6px">🔴</div>
-        <div style="font-size:30px;font-weight:700;color:var(--red)" id="cnt-signal">0</div>
+        <div style="font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--red)" id="cnt-signal">0</div>
         <div style="font-size:12px;color:var(--text3);font-weight:500">Sans signal</div>
         <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--red)"></div>
       </div>
@@ -1810,7 +1810,7 @@ function initMap(){
         maxNativeZoom:17,
     minZoom:3
   }).addTo(map);
-  poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
+  poly=L.polyline([],{color:"#5B6EF5",weight:4,opacity:0.85}).addTo(map);
 }
  
 async function loadVehicules(){
@@ -2044,4 +2044,3 @@ loadVehicules();
 loadDashboard();
 setInterval(loadDashboard, 30000);
 </script></body></html>"""
- 
