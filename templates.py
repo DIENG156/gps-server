@@ -1,5 +1,5 @@
 # ============================================================
-#  templates.py — GPS Tracker v3
+#  templates.py — GPS Tracker v3 (SaaS Modern Redesign)
 #  Toutes les pages HTML (Login, Admin, User, Reset)
 # ============================================================
 
@@ -11,138 +11,133 @@ LOGIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GPS Tracker — Connexion</title>
-<meta name="theme-color" content="#6366F1">
+<meta name="theme-color" content="#0B3D91">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GPS Tracker">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root{
-  --bg:#F5F3FF;--surface:#FFFFFF;--border:#E5E7EB;
-  --primary:#6366F1;--primary2:#4F46E5;--cyan:#06B6D4;--violet:#7C3AED;
-  --grad:linear-gradient(135deg,#6366F1,#06B6D4);
-  --grad2:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
-  --green:#10B981;--red:#F43F5E;
-  --text:#111827;--text2:#6B7280;--text3:#9CA3AF;
+  --bg:#F5F7FA; --surface:#FFFFFF; --border:#E2E8F0;
+  --primary-light:#4FC3F7; --primary-dark:#0B3D91; --primary-hover:#29B6F6;
+  --grad:linear-gradient(135deg, #0B3D91, #4FC3F7);
+  --green:#10B981; --red:#F43F5E;
+  --text:#1E293B; --text2:#64748B; --text3:#94A3B8;
+  --shadow-sm: 0 4px 6px -1px rgba(11, 61, 145, 0.05), 0 2px 4px -1px rgba(11, 61, 145, 0.03);
+  --shadow-lg: 0 20px 25px -5px rgba(11, 61, 145, 0.1), 0 10px 10px -5px rgba(11, 61, 145, 0.04);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;min-height:100vh;display:flex;
+body{font-family:'Poppins',sans-serif;min-height:100vh;display:flex;
   align-items:center;justify-content:center;position:relative;overflow:hidden;
-  background:linear-gradient(160deg,#EDE9FE 0%,#E0F2FE 55%,#F0FDF4 100%)}
-.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
-.o1{width:500px;height:500px;background:radial-gradient(circle,rgba(99,102,241,0.15),transparent);top:-120px;right:-80px}
-.o2{width:400px;height:400px;background:radial-gradient(circle,rgba(6,182,212,0.12),transparent);bottom:-80px;left:-60px}
-.o3{width:250px;height:250px;background:radial-gradient(circle,rgba(124,58,237,0.1),transparent);top:50%;left:30%}
+  background:var(--bg); color:var(--text);}
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(60px);opacity:0.6;}
+.o1{width:400px;height:400px;background:var(--primary-light);top:-100px;right:-100px;opacity:0.3;}
+.o2{width:500px;height:500px;background:var(--primary-dark);bottom:-150px;left:-150px;opacity:0.15;}
 .card{position:relative;z-index:1;background:rgba(255,255,255,0.85);
   backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.9);
-  border-radius:24px;padding:52px 44px;width:100%;max-width:430px;
-  box-shadow:0 8px 40px rgba(99,102,241,0.12),0 2px 8px rgba(0,0,0,0.04)}
+  border-radius:24px;padding:50px 40px;width:100%;max-width:420px;
+  box-shadow:var(--shadow-lg);}
 @media(max-width:480px){.card{padding:36px 24px;margin:16px;border-radius:20px}}
-.logo{text-align:center;margin-bottom:38px}
-.logo-wrap{position:relative;width:72px;height:72px;margin:0 auto 16px}
-.logo-bg{width:72px;height:72px;border-radius:20px;background:var(--grad2);
-  display:flex;align-items:center;justify-content:center;font-size:30px;
-  box-shadow:0 8px 28px rgba(99,102,241,0.35)}
-.logo-ring{position:absolute;inset:-5px;border-radius:25px;
-  border:2px solid transparent;
-  background:linear-gradient(135deg,rgba(99,102,241,0.4),rgba(6,182,212,0.4)) border-box;
-  -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
-  -webkit-mask-composite:destination-out;mask-composite:exclude}
-.logo h1{font-size:24px;font-weight:700;letter-spacing:-0.5px;
-  background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo p{color:var(--text3);font-size:13px;margin-top:5px}
-.fg{margin-bottom:18px}
-.fg label{display:block;font-size:11px;font-weight:700;color:var(--text2);
-  margin-bottom:7px;text-transform:uppercase;letter-spacing:0.7px}
+.logo{text-align:center;margin-bottom:36px}
+.logo-wrap{position:relative;width:64px;height:64px;margin:0 auto 16px}
+.logo-bg{width:64px;height:64px;border-radius:18px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;
+  box-shadow:0 10px 25px rgba(79, 195, 247, 0.4);}
+.logo h1{font-size:24px;font-weight:700;letter-spacing:-0.5px;color:var(--primary-dark);}
+.logo p{color:var(--text2);font-size:13px;margin-top:4px;font-weight:400;}
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);
+  margin-bottom:8px;letter-spacing:0.3px}
 .iw{position:relative}
-.ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.35;pointer-events:none}
-input{width:100%;height:44px;padding:0 14px 0 42px;
-  background:#FAFAFA;border:1.5px solid #E5E7EB;
-  border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;
-  color:var(--text);outline:none;transition:all 0.2s}
-input:hover{border-color:#D1D5DB;background:#fff}
-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,0.1)}
-input::placeholder{color:var(--text3)}
-.btn{width:100%;height:46px;margin-top:6px;background:var(--grad2);
-  border:none;border-radius:12px;color:#fff;font-family:'Inter',sans-serif;
-  font-size:14px;font-weight:600;cursor:pointer;letter-spacing:0.2px;
-  box-shadow:0 4px 16px rgba(99,102,241,0.4);transition:all 0.2s}
-.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,0.45)}
-.btn:active{transform:translateY(0)}
+.ii{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text3);transition:color 0.3s;}
+input{width:100%;height:48px;padding:0 16px 0 46px;
+  background:#F8FAFC;border:1.5px solid var(--border);
+  border-radius:14px;font-size:14px;font-family:'Poppins',sans-serif;
+  color:var(--text);outline:none;transition:all 0.3s;box-shadow:inset 0 2px 4px rgba(0,0,0,0.01);}
+input:hover{border-color:#CBD5E1;}
+input:focus{border-color:var(--primary-light);background:#fff;box-shadow:0 0 0 4px rgba(79, 195, 247, 0.15);}
+input:focus + .ii, .iw:focus-within .ii {color:var(--primary-dark);}
+input::placeholder{color:var(--text3);font-weight:300;}
+.btn{width:100%;height:48px;margin-top:8px;background:var(--grad);
+  border:none;border-radius:14px;color:#fff;font-family:'Poppins',sans-serif;
+  font-size:15px;font-weight:600;cursor:pointer;letter-spacing:0.3px;
+  box-shadow:0 8px 20px rgba(11, 61, 145, 0.2);transition:all 0.3s;
+  display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(11, 61, 145, 0.3);background:linear-gradient(135deg, #093070, #29B6F6);}
+.btn:active{transform:translateY(0);}
 .err{background:#FFF1F2;border:1px solid #FECDD3;color:var(--red);
-  padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none}
-.trust{display:flex;justify-content:center;gap:20px;margin-top:22px;flex-wrap:wrap}
-.trust-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
-.trust-dot{width:6px;height:6px;border-radius:50%;background:var(--grad)}
+  padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:20px;display:none;
+  display:flex;align-items:center;gap:8px;font-weight:500;}
+.trust{display:flex;justify-content:center;gap:20px;margin-top:28px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);font-weight:500;}
+.trust-item i {color:var(--primary-light);font-size:10px;}
 </style></head><body>
-<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div class="orb o1"></div><div class="orb o2"></div>
 <div class="card">
   <div class="logo">
     <div class="logo-wrap">
-      <div class="logo-bg">🛰️</div>
-      <div class="logo-ring"></div>
+      <div class="logo-bg"><i class="fa-solid fa-satellite-dish"></i></div>
     </div>
     <h1>GPS Tracker</h1>
-    <p>Système de suivi de véhicules en temps réel</p>
+    <p>Système de suivi intelligent & sécurisé</p>
   </div>
-  <div class="err" id="err"></div>
+  <div class="err" id="err"><i class="fa-solid fa-circle-exclamation"></i><span id="err-text"></span></div>
   <div class="fg">
     <label>Adresse email</label>
-    <div class="iw"><span class="ii">✉️</span>
+    <div class="iw"><i class="fa-solid fa-envelope ii"></i>
       <input type="email" id="email" placeholder="votre@email.com"/></div>
   </div>
   <div class="fg">
     <label>Mot de passe</label>
-    <div class="iw"><span class="ii">🔑</span>
+    <div class="iw"><i class="fa-solid fa-lock ii"></i>
       <input type="password" id="pwd" placeholder="••••••••"
              onkeydown="if(event.key==='Enter')doLogin()"/></div>
   </div>
-  <button class="btn" onclick="doLogin()">Se connecter →</button>
-  <div style="text-align:center;margin-top:14px">
-    <a href="#" onclick="showForgot()" style="font-size:12px;color:var(--text3);text-decoration:none;
-      transition:color 0.2s" onmouseover="this.style.color='var(--primary)'"
-      onmouseout="this.style.color='var(--text3)'">Mot de passe oublié ?</a>
+  <button class="btn" onclick="doLogin()">Se connecter <i class="fa-solid fa-arrow-right"></i></button>
+  <div style="text-align:center;margin-top:20px">
+    <a href="#" onclick="showForgot()" style="font-size:13px;color:var(--text2);text-decoration:none;
+      transition:color 0.3s;font-weight:500;" onmouseover="this.style.color='var(--primary-dark)'"
+      onmouseout="this.style.color='var(--text2)'">Mot de passe oublié ?</a>
   </div>
   <div class="trust">
-    <div class="trust-item"><div class="trust-dot"></div>Sécurisé</div>
-    <div class="trust-item"><div class="trust-dot"></div>Temps réel</div>
-    <div class="trust-item"><div class="trust-dot"></div>GPS IoT</div>
+    <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> Sécurisé</div>
+    <div class="trust-item"><i class="fa-solid fa-bolt"></i> Temps réel</div>
+    <div class="trust-item"><i class="fa-solid fa-cloud"></i> IoT Cloud</div>
   </div>
 </div>
 
-<!-- MODAL MOT DE PASSE OUBLIÉ -->
-<div id="forgot-bg" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,0.45);
-  backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px">
-  <div style="background:#fff;border-radius:20px;padding:32px;width:100%;max-width:400px;
-    position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.12)">
-    <div style="position:absolute;top:0;left:20%;right:20%;height:3px;
-      background:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);border-radius:0 0 4px 4px"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="font-size:16px;font-weight:700;color:#111827">Mot de passe oublié</h3>
-      <button onclick="hideForgot()" style="width:28px;height:28px;border-radius:8px;
-        border:1px solid #E5E7EB;background:transparent;cursor:pointer;font-size:14px;color:#9CA3AF">✕</button>
+<div id="forgot-bg" style="display:none;position:fixed;inset:0;background:rgba(15, 23, 42, 0.6);
+  backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:24px;padding:36px;width:100%;max-width:420px;
+    position:relative;box-shadow:var(--shadow-lg)">
+    <div style="position:absolute;top:0;left:20%;right:20%;height:4px;
+      background:var(--grad);border-radius:0 0 8px 8px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <h3 style="font-size:18px;font-weight:700;color:var(--primary-dark)">Mot de passe oublié</h3>
+      <button onclick="hideForgot()" style="width:32px;height:32px;border-radius:10px;
+        border:1px solid var(--border);background:#F8FAFC;cursor:pointer;font-size:14px;color:var(--text2);
+        transition:all 0.2s"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <p style="font-size:13px;color:#6B7280;margin-bottom:16px;line-height:1.6">
-      Entrez votre email. Vous recevrez un lien pour réinitialiser votre mot de passe.
+    <p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">
+      Entrez votre adresse email. Vous recevrez un lien sécurisé pour réinitialiser votre mot de passe.
     </p>
     <div id="forgot-err" style="background:#FFF1F2;border:1px solid #FECDD3;color:#F43F5E;
-      padding:10px 13px;border-radius:10px;font-size:12px;margin-bottom:12px;display:none"></div>
-    <div id="forgot-ok" style="background:#F0FDF4;border:1px solid #BBF7D0;color:#10B981;
-      padding:10px 13px;border-radius:10px;font-size:12px;margin-bottom:12px;display:none"></div>
-    <div style="margin-bottom:16px">
-      <label style="display:block;font-size:11px;font-weight:700;color:#6B7280;
-        margin-bottom:7px;text-transform:uppercase;letter-spacing:0.7px">Email</label>
-      <input type="email" id="forgot-email" placeholder="votre@email.com"
-        style="width:100%;height:42px;padding:0 13px;background:#FAFAFA;
-          border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;
-          font-family:Inter,sans-serif;color:#111827;outline:none"
-        onkeydown="if(event.key==='Enter')doForgot()"/>
+      padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:16px;display:none;font-weight:500;"></div>
+    <div id="forgot-ok" style="background:#ECFDF5;border:1px solid #A7F3D0;color:#059669;
+      padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:16px;display:none;font-weight:500;"></div>
+    <div style="margin-bottom:24px">
+      <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);
+        margin-bottom:8px;">Email</label>
+      <div class="iw">
+        <i class="fa-solid fa-envelope ii"></i>
+        <input type="email" id="forgot-email" placeholder="votre@email.com"
+          onkeydown="if(event.key==='Enter')doForgot()"/>
+      </div>
     </div>
-    <button onclick="doForgot()" style="width:100%;height:42px;background:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
-      border:none;border-radius:10px;color:#fff;font-family:Inter,sans-serif;
-      font-size:13px;font-weight:600;cursor:pointer">Envoyer le lien →</button>
+    <button onclick="doForgot()" class="btn">Envoyer le lien <i class="fa-solid fa-paper-plane"></i></button>
   </div>
 </div>
 <script>
@@ -150,15 +145,15 @@ async function doLogin(){
   const email=document.getElementById("email").value.trim();
   const pwd=document.getElementById("pwd").value;
   const err=document.getElementById("err");
+  const errText=document.getElementById("err-text");
   err.style.display="none";
-  if(!email||!pwd){err.textContent="Veuillez remplir tous les champs.";err.style.display="block";return;}
+  if(!email||!pwd){errText.textContent="Veuillez remplir tous les champs.";err.style.display="flex";return;}
   const res=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({email,mot_de_passe:pwd})});
   const data=await res.json();
   if(res.ok){window.location.href=data.role==="admin"?"/admin":"/dashboard";}
-  else{err.textContent=data.error||"Identifiants incorrects.";err.style.display="block";}
+  else{errText.textContent=data.error||"Identifiants incorrects.";err.style.display="flex";}
 }
-// Enregistrement Service Worker PWA
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js', {scope:'/'})
     .then(()=>console.log('[PWA] Service Worker enregistré'))
@@ -179,7 +174,7 @@ async function doForgot(){
   if(!email){err.textContent="Veuillez entrer votre email.";err.style.display="block";return;}
   await fetch("/api/forgot-password",{method:"POST",
     headers:{"Content-Type":"application/json"},body:JSON.stringify({email})});
-  ok.textContent="Si cet email existe, vous recevrez un lien dans quelques minutes.";
+  ok.innerHTML="<i class='fa-solid fa-circle-check'></i> Si cet email existe, vous recevrez un lien dans quelques minutes.";
   ok.style.display="block";
 }
 </script></body></html>"""
@@ -192,77 +187,82 @@ RESET_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GPS Tracker — Nouveau mot de passe</title>
-<meta name="theme-color" content="#6366F1">
+<meta name="theme-color" content="#0B3D91">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root{
-  --grad2:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
-  --green:#10B981;--red:#F43F5E;--text:#111827;--text2:#6B7280;--text3:#9CA3AF;
+  --bg:#F5F7FA; --surface:#FFFFFF; --border:#E2E8F0;
+  --primary-light:#4FC3F7; --primary-dark:#0B3D91; --primary-hover:#29B6F6;
+  --grad:linear-gradient(135deg, #0B3D91, #4FC3F7);
+  --green:#10B981; --red:#F43F5E;
+  --text:#1E293B; --text2:#64748B; --text3:#94A3B8;
+  --shadow-lg: 0 20px 25px -5px rgba(11, 61, 145, 0.1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;
-  justify-content:center;background:linear-gradient(160deg,#EDE9FE 0%,#E0F2FE 55%,#F0FDF4 100%);
-  padding:16px}
-.card{background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,0.9);border-radius:24px;
+body{font-family:'Poppins',sans-serif;min-height:100vh;display:flex;align-items:center;
+  justify-content:center;background:var(--bg);padding:16px;color:var(--text);}
+.card{background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.8);border-radius:24px;
   padding:48px 40px;width:100%;max-width:420px;
-  box-shadow:0 8px 40px rgba(99,102,241,0.12)}
-@media(max-width:480px){.card{padding:32px 22px}}
-.logo{text-align:center;margin-bottom:32px}
-.logo-bg{width:64px;height:64px;border-radius:18px;background:var(--grad2);
-  display:flex;align-items:center;justify-content:center;font-size:26px;
-  margin:0 auto 14px;box-shadow:0 6px 22px rgba(99,102,241,0.35)}
-.logo h1{font-size:22px;font-weight:700;
-  background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo p{color:var(--text3);font-size:13px;margin-top:4px}
-.fg{margin-bottom:16px}
-.fg label{display:block;font-size:11px;font-weight:700;color:var(--text2);
-  margin-bottom:7px;text-transform:uppercase;letter-spacing:0.7px}
+  box-shadow:var(--shadow-lg)}
+@media(max-width:480px){.card{padding:32px 24px}}
+.logo{text-align:center;margin-bottom:36px}
+.logo-bg{width:64px;height:64px;border-radius:18px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;
+  margin:0 auto 16px;box-shadow:0 10px 25px rgba(79, 195, 247, 0.4);}
+.logo h1{font-size:24px;font-weight:700;color:var(--primary-dark);}
+.logo p{color:var(--text2);font-size:13px;margin-top:4px}
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);
+  margin-bottom:8px;}
 .iw{position:relative}
-.ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.35;pointer-events:none}
-input{width:100%;height:44px;padding:0 14px 0 42px;background:#FAFAFA;
-  border:1.5px solid #E5E7EB;border-radius:12px;font-size:14px;
-  font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:all 0.2s}
-input:focus{border-color:#6366F1;background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,0.1)}
-.btn{width:100%;height:46px;margin-top:6px;background:var(--grad2);border:none;
-  border-radius:12px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;
-  font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,0.4);transition:all 0.2s}
-.btn:hover{transform:translateY(-1px)}
+.ii{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3);transition:color 0.3s;}
+input{width:100%;height:48px;padding:0 16px 0 46px;background:#F8FAFC;
+  border:1.5px solid var(--border);border-radius:14px;font-size:14px;
+  font-family:'Poppins',sans-serif;color:var(--text);outline:none;transition:all 0.3s}
+input:focus{border-color:var(--primary-light);background:#fff;box-shadow:0 0 0 4px rgba(79, 195, 247, 0.15);}
+input:focus + .ii, .iw:focus-within .ii {color:var(--primary-dark);}
+.btn{width:100%;height:48px;margin-top:8px;background:var(--grad);border:none;
+  border-radius:14px;color:#fff;font-family:'Poppins',sans-serif;font-size:15px;
+  font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(11, 61, 145, 0.2);transition:all 0.3s;
+  display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(11, 61, 145, 0.3);}
 .err{background:#FFF1F2;border:1px solid #FECDD3;color:var(--red);
-  padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none}
-.ok{background:#F0FDF4;border:1px solid #BBF7D0;color:var(--green);
-  padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none}
-.exp{background:#FFF7ED;border:1px solid #FED7AA;color:#C2410C;
-  padding:16px;border-radius:12px;text-align:center;font-size:13px;display:none}
+  padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:20px;display:none;font-weight:500;}
+.ok{background:#ECFDF5;border:1px solid #A7F3D0;color:var(--green);
+  padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:20px;display:none;font-weight:500;}
+.exp{background:#FFFBEB;border:1px solid #FDE68A;color:#B45309;
+  padding:24px;border-radius:16px;text-align:center;font-size:14px;display:none;font-weight:500;}
 </style></head><body>
 <div class="card">
   <div class="logo">
-    <div class="logo-bg">🔑</div>
+    <div class="logo-bg"><i class="fa-solid fa-shield-halved"></i></div>
     <h1>Nouveau mot de passe</h1>
-    <p>Choisissez un nouveau mot de passe sécurisé</p>
+    <p>Sécurisez l'accès à votre espace</p>
   </div>
   <div class="exp" id="exp">
-    <div style="font-size:24px;margin-bottom:8px">⏰</div>
-    <div style="font-weight:700;margin-bottom:4px">Lien expiré</div>
-    <div style="color:#9A3412">Ce lien n'est plus valide. Faites une nouvelle demande sur la page de connexion.</div>
+    <div style="font-size:32px;margin-bottom:12px;color:#D97706;"><i class="fa-solid fa-clock-rotate-left"></i></div>
+    <div style="font-weight:700;margin-bottom:8px;font-size:16px;">Lien expiré ou invalide</div>
+    <div style="color:#92400E;font-size:13px;">Ce lien n'est plus valide. Veuillez faire une nouvelle demande de réinitialisation.</div>
   </div>
   <div id="form-wrap">
     <div class="err" id="err"></div>
     <div class="ok" id="ok"></div>
     <div class="fg">
       <label>Nouveau mot de passe</label>
-      <div class="iw"><span class="ii">🔑</span>
+      <div class="iw"><i class="fa-solid fa-lock ii"></i>
         <input type="password" id="pwd1" placeholder="Minimum 6 caractères"/></div>
     </div>
     <div class="fg">
       <label>Confirmer le mot de passe</label>
-      <div class="iw"><span class="ii">🔑</span>
+      <div class="iw"><i class="fa-solid fa-lock-open ii"></i>
         <input type="password" id="pwd2" placeholder="Répétez le mot de passe"
           onkeydown="if(event.key==='Enter')doReset()"/></div>
     </div>
-    <button class="btn" onclick="doReset()">Enregistrer le mot de passe →</button>
+    <button class="btn" onclick="doReset()">Enregistrer <i class="fa-solid fa-check"></i></button>
   </div>
 </div>
 <script>
@@ -282,290 +282,255 @@ async function doReset(){
   const err=document.getElementById("err");
   const ok=document.getElementById("ok");
   err.style.display=ok.style.display="none";
-  if(!pwd1||!pwd2){err.textContent="Veuillez remplir les deux champs.";err.style.display="block";return;}
-  if(pwd1.length<6){err.textContent="Le mot de passe doit faire au moins 6 caractères.";err.style.display="block";return;}
-  if(pwd1!==pwd2){err.textContent="Les mots de passe ne correspondent pas.";err.style.display="block";return;}
+  if(!pwd1||!pwd2){err.innerHTML="<i class='fa-solid fa-circle-exclamation'></i> Veuillez remplir les deux champs.";err.style.display="block";return;}
+  if(pwd1.length<6){err.innerHTML="<i class='fa-solid fa-circle-exclamation'></i> Le mot de passe doit faire au moins 6 caractères.";err.style.display="block";return;}
+  if(pwd1!==pwd2){err.innerHTML="<i class='fa-solid fa-circle-exclamation'></i> Les mots de passe ne correspondent pas.";err.style.display="block";return;}
   const res=await fetch("/api/reset-password",{method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({token,mot_de_passe:pwd1})});
   const data=await res.json();
   if(res.ok){
-    ok.textContent="✓ Mot de passe modifié ! Redirection...";ok.style.display="block";
+    ok.innerHTML="<i class='fa-solid fa-circle-check'></i> Mot de passe modifié ! Redirection...";ok.style.display="block";
     document.getElementById("pwd1").value="";document.getElementById("pwd2").value="";
     setTimeout(()=>window.location.href="/",2500);
-  }else{err.textContent=data.error||"Erreur.";err.style.display="block";}
+  }else{err.innerHTML="<i class='fa-solid fa-circle-exclamation'></i> "+(data.error||"Erreur.");err.style.display="block";}
 }
 init();
 </script></body></html>"""
 
 # ═════════════════════════════════════════════════════════════
-#  PAGE ADMIN — CORRIGÉE (id="pt" → id="p-tel", responsive mobile)
+#  PAGE ADMIN
 # ═════════════════════════════════════════════════════════════
 
 ADMIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GPS Tracker — Admin</title>
-<meta name="theme-color" content="#6366F1">
+<title>GPS Tracker — Admin Dashboard</title>
+<meta name="theme-color" content="#0B3D91">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GPS Tracker">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root{
-  --bg:#F8F7FF;--surface:#FFFFFF;--surface2:#F9FAFB;--border:#E5E7EB;--border2:#D1D5DB;
-  --primary:#6366F1;--primary2:#4F46E5;--violet:#7C3AED;--cyan:#06B6D4;
-  --grad:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
-  --grad2:linear-gradient(135deg,#6366F1,#06B6D4);
-  --green:#10B981;--green-bg:rgba(16,185,129,0.08);--green-bd:rgba(16,185,129,0.2);
-  --red:#F43F5E;--red-bg:rgba(244,63,94,0.08);--red-bd:rgba(244,63,94,0.2);
-  --amber:#F59E0B;--text:#111827;--text2:#6B7280;--text3:#9CA3AF;
-  --sidebar-w:256px;
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface2:#F8FAFC; --border:#E2E8F0;
+  --primary:#4FC3F7; --primary-dark:#0B3D91; --primary-hover:#29B6F6;
+  --grad:linear-gradient(135deg, #0B3D91, #4FC3F7);
+  --grad-light:linear-gradient(135deg, rgba(79, 195, 247, 0.1), rgba(11, 61, 145, 0.05));
+  --green:#10B981; --green-bg:rgba(16,185,129,0.1); --green-bd:rgba(16,185,129,0.2);
+  --red:#EF4444; --red-bg:rgba(239,68,68,0.1); --red-bd:rgba(239,68,68,0.2);
+  --amber:#F59E0B; --text:#1E293B; --text2:#475569; --text3:#94A3B8;
+  --sidebar-w:260px;
+  --radius-lg:16px; --radius-md:12px;
+  --shadow-sm: 0 2px 4px rgba(11, 61, 145, 0.04);
+  --shadow-md: 0 8px 16px rgba(11, 61, 145, 0.06);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;display:flex;min-height:100vh}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);font-size:14px;display:flex;min-height:100vh}
 
 /* ══ SIDEBAR ══ */
 .sidebar{
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
   background:var(--surface);border-right:1px solid var(--border);
   display:flex;flex-direction:column;z-index:100;overflow:hidden;
-  transition:left 0.25s ease
+  transition:left 0.3s ease; box-shadow:var(--shadow-md);
 }
-.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:180px;
-  background:linear-gradient(180deg,rgba(99,102,241,0.06),transparent);pointer-events:none}
-.s-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border);position:relative}
-.s-logo-row{display:flex;align-items:center;gap:12px}
-.s-logo-icon{width:40px;height:40px;border-radius:12px;background:var(--grad);
-  display:flex;align-items:center;justify-content:center;font-size:19px;
-  box-shadow:0 4px 14px rgba(99,102,241,0.35);flex-shrink:0}
-.s-logo-name{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
-.s-logo-sub{font-size:10px;color:var(--text3);margin-top:2px;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600}
-.s-admin{margin:14px 12px;padding:12px 14px;
-  background:linear-gradient(135deg,rgba(124,58,237,0.07),rgba(99,102,241,0.05));
-  border:1px solid rgba(124,58,237,0.15);border-radius:12px}
-.s-admin-row{display:flex;align-items:center;gap:10px}
-.s-avatar{width:36px;height:36px;border-radius:10px;background:var(--grad);
-  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.s-admin-name{font-size:13px;font-weight:600;color:var(--text)}
-.s-admin-role{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.s-nav{flex:1;padding:10px 10px 0;overflow-y:auto}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;
-  border-radius:10px;cursor:pointer;color:var(--text2);font-size:13px;
-  font-weight:500;transition:all 0.15s;margin-bottom:2px;
-  border-left:3px solid transparent;position:relative}
-.nav-item:hover{background:rgba(99,102,241,0.06);color:var(--primary)}
-.nav-item.active{background:linear-gradient(135deg,rgba(124,58,237,0.09),rgba(99,102,241,0.07));
-  color:var(--primary);font-weight:600;border-left-color:var(--violet)}
-.nav-item.active .nav-ico{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-ico{font-size:16px;width:22px;text-align:center;flex-shrink:0;transition:all 0.15s}
-.s-bottom{padding:14px 12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.btn-logout{width:100%;padding:10px 16px;background:var(--red-bg);color:var(--red);
-  border:1px solid var(--red-bd);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;
-  font-family:'Inter',sans-serif;transition:all 0.15s;
+.s-logo{padding:24px 20px;border-bottom:1px solid var(--border);position:relative}
+.s-logo-row{display:flex;align-items:center;gap:14px}
+.s-logo-icon{width:42px;height:42px;border-radius:12px;background:var(--grad);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  box-shadow:0 4px 14px rgba(79, 195, 247, 0.3);flex-shrink:0}
+.s-logo-name{font-size:16px;font-weight:700;color:var(--primary-dark);letter-spacing:-0.3px}
+.s-logo-sub{font-size:11px;color:var(--text3);margin-top:2px;font-weight:500;}
+
+.s-admin{margin:20px 16px;padding:14px;
+  background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-md)}
+.s-admin-row{display:flex;align-items:center;gap:12px}
+.s-avatar{width:40px;height:40px;border-radius:10px;background:var(--grad-light);color:var(--primary-dark);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.s-admin-name{font-size:14px;font-weight:600;color:var(--text)}
+.s-admin-role{font-size:11px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:0.5px;}
+
+.s-nav{flex:1;padding:0 16px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;
+  border-radius:var(--radius-md);cursor:pointer;color:var(--text2);font-size:14px;
+  font-weight:500;transition:all 0.2s;margin-bottom:6px;position:relative}
+.nav-item:hover{background:var(--surface2);color:var(--primary-dark)}
+.nav-item.active{background:var(--primary-dark);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(11, 61, 145, 0.2);}
+.nav-ico{font-size:16px;width:24px;text-align:center;flex-shrink:0;transition:all 0.2s;}
+
+.s-bottom{padding:20px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.btn-logout{width:100%;padding:12px;background:var(--surface);color:var(--text2);
+  border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;font-size:14px;font-weight:600;
+  font-family:'Poppins',sans-serif;transition:all 0.2s;
   display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-logout:hover{background:rgba(244,63,94,0.14);border-color:rgba(244,63,94,0.35)}
+.btn-logout:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
 
 /* ══ MAIN ══ */
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0}
-.topbar{position:sticky;top:0;z-index:50;height:60px;padding:0 28px;
-  background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);
+.topbar{position:sticky;top:0;z-index:50;height:70px;padding:0 32px;
+  background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 1px 4px rgba(0,0,0,0.04)}
-.tb-left{display:flex;align-items:center;gap:8px}
-.tb-crumb{font-size:12px;color:var(--text3);font-weight:500}
-.tb-page-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
-.tb-right{display:flex;align-items:center;gap:10px}
-.clock{padding:5px 14px;background:var(--surface2);border:1px solid var(--border);
-  border-radius:8px;font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums;font-weight:500}
+  display:flex;align-items:center;justify-content:space-between;}
+.tb-left{display:flex;align-items:center;gap:12px}
 .menu-btn{display:none;background:none;border:none;cursor:pointer;
-  font-size:22px;color:var(--text);padding:4px 8px;margin-right:4px}
+  font-size:20px;color:var(--text);padding:8px;border-radius:8px;transition:background 0.2s;}
+.menu-btn:hover{background:var(--surface2);}
+.tb-crumb{font-size:13px;color:var(--text3);font-weight:500}
+.tb-page-title{font-size:20px;font-weight:700;color:var(--primary-dark);letter-spacing:-0.5px}
+.tb-right{display:flex;align-items:center;gap:16px}
+.clock{padding:8px 16px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-md);font-size:13px;color:var(--primary-dark);font-weight:600;
+  box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;}
 
-.content{padding:28px;flex:1}
+.content{padding:32px;flex:1}
 .section{display:none}
-.section.active{display:block;animation:fadeUp 0.2s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.section.active{display:block;animation:fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Stats ── */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-  padding:22px;position:relative;overflow:hidden;transition:all 0.2s}
-.stat:hover{border-color:rgba(99,102,241,0.25);box-shadow:0 4px 20px rgba(99,102,241,0.1);transform:translateY(-2px)}
-.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
-.stat-icon{width:44px;height:44px;border-radius:12px;background:var(--grad);
-  display:flex;align-items:center;justify-content:center;font-size:20px;
-  box-shadow:0 4px 14px rgba(99,102,241,0.3)}
-.stat-trend{font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;
-  background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
-.stat-val{font-size:34px;font-weight:700;color:var(--text);letter-spacing:-1.5px;line-height:1}
-.stat-lbl{font-size:12px;color:var(--text3);margin-top:5px;font-weight:500}
-.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--grad)}
-.stat::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;
-  background:radial-gradient(circle,rgba(99,102,241,0.06),transparent);pointer-events:none}
+/* ── Stats Modernes ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:32px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:28px;position:relative;overflow:hidden;transition:all 0.3s;box-shadow:var(--shadow-sm);}
+.stat:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.stat-icon{width:52px;height:52px;border-radius:14px;background:var(--grad-light);color:var(--primary-dark);
+  display:flex;align-items:center;justify-content:center;font-size:24px;}
+.stat-trend{font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;
+  background:var(--green-bg);color:var(--green);}
+.stat-val{font-size:38px;font-weight:700;color:var(--primary-dark);letter-spacing:-1px;line-height:1}
+.stat-lbl{font-size:14px;color:var(--text2);margin-top:8px;font-weight:500}
 
 /* ── Section header ── */
-.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
-.sh h2{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
-.sh-sub{font-size:13px;color:var(--text3);margin-top:2px}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px}
+.sh h2{font-size:22px;font-weight:700;color:var(--primary-dark);}
+.sh-sub{font-size:14px;color:var(--text3);margin-top:4px}
 
 /* ── Boutons ── */
-.btn{height:40px;padding:0 18px;border:none;border-radius:10px;cursor:pointer;
-  font-size:13px;font-weight:600;font-family:'Inter',sans-serif;
-  transition:all 0.2s;display:inline-flex;align-items:center;gap:7px}
-.btn-primary{background:var(--grad);color:#fff;box-shadow:0 3px 12px rgba(99,102,241,0.35)}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.45)}
-.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
-.btn-danger:hover{background:rgba(244,63,94,0.14)}
-.btn-success{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
-.btn-success:hover{background:rgba(16,185,129,0.14)}
-.btn-sm{height:30px;padding:0 13px;font-size:12px;border-radius:8px}
+.btn{height:44px;padding:0 20px;border:none;border-radius:var(--radius-md);cursor:pointer;
+  font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;
+  transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 12px rgba(79, 195, 247, 0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(79, 195, 247, 0.4)}
+.btn-danger{background:var(--surface);color:var(--red);border:1px solid var(--border);}
+.btn-danger:hover{background:var(--red-bg); border-color:var(--red-bd);}
+.btn-success{background:var(--surface);color:var(--green);border:1px solid var(--border);}
+.btn-success:hover{background:var(--green-bg); border-color:var(--green-bd);}
+.btn-sm{height:34px;padding:0 14px;font-size:12px;border-radius:8px}
 
-/* ── Table ── */
-.table-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;
-  box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+/* ── Table SaaS ── */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:var(--shadow-sm);}
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:separate;border-spacing:0;min-width:600px}
-thead{background:var(--surface2)}
-th{padding:12px 18px;text-align:left;font-size:11px;color:var(--text3);
-  font-weight:700;text-transform:uppercase;letter-spacing:0.8px;border-bottom:1px solid var(--border)}
-tbody tr{transition:background 0.12s}
-tbody tr:hover td{background:rgba(99,102,241,0.025)}
-td{padding:14px 18px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border)}
-tbody tr:last-child td{border-bottom:none}
-.td-main{font-weight:600;color:var(--text)}
-.device{font-size:11px;background:rgba(99,102,241,0.07);color:var(--primary);
-  padding:3px 9px;border-radius:6px;font-weight:600;
-  border:1px solid rgba(99,102,241,0.15);font-family:monospace}
-.badge{padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;
-  display:inline-flex;align-items:center;gap:5px}
-.badge::before{content:'';width:5px;height:5px;border-radius:50%}
-.badge-on{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
-.badge-on::before{background:var(--green)}
-.badge-off{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
-.badge-off::before{background:var(--red)}
-
-/* ── Positions propriétaires ── */
-.prop-positions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-.pp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
-  padding:16px 18px;position:relative;overflow:hidden;transition:all 0.2s}
-.pp-card:hover{border-color:rgba(99,102,241,0.2);box-shadow:0 3px 14px rgba(99,102,241,0.08)}
-.pp-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--grad)}
-.pp-icon{font-size:22px;margin-bottom:8px}
-.pp-val{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-1px;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.pp-lbl{font-size:12px;color:var(--text3);font-weight:500;margin-top:3px}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead{background:var(--surface2); border-bottom:2px solid var(--border);}
+th{padding:16px 24px;text-align:left;font-size:12px;color:var(--text2);
+  font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+tbody tr{transition:background 0.2s; border-bottom:1px solid var(--border);}
+tbody tr:hover{background:var(--surface2);}
+td{padding:18px 24px;font-size:14px;color:var(--text);}
+tbody tr:last-child{border-bottom:none}
+.td-main{font-weight:600;color:var(--primary-dark);}
+.device{font-size:12px;background:var(--grad-light);color:var(--primary-dark);
+  padding:4px 10px;border-radius:6px;font-weight:600;font-family:monospace; border:1px solid var(--border);}
+.badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px}
+.badge::before{content:'\\f111'; font-family:'Font Awesome 6 Free'; font-weight:900; font-size:8px;}
+.badge-on{background:var(--green-bg);color:var(--green);}
+.badge-off{background:var(--red-bg);color:var(--red);}
 
 /* ── Empty ── */
-.empty{padding:52px;text-align:center}
-.empty-ico{font-size:44px;margin-bottom:12px;opacity:0.25}
-.empty-txt{font-size:14px;font-weight:600;color:var(--text2)}
-.empty-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.empty{padding:60px 20px;text-align:center}
+.empty-ico{font-size:50px;margin-bottom:16px;color:var(--border)}
+.empty-txt{font-size:16px;font-weight:600;color:var(--text2)}
+.empty-sub{font-size:13px;color:var(--text3);margin-top:6px}
 
-/* ── Historique ── */
-.h-filters{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap}
-.h-select{height:38px;padding:0 13px;background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:all 0.15s}
-.h-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
-.h-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.hs{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
-.hs-val{font-size:22px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hs-lbl{font-size:11px;color:var(--text3);font-weight:500;margin-top:3px}
+/* ── Historique & Params ── */
+.h-filters{display:flex;gap:12px;margin-bottom:24px;align-items:center;flex-wrap:wrap}
+.h-select{height:44px;padding:0 16px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-md);font-size:14px;font-family:'Poppins',sans-serif;color:var(--text);
+  outline:none;transition:all 0.3s; box-shadow:var(--shadow-sm);}
+.h-select:focus{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(79, 195, 247, 0.15)}
 
-/* ── Paramètres ── */
-.param-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:14px}
-.param-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
-.param-sub{font-size:12px;color:var(--text3);margin-bottom:18px}
+.param-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:28px;margin-bottom:24px; box-shadow:var(--shadow-sm);}
+.param-title{font-size:16px;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
+.param-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
 .param-row{display:flex;justify-content:space-between;align-items:center;
-  padding:13px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+  padding:16px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
 .param-row:last-child{border-bottom:none;padding-bottom:0}
-.p-lbl{font-size:13px;font-weight:500;color:var(--text)}
-.p-desc{font-size:11px;color:var(--text3);margin-top:2px}
-.p-badge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px}
-.p-blue{background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)}
-.p-violet{background:rgba(124,58,237,0.08);color:var(--violet);border:1px solid rgba(124,58,237,0.2)}
-.p-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.p-lbl{font-size:14px;font-weight:600;color:var(--text)}
+.p-desc{font-size:12px;color:var(--text3);margin-top:4px}
+.p-badge{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px; background:var(--surface2); color:var(--text2); border:1px solid var(--border);}
 
-/* ── Modal ── */
-.mbg{display:none;position:fixed;inset:0;background:rgba(17,24,39,0.45);
-  backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
-.mbg.open{display:flex;animation:fi 0.2s ease}
-@keyframes fi{from{opacity:0}to{opacity:1}}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;
-  padding:32px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;
-  box-shadow:0 20px 60px rgba(0,0,0,0.12);animation:su 0.22s ease;position:relative}
-@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.modal::before{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;
-  background:var(--grad);border-radius:0 0 4px 4px}
-.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.mh h3{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
-.mc{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);
-  background:transparent;cursor:pointer;font-size:16px;color:var(--text3);
-  display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif}
-.mc:hover{background:var(--surface2)}
-.fg{margin-bottom:15px}
-.fg label{display:block;font-size:11px;font-weight:700;color:var(--text2);
-  margin-bottom:7px;text-transform:uppercase;letter-spacing:0.7px}
-.fg input,.fg select{width:100%;height:42px;padding:0 13px;
-  background:#FAFAFA;border:1.5px solid var(--border);
-  border-radius:10px;font-size:13px;font-family:'Inter',sans-serif;
-  color:var(--text);outline:none;transition:all 0.2s}
-.fg input:focus,.fg select:focus{border-color:var(--primary);background:#fff;
-  box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
-.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.ma{display:flex;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
-.ma .btn{flex:1;justify-content:center;height:42px}
-.al{padding:10px 14px;border-radius:10px;font-size:12px;font-weight:500;margin-bottom:14px;display:none}
-.al-e{background:#FFF1F2;border:1px solid #FECDD3;color:var(--red)}
-.al-o{background:#F0FDF4;border:1px solid #BBF7D0;color:var(--green)}
+/* ── Modal Glassmorphism ── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(15, 23, 42, 0.5);
+  backdrop-filter:blur(6px);z-index:200;align-items:center;justify-content:center;padding:16px}
+.mbg.open{display:flex;animation:fadeIn 0.2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border:1px solid rgba(255,255,255,0.8);border-radius:24px;
+  padding:36px;width:100%;max-width:550px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow-lg);animation:slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);position:relative}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.mh h3{font-size:20px;font-weight:700;color:var(--primary-dark);}
+.mc{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface2);cursor:pointer;font-size:16px;color:var(--text2);
+  display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.mc:hover{background:var(--border); color:var(--text);}
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;}
+.fg input,.fg select{width:100%;height:46px;padding:0 16px;
+  background:#F8FAFC;border:1px solid var(--border);
+  border-radius:12px;font-size:14px;font-family:'Poppins',sans-serif;
+  color:var(--text);outline:none;transition:all 0.3s;}
+.fg input:focus,.fg select:focus{border-color:var(--primary-light);background:#fff;
+  box-shadow:0 0 0 3px rgba(79, 195, 247, 0.15)}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ma{display:flex;gap:12px;margin-top:32px;padding-top:24px;border-top:1px solid var(--border)}
+.ma .btn{flex:1;justify-content:center;}
+.al{padding:14px 16px;border-radius:12px;font-size:13px;font-weight:500;margin-bottom:20px;display:none; align-items:center; gap:8px;}
+.al-e{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red)}
+.al-o{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green)}
 
-/* ── Overlay mobile ── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
+/* Overlay mobile */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99; backdrop-filter:blur(4px);}
 .overlay.open{display:block}
 
 /* ══ RESPONSIVE MOBILE ══ */
 @media(max-width:768px){
-  .sidebar{left:calc(-1 * var(--sidebar-w));box-shadow:none}
-  .sidebar.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.15)}
+  .sidebar{left:calc(-1 * var(--sidebar-w));}
+  .sidebar.open{left:0;}
   .main{margin-left:0!important}
-  .menu-btn{display:inline-flex;align-items:center;justify-content:center}
-  .topbar{padding:0 14px}
-  .tb-page-title{font-size:15px}
-  .content{padding:14px}
-  .stats{grid-template-columns:1fr!important}
-  .prop-positions{grid-template-columns:1fr 1fr!important}
-  .h-stats{grid-template-columns:1fr 1fr!important}
+  .menu-btn{display:inline-flex;}
+  .topbar{padding:0 16px; height:60px;}
+  .tb-page-title{font-size:18px}
+  .content{padding:16px}
+  .stats{grid-template-columns:1fr!important; gap:16px;}
   .fg2{grid-template-columns:1fr!important}
   .h-filters{flex-direction:column;align-items:stretch}
-  .h-select{width:100%}
-  .modal{padding:24px 18px}
-}
-@media(max-width:400px){
-  .prop-positions{grid-template-columns:1fr!important}
-  .h-stats{grid-template-columns:1fr!important}
+  .modal{padding:24px 20px}
 }
 </style></head><body>
 
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
-<!-- ══ SIDEBAR ══ -->
 <div class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-logo-row">
-      <div class="s-logo-icon">🛰️</div>
+      <div class="s-logo-icon"><i class="fa-solid fa-earth-americas"></i></div>
       <div>
         <div class="s-logo-name">GPS Tracker</div>
-        <div class="s-logo-sub">Control Center</div>
+        <div class="s-logo-sub">Command Center</div>
       </div>
     </div>
   </div>
   <div class="s-admin">
     <div class="s-admin-row">
-      <div class="s-avatar">⚙️</div>
+      <div class="s-avatar"><i class="fa-solid fa-user-shield"></i></div>
       <div>
         <div class="s-admin-name">Administrateur</div>
         <div class="s-admin-role">Accès total</div>
@@ -574,180 +539,178 @@ tbody tr:last-child td{border-bottom:none}
   </div>
   <div class="s-nav">
     <div class="nav-item active" onclick="show('dashboard',this)">
-      <span class="nav-ico">📊</span>Dashboard
+      <i class="fa-solid fa-chart-pie nav-ico"></i> Tableau de bord
     </div>
     <div class="nav-item" onclick="show('proprietaires',this)">
-      <span class="nav-ico">👥</span>Propriétaires
+      <i class="fa-solid fa-users nav-ico"></i> Propriétaires
     </div>
     <div class="nav-item" onclick="show('vehicules',this)">
-      <span class="nav-ico">🚗</span>Véhicules
+      <i class="fa-solid fa-car nav-ico"></i> Véhicules
     </div>
     <div class="nav-item" onclick="show('historique',this)">
-      <span class="nav-ico">📍</span>Historique GPS
+      <i class="fa-solid fa-map-location-dot nav-ico"></i> Historique GPS
     </div>
     <div class="nav-item" onclick="show('parametres',this)">
-      <span class="nav-ico">⚙️</span>Paramètres
+      <i class="fa-solid fa-sliders nav-ico"></i> Paramètres
     </div>
   </div>
   <div class="s-bottom">
-    <button class="btn-logout" onclick="doLogout()">🚪 Déconnexion</button>
+    <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion</button>
   </div>
 </div>
 
-<!-- ══ MAIN ══ -->
 <div class="main">
   <div class="topbar">
     <div class="tb-left">
-      <button class="menu-btn" onclick="toggleMenu()">☰</button>
-      <span class="tb-crumb">Admin /</span>
-      <span class="tb-page-title" id="page-title">Dashboard</span>
+      <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+      <div style="display:flex;flex-direction:column;">
+        <span class="tb-crumb">Espace Admin</span>
+        <span class="tb-page-title" id="page-title">Tableau de bord</span>
+      </div>
     </div>
     <div class="tb-right">
-      <div class="clock" id="clk">--:--:--</div>
+      <div class="clock"><i class="fa-regular fa-clock"></i> <span id="clk">--:--:--</span></div>
     </div>
   </div>
 
   <div class="content">
 
-    <!-- DASHBOARD -->
     <div class="section active" id="s-dashboard">
       <div class="stats">
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-icon">👥</div>
-            <span class="stat-trend">Total</span>
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <span class="stat-trend"><i class="fa-solid fa-arrow-trend-up"></i> Total</span>
           </div>
           <div class="stat-val" id="stp">—</div>
           <div class="stat-lbl">Propriétaires enregistrés</div>
         </div>
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-icon">🚗</div>
-            <span class="stat-trend">Actifs</span>
+            <div class="stat-icon"><i class="fa-solid fa-car-side"></i></div>
+            <span class="stat-trend"><i class="fa-solid fa-signal"></i> Actifs</span>
           </div>
           <div class="stat-val" id="stv">—</div>
           <div class="stat-lbl">Véhicules suivis</div>
         </div>
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-icon">📡</div>
-            <span class="stat-trend">Live</span>
+            <div class="stat-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+            <span class="stat-trend"><i class="fa-solid fa-bolt"></i> Live</span>
           </div>
           <div class="stat-val">24/7</div>
-          <div class="stat-lbl">Surveillance active</div>
+          <div class="stat-lbl">Surveillance réseau</div>
         </div>
       </div>
-      <div class="table-card" style="padding:28px 32px">
-        <p style="font-size:14px;color:var(--text2);line-height:1.9">
-          Bienvenue dans le <strong style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Centre de Contrôle GPS</strong>.<br>
-          Utilisez la navigation à gauche pour gérer les propriétaires, les véhicules et consulter l'historique GPS.
+      <div class="table-card" style="padding:40px; text-align:center;">
+        <i class="fa-solid fa-chart-line" style="font-size:40px; color:var(--primary-light); margin-bottom:20px;"></i>
+        <h3 style="font-size:20px; color:var(--primary-dark); margin-bottom:10px;">Bienvenue sur le Centre de Contrôle</h3>
+        <p style="font-size:14px;color:var(--text2);line-height:1.6; max-width:500px; margin:0 auto;">
+          Gérez votre flotte avec précision. Utilisez le menu latéral pour ajouter des clients, assigner des traceurs GPS, et analyser les données de déplacement.
         </p>
       </div>
     </div>
 
-    <!-- PROPRIÉTAIRES -->
     <div class="section" id="s-proprietaires">
-      <div class="prop-positions" id="prop-pos">
-        <div class="pp-card">
-          <div class="pp-icon">👥</div>
-          <div class="pp-val" id="pp-total">—</div>
-          <div class="pp-lbl">Total propriétaires</div>
+      <div class="stats" id="prop-pos" style="margin-bottom:24px;">
+        <div class="stat" style="padding:20px;">
+          <div style="font-size:24px; color:var(--primary-dark); margin-bottom:10px;"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-val" id="pp-total" style="font-size:28px;">—</div>
+          <div class="stat-lbl" style="margin-top:4px;">Total propriétaires</div>
         </div>
-        <div class="pp-card">
-          <div class="pp-icon">✅</div>
-          <div class="pp-val" id="pp-actif">—</div>
-          <div class="pp-lbl">Comptes actifs</div>
+        <div class="stat" style="padding:20px;">
+          <div style="font-size:24px; color:var(--green); margin-bottom:10px;"><i class="fa-solid fa-user-check"></i></div>
+          <div class="stat-val" id="pp-actif" style="font-size:28px;">—</div>
+          <div class="stat-lbl" style="margin-top:4px;">Comptes actifs</div>
         </div>
-        <div class="pp-card">
-          <div class="pp-icon">🚗</div>
-          <div class="pp-val" id="pp-vehs">—</div>
-          <div class="pp-lbl">Véhicules associés</div>
+        <div class="stat" style="padding:20px;">
+          <div style="font-size:24px; color:var(--primary-light); margin-bottom:10px;"><i class="fa-solid fa-car"></i></div>
+          <div class="stat-val" id="pp-vehs" style="font-size:28px;">—</div>
+          <div class="stat-lbl" style="margin-top:4px;">Véhicules associés</div>
         </div>
       </div>
       <div class="sh">
         <div>
           <h2>Propriétaires</h2>
-          <div class="sh-sub">Gestion des comptes propriétaires</div>
+          <div class="sh-sub">Gestion des comptes clients</div>
         </div>
-        <button class="btn btn-primary" onclick="openMP()">+ Nouveau propriétaire</button>
+        <button class="btn btn-primary" onclick="openMP()"><i class="fa-solid fa-plus"></i> Nouveau</button>
       </div>
       <div class="table-card">
         <div class="table-wrap">
           <table>
             <thead><tr>
               <th>Nom complet</th><th>Email</th><th>Téléphone</th>
-              <th>Véhicules</th><th>Depuis</th><th>Statut</th><th style="min-width:200px">Action</th>
+              <th>Véhicules</th><th>Depuis</th><th>Statut</th><th style="min-width:260px">Actions</th>
             </tr></thead>
             <tbody id="tbp">
-              <tr><td colspan="7"><div class="empty"><div class="empty-ico">👥</div>
-                <div class="empty-txt">Chargement...</div></div></td></tr>
+              <tr><td colspan="7"><div class="empty"><i class="fa-solid fa-users empty-ico"></i>
+                <div class="empty-txt">Chargement des données...</div></div></td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- VÉHICULES -->
     <div class="section" id="s-vehicules">
       <div class="sh">
         <div>
-          <h2>Véhicules</h2>
-          <div class="sh-sub">Flotte de véhicules enregistrés</div>
+          <h2>Flotte de Véhicules</h2>
+          <div class="sh-sub">Gérez les traceurs GPS et assignations</div>
         </div>
-        <button class="btn btn-primary" onclick="openMV()">+ Nouveau véhicule</button>
+        <button class="btn btn-primary" onclick="openMV()"><i class="fa-solid fa-plus"></i> Nouveau</button>
       </div>
       <div class="table-card">
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Immatriculation</th><th>Marque / Modèle</th><th>Type</th>
-              <th>Propriétaire</th><th>Device ID</th><th>Statut</th><th style="min-width:200px">Action</th>
+              <th>Immatriculation</th><th>Modèle</th><th>Type</th>
+              <th>Propriétaire</th><th>Device ID</th><th>Statut</th><th style="min-width:260px">Actions</th>
             </tr></thead>
             <tbody id="tbv">
-              <tr><td colspan="7"><div class="empty"><div class="empty-ico">🚗</div>
-                <div class="empty-txt">Chargement...</div></div></td></tr>
+              <tr><td colspan="7"><div class="empty"><i class="fa-solid fa-car empty-ico"></i>
+                <div class="empty-txt">Chargement des données...</div></div></td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- HISTORIQUE GPS -->
     <div class="section" id="s-historique">
       <div class="sh">
         <div>
-          <h2>Historique GPS</h2>
-          <div class="sh-sub">Consultez l'historique des positions par véhicule</div>
+          <h2>Historique de Tracking</h2>
+          <div class="sh-sub">Analysez les trajets enregistrés</div>
         </div>
       </div>
       <div class="h-filters">
-        <select class="h-select" id="hv" onchange="loadHist()">
+        <select class="h-select" id="hv" onchange="loadHist()" style="min-width:250px;">
           <option value="">Sélectionnez un véhicule...</option>
         </select>
         <select class="h-select" id="hl" onchange="loadHist()">
-          <option value="50">50 positions</option>
-          <option value="100">100 positions</option>
-          <option value="200">200 positions</option>
+          <option value="50">50 dernières positions</option>
+          <option value="100">100 dernières positions</option>
+          <option value="200">200 dernières positions</option>
         </select>
       </div>
-      <div class="h-stats" id="hstats" style="display:none">
-        <div class="hs"><div class="hs-val" id="hs1">0</div><div class="hs-lbl">Positions totales</div></div>
-        <div class="hs"><div class="hs-val" id="hs2">0</div><div class="hs-lbl">Vitesse max km/h</div></div>
-        <div class="hs"><div class="hs-val" id="hs3">0</div><div class="hs-lbl">Vitesse moy km/h</div></div>
-        <div class="hs"><div class="hs-val" id="hs4">0</div><div class="hs-lbl">Satellites moy</div></div>
+      <div class="stats" id="hstats" style="display:none; grid-template-columns:repeat(4,1fr); gap:16px;">
+        <div class="stat" style="padding:16px;"><div class="stat-val" id="hs1" style="font-size:24px;">0</div><div class="stat-lbl" style="font-size:12px;margin-top:2px;">Points</div></div>
+        <div class="stat" style="padding:16px;"><div class="stat-val" id="hs2" style="font-size:24px;">0</div><div class="stat-lbl" style="font-size:12px;margin-top:2px;">Vmax (km/h)</div></div>
+        <div class="stat" style="padding:16px;"><div class="stat-val" id="hs3" style="font-size:24px;">0</div><div class="stat-lbl" style="font-size:12px;margin-top:2px;">Vmoy (km/h)</div></div>
+        <div class="stat" style="padding:16px;"><div class="stat-val" id="hs4" style="font-size:24px;">0</div><div class="stat-lbl" style="font-size:12px;margin-top:2px;">Satellites moy.</div></div>
       </div>
       <div class="table-card">
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>#</th><th>Date / Heure</th><th>Latitude</th>
-              <th>Longitude</th><th>Vitesse</th><th>Satellites</th>
+              <th>#</th><th>Horodatage</th><th>Latitude</th>
+              <th>Longitude</th><th>Vitesse</th><th>Signal</th>
             </tr></thead>
             <tbody id="tbh">
               <tr><td colspan="6"><div class="empty">
-                <div class="empty-ico">📍</div>
+                <i class="fa-solid fa-map-location-dot empty-ico"></i>
                 <div class="empty-txt">Sélectionnez un véhicule</div>
-                <div class="empty-sub">pour afficher son historique</div>
+                <div class="empty-sub">pour afficher l'historique des trajets</div>
               </div></td></tr>
             </tbody>
           </table>
@@ -755,54 +718,31 @@ tbody tr:last-child td{border-bottom:none}
       </div>
     </div>
 
-    <!-- PARAMÈTRES -->
     <div class="section" id="s-parametres">
       <div class="sh">
         <div>
-          <h2>Paramètres</h2>
-          <div class="sh-sub">Configuration du système GPS Tracker</div>
+          <h2>Paramètres Système</h2>
+          <div class="sh-sub">Configuration globale du GPS Tracker</div>
         </div>
       </div>
       <div class="param-card">
-        <div class="param-title">Compte administrateur</div>
-        <div class="param-sub">Informations de votre compte</div>
+        <div class="param-title">Compte Super Administrateur</div>
+        <div class="param-sub">Identité de gestion</div>
         <div class="param-row">
-          <div><div class="p-lbl">Email de connexion</div><div class="p-desc">admin@gps.com</div></div>
-          <span class="p-badge p-violet">Administrateur</span>
-        </div>
-        <div class="param-row">
-          <div><div class="p-lbl">Niveau d'accès</div><div class="p-desc">Contrôle total sur toutes les fonctionnalités</div></div>
-          <span class="p-badge p-green">Actif</span>
+          <div><div class="p-lbl">Email principal</div><div class="p-desc">admin@gps.com</div></div>
+          <span class="p-badge" style="background:var(--grad-light); color:var(--primary-dark);"><i class="fa-solid fa-shield-halved"></i> Root Access</span>
         </div>
       </div>
       <div class="param-card">
-        <div class="param-title">Système de suivi GPS</div>
-        <div class="param-sub">État des services et configuration</div>
+        <div class="param-title">Infrastructure IoT</div>
+        <div class="param-sub">État des connexions serveurs</div>
         <div class="param-row">
-          <div><div class="p-lbl">API ESP32</div><div class="p-desc">Endpoint : POST /api/position</div></div>
-          <span class="p-badge p-green">En ligne</span>
+          <div><div class="p-lbl">Endpoint ESP32</div><div class="p-desc">POST /api/position</div></div>
+          <span class="p-badge" style="background:var(--green-bg);color:var(--green);"><i class="fa-solid fa-circle-check"></i> Actif</span>
         </div>
         <div class="param-row">
-          <div><div class="p-lbl">Base de données</div><div class="p-desc">SQLite — gps_data.db</div></div>
-          <span class="p-badge p-green">Connectée</span>
-        </div>
-        <div class="param-row">
-          <div><div class="p-lbl">Intervalle de mise à jour</div><div class="p-desc">Fréquence de rafraîchissement</div></div>
-          <select class="h-select" style="width:160px">
-            <option>2 secondes</option><option>5 secondes</option><option>10 secondes</option>
-          </select>
-        </div>
-      </div>
-      <div class="param-card">
-        <div class="param-title">À propos</div>
-        <div class="param-sub">Informations sur l'application</div>
-        <div class="param-row">
-          <div><div class="p-lbl">GPS Tracker</div><div class="p-desc">Version 3.0 — Ocean Blue + Violet</div></div>
-          <span class="p-badge p-blue">Flask · SQLite</span>
-        </div>
-        <div class="param-row">
-          <div><div class="p-lbl">Design</div><div class="p-desc">Style Stripe Premium</div></div>
-          <span class="p-badge p-violet">Inter · Gradient</span>
+          <div><div class="p-lbl">Stockage Data</div><div class="p-desc">SQLite Relational DB</div></div>
+          <span class="p-badge" style="background:var(--green-bg);color:var(--green);"><i class="fa-solid fa-database"></i> Connecté</span>
         </div>
       </div>
     </div>
@@ -810,72 +750,69 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- MODAL PROPRIÉTAIRE — CORRIGÉ : id="p-tel" au lieu de id="pt" -->
 <div class="mbg" id="mp">
   <div class="modal">
     <div class="mh">
-      <h3>Nouveau propriétaire</h3>
-      <button class="mc" onclick="closeM('mp')">✕</button>
+      <h3>Ajouter un client</h3>
+      <button class="mc" onclick="closeM('mp')"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="al al-e" id="ep"></div>
-    <div class="al al-o" id="op"></div>
+    <div class="al al-e" id="ep"><i class="fa-solid fa-circle-exclamation"></i> <span id="ep-t"></span></div>
+    <div class="al al-o" id="op"><i class="fa-solid fa-circle-check"></i> <span id="op-t"></span></div>
     <div class="fg2">
-      <div class="fg"><label>Nom *</label><input id="pn" placeholder="Dieng"/></div>
-      <div class="fg"><label>Prénom *</label><input id="pp" placeholder="Saliou"/></div>
+      <div class="fg"><label>Nom *</label><input id="pn" placeholder="Nom"/></div>
+      <div class="fg"><label>Prénom *</label><input id="pp" placeholder="Prénom"/></div>
     </div>
-    <div class="fg"><label>Email *</label><input type="email" id="pe" placeholder="saliou@email.com"/></div>
-    <div class="fg"><label>Téléphone *</label><input id="p-tel" placeholder="+221 77 229 22 03"/></div>
+    <div class="fg"><label>Email *</label><input type="email" id="pe" placeholder="client@email.com"/></div>
+    <div class="fg"><label>Téléphone *</label><input id="p-tel" placeholder="+33 6 ..."/></div>
     <div class="fg"><label>Mot de passe *</label><input type="password" id="pw" placeholder="Minimum 6 caractères"/></div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('mp')">Annuler</button>
-      <button class="btn btn-primary" onclick="creerP()">Créer le compte</button>
+      <button class="btn btn-primary" onclick="creerP()"><i class="fa-solid fa-check"></i> Créer le compte</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL VÉHICULE -->
 <div class="mbg" id="mv">
   <div class="modal">
     <div class="mh">
-      <h3>Nouveau véhicule</h3>
-      <button class="mc" onclick="closeM('mv')">✕</button>
+      <h3>Assigner un véhicule</h3>
+      <button class="mc" onclick="closeM('mv')"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="al al-e" id="ev"></div>
-    <div class="al al-o" id="ov"></div>
+    <div class="al al-e" id="ev"><i class="fa-solid fa-circle-exclamation"></i> <span id="ev-t"></span></div>
+    <div class="al al-o" id="ov"><i class="fa-solid fa-circle-check"></i> <span id="ov-t"></span></div>
     <div class="fg"><label>Propriétaire *</label><select id="vp"></select></div>
     <div class="fg2">
-      <div class="fg"><label>Marque *</label><input id="vm" placeholder="Toyota"/></div>
-      <div class="fg"><label>Modèle *</label><input id="vmo" placeholder="Corolla"/></div>
+      <div class="fg"><label>Marque *</label><input id="vm" placeholder="Peugeot"/></div>
+      <div class="fg"><label>Modèle *</label><input id="vmo" placeholder="3008"/></div>
     </div>
     <div class="fg2">
       <div class="fg"><label>Type *</label>
         <select id="vt">
-          <option value="voiture">🚗 Voiture</option>
-          <option value="moto">🏍️ Moto</option>
-          <option value="camion">🚛 Camion</option>
-          <option value="bus">🚌 Bus</option>
-          <option value="autre">🚙 Autre</option>
+          <option value="voiture">Voiture</option>
+          <option value="moto">Moto</option>
+          <option value="camion">Camion</option>
+          <option value="bus">Bus</option>
+          <option value="autre">Autre</option>
         </select>
       </div>
-      <div class="fg"><label>Couleur</label><input id="vc" placeholder="Blanc"/></div>
+      <div class="fg"><label>Couleur</label><input id="vc" placeholder="Noir"/></div>
     </div>
     <div class="fg2">
-      <div class="fg"><label>Immatriculation *</label><input id="vi" placeholder="DK-1234-AB"/></div>
-      <div class="fg"><label>Année</label><input type="number" id="va" placeholder="2022"/></div>
+      <div class="fg"><label>Immatriculation *</label><input id="vi" placeholder="AB-123-CD"/></div>
+      <div class="fg"><label>Année</label><input type="number" id="va" placeholder="2023"/></div>
     </div>
-    <div class="fg"><label>Device ID (ESP32) *</label><input id="vd" placeholder="DK-1234-AB"/>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">Utilisez l'immatriculation du véhicule comme identifiant</div>
+    <div class="fg"><label>Device ID (Tracker ESP32) *</label><input id="vd" placeholder="Identifiant unique"/>
     </div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('mv')">Annuler</button>
-      <button class="btn btn-primary" onclick="creerV()">Créer le véhicule</button>
+      <button class="btn btn-primary" onclick="creerV()"><i class="fa-solid fa-check"></i> Assigner</button>
     </div>
   </div>
 </div>
 
 <script>
-const T={dashboard:"Dashboard",proprietaires:"Propriétaires",vehicules:"Véhicules",
-  historique:"Historique GPS",parametres:"Paramètres"};
+const T={dashboard:"Tableau de bord",proprietaires:"Propriétaires",vehicules:"Flotte de Véhicules",
+  historique:"Historique de Tracking",parametres:"Paramètres Système"};
 
 setInterval(()=>{document.getElementById("clk").textContent=new Date().toLocaleTimeString('fr-FR')},1000);
 
@@ -918,28 +855,28 @@ async function loadP(){
   document.getElementById("pp-vehs").textContent=totalVehs;
   const tb=document.getElementById("tbp");
   if(!data.length){
-    tb.innerHTML='<tr><td colspan="7"><div class="empty"><div class="empty-ico">👥</div><div class="empty-txt">Aucun propriétaire enregistré</div><div class="empty-sub">Créez votre premier propriétaire</div></div></td></tr>';
+    tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fa-solid fa-users empty-ico"></i><div class="empty-txt">Aucun client trouvé</div></div></td></tr>';
     return;
   }
   tb.innerHTML=data.map(p=>`<tr>
     <td class="td-main">${p.prenom} ${p.nom}</td>
-    <td>${p.email}</td>
+    <td><i class="fa-regular fa-envelope" style="color:var(--text3);margin-right:6px"></i>${p.email}</td>
     <td>${p.telephone||"—"}</td>
-    <td><span style="font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${p.nb_vehicules}</span></td>
+    <td><span style="font-weight:600; padding:4px 12px; border-radius:20px; background:var(--surface2); border:1px solid var(--border);">${p.nb_vehicules} <i class="fa-solid fa-car" style="color:var(--primary);margin-left:4px;"></i></span></td>
     <td style="font-size:12px;color:var(--text3)">${(p.date_creation||"").slice(0,10)}</td>
     <td><span class="badge ${p.actif?'badge-on':'badge-off'}">${p.actif?'Actif':'Inactif'}</span></td>
-    <td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center">
-    <button class="btn btn-sm ${p.actif?'btn-danger':'btn-success'}" onclick="toggleP(${p.id})">${p.actif?'Désactiver':'Activer'}</button>
-    <button class="btn btn-sm" onclick="confirmerSuppressionP(${p.id},'${p.prenom} ${p.nom}')" style="background:rgba(244,63,94,0.15);color:var(--red);border:1px solid var(--red-bd)">🗑️ Supprimer</button>
-    <button class="btn btn-sm" onclick="ouvrirModifP(${p.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)">✏️ Modifier</button>
+    <td style="white-space:nowrap"><div style="display:flex;gap:8px;align-items:center">
+    <button class="btn btn-sm ${p.actif?'btn-danger':'btn-success'}" onclick="toggleP(${p.id})"><i class="fa-solid fa-power-off"></i></button>
+    <button class="btn btn-sm btn-primary" style="background:var(--surface2); color:var(--primary-dark); border:1px solid var(--border); box-shadow:none;" onclick="ouvrirModifP(${p.id})"><i class="fa-solid fa-pen"></i></button>
+    <button class="btn btn-sm btn-danger" onclick="confirmerSuppressionP(${p.id},'${p.prenom} ${p.nom}')"><i class="fa-solid fa-trash"></i></button>
     </div></td>
   </tr>`).join("");
 }
 
 async function creerP(){
   const e=document.getElementById("ep"),o=document.getElementById("op");
+  const et=document.getElementById("ep-t"),ot=document.getElementById("op-t");
   e.style.display=o.style.display="none";
-  /* CORRIGÉ : id="p-tel" au lieu de "pt" */
   const body={
     nom:document.getElementById("pn").value.trim(),
     prenom:document.getElementById("pp").value.trim(),
@@ -948,16 +885,15 @@ async function creerP(){
     mot_de_passe:document.getElementById("pw").value
   };
   if(!body.nom||!body.prenom||!body.email||!body.telephone||!body.mot_de_passe){
-    e.textContent="Tous les champs sont obligatoires.";e.style.display="block";return;}
+    et.textContent="Champs obligatoires manquants.";e.style.display="flex";return;}
   const res=await fetch("/api/admin/proprietaires",{method:"POST",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   const data=await res.json();
   if(res.ok){
-    o.textContent="✓ Propriétaire créé avec succès !";o.style.display="block";
-    /* CORRIGÉ : "p-tel" dans le reset */
+    ot.textContent="Compte client créé avec succès.";o.style.display="flex";
     ["pn","pp","pe","p-tel","pw"].forEach(id=>document.getElementById(id).value="");
     loadStats();
-  }else{e.textContent=data.error;e.style.display="block";}
+  }else{et.textContent=data.error;e.style.display="flex";}
 }
 
 async function toggleP(id){await fetch(`/api/admin/proprietaires/${id}/toggle`,{method:"POST"});loadP();}
@@ -966,18 +902,18 @@ async function toggleP(id){await fetch(`/api/admin/proprietaires/${id}/toggle`,{
 async function loadV(){
   const data=await fetch("/api/admin/vehicules").then(r=>r.json());
   const tb=document.getElementById("tbv");
-  if(!data.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><div class="empty-ico">🚗</div><div class="empty-txt">Aucun véhicule enregistré</div></div></td></tr>';return;}
+  if(!data.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fa-solid fa-car empty-ico"></i><div class="empty-txt">Flotte vide</div></div></td></tr>';return;}
   tb.innerHTML=data.map(v=>`<tr>
     <td class="td-main">${v.immatriculation}</td>
-    <td>${v.marque} ${v.modele}</td>
-    <td>${v.type_vehicule}</td>
-    <td>${v.proprietaire_nom}</td>
-    <td><span class="device">${v.device_id}</span></td>
+    <td>${v.marque} <span style="color:var(--text2);font-weight:400">${v.modele}</span></td>
+    <td style="text-transform:capitalize"><i class="fa-solid fa-car" style="color:var(--text3);margin-right:6px"></i>${v.type_vehicule}</td>
+    <td><i class="fa-regular fa-user" style="color:var(--text3);margin-right:6px"></i>${v.proprietaire_nom}</td>
+    <td><span class="device"><i class="fa-solid fa-microchip" style="margin-right:4px;"></i>${v.device_id}</span></td>
     <td><span class="badge ${v.actif?'badge-on':'badge-off'}">${v.actif?'Actif':'Inactif'}</span></td>
-    <td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center">
-    <button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})">${v.actif?'Désactiver':'Activer'}</button>
-    <button class="btn btn-sm" onclick="confirmerSuppressionV(${v.id},'${v.immatriculation}')" style="background:rgba(244,63,94,0.15);color:var(--red);border:1px solid var(--red-bd)">🗑️ Supprimer</button>
-    <button class="btn btn-sm" onclick="ouvrirModifV(${v.id})" style="background:rgba(99,102,241,0.08);color:var(--primary);border:1px solid rgba(99,102,241,0.2)">✏️ Modifier</button>
+    <td style="white-space:nowrap"><div style="display:flex;gap:8px;align-items:center">
+    <button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})"><i class="fa-solid fa-power-off"></i></button>
+    <button class="btn btn-sm btn-primary" style="background:var(--surface2); color:var(--primary-dark); border:1px solid var(--border); box-shadow:none;" onclick="ouvrirModifV(${v.id})"><i class="fa-solid fa-pen"></i></button>
+    <button class="btn btn-sm btn-danger" onclick="confirmerSuppressionV(${v.id},'${v.immatriculation}')"><i class="fa-solid fa-trash"></i></button>
     </div></td>
   </tr>`).join("");
 }
@@ -985,11 +921,13 @@ async function loadV(){
 async function openMV(){
   const data=await fetch("/api/admin/proprietaires").then(r=>r.json());
   document.getElementById("vp").innerHTML=data.map(p=>`<option value="${p.id}">${p.prenom} ${p.nom}</option>`).join("");
+  document.getElementById("ev").style.display=document.getElementById("ov").style.display="none";
   document.getElementById("mv").classList.add("open");
 }
 
 async function creerV(){
   const e=document.getElementById("ev"),o=document.getElementById("ov");
+  const et=document.getElementById("ev-t"),ot=document.getElementById("ov-t");
   e.style.display=o.style.display="none";
   const body={
     proprietaire_id:parseInt(document.getElementById("vp").value),
@@ -1004,8 +942,8 @@ async function creerV(){
   const res=await fetch("/api/admin/vehicules",{method:"POST",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   const data=await res.json();
-  if(res.ok){o.textContent="✓ Véhicule créé avec succès !";o.style.display="block";loadStats();}
-  else{e.textContent=data.error;e.style.display="block";}
+  if(res.ok){ot.textContent="Traceur assigné au véhicule.";o.style.display="flex";loadStats();}
+  else{et.textContent=data.error;e.style.display="flex";}
 }
 
 async function toggleV(id){await fetch(`/api/admin/vehicules/${id}/toggle`,{method:"POST"});loadV();}
@@ -1015,7 +953,7 @@ async function initHist(){
   const vehs=await fetch("/api/admin/vehicules").then(r=>r.json());
   const sel=document.getElementById("hv");
   const cur=sel.value;
-  sel.innerHTML='<option value="">Sélectionnez un véhicule...</option>'+
+  sel.innerHTML='<option value="">Sélectionner un véhicule...</option>'+
     vehs.filter(v=>v.actif).map(v=>`<option value="${v.id}">${v.immatriculation} — ${v.marque} ${v.modele}</option>`).join("");
   if(cur)sel.value=cur;
 }
@@ -1029,7 +967,7 @@ async function loadHist(){
   const tb=document.getElementById("tbh");
   if(!data.length){
     hs.style.display="none";
-    tb.innerHTML='<tr><td colspan="6"><div class="empty"><div class="empty-ico">📍</div><div class="empty-txt">Aucune position enregistrée</div></div></td></tr>';
+    tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-route empty-ico"></i><div class="empty-txt">Aucune donnée GPS trouvée</div></div></td></tr>';
     return;
   }
   hs.style.display="grid";
@@ -1042,14 +980,12 @@ async function loadHist(){
   document.getElementById("hs4").textContent=smoy.toFixed(1);
   const rev=[...data].reverse();
   tb.innerHTML=rev.map((p,i)=>`<tr>
-    <td style="color:var(--text3);font-size:12px">#${data.length-i}</td>
-    <td style="font-size:12px;color:var(--text2)">${p.created_at||p.timestamp||"—"}</td>
-    <td style="font-family:monospace;font-size:12px;font-weight:600;
-      background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${(p.latitude||0).toFixed(6)}</td>
-    <td style="font-family:monospace;font-size:12px;font-weight:600;
-      background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${(p.longitude||0).toFixed(6)}</td>
-    <td><span style="font-weight:700;color:${(p.vitesse||0)>80?'var(--red)':'var(--text)'}">${(p.vitesse||0).toFixed(1)} km/h</span></td>
-    <td>${p.satellites||"—"}</td>
+    <td style="color:var(--text3);font-size:12px;font-weight:600">#${data.length-i}</td>
+    <td style="font-size:13px;color:var(--text2)"><i class="fa-regular fa-clock" style="margin-right:6px"></i>${p.created_at||p.timestamp||"—"}</td>
+    <td style="font-family:monospace;font-size:13px;font-weight:600;color:var(--primary-dark)">${(p.latitude||0).toFixed(6)}</td>
+    <td style="font-family:monospace;font-size:13px;font-weight:600;color:var(--primary-dark)">${(p.longitude||0).toFixed(6)}</td>
+    <td><span style="font-weight:600; padding:4px 10px; border-radius:8px; background:${(p.vitesse||0)>80?'var(--red-bg)':'var(--surface2)'}; color:${(p.vitesse||0)>80?'var(--red)':'var(--text)'}">${(p.vitesse||0).toFixed(1)} km/h</span></td>
+    <td><i class="fa-solid fa-satellite" style="color:var(--text3);margin-right:6px"></i>${p.satellites||"—"}</td>
   </tr>`).join("");
 }
 
@@ -1064,15 +1000,15 @@ let _supprId=null, _supprType=null;
 
 function confirmerSuppressionV(id, label){
   _supprId=id; _supprType='vehicule';
-  document.getElementById("suppr-msg").textContent=
-    `Voulez-vous supprimer définitivement le véhicule "${label}" et toutes ses positions GPS ?`;
+  document.getElementById("suppr-msg").innerHTML=
+    `Supprimer le véhicule <strong style="color:var(--text)">${label}</strong> et tout son historique GPS ?`;
   document.getElementById("m-suppr").classList.add("open");
 }
 
 function confirmerSuppressionP(id, label){
   _supprId=id; _supprType='proprietaire';
-  document.getElementById("suppr-msg").textContent=
-    `Voulez-vous supprimer définitivement le propriétaire "${label}", tous ses véhicules et toutes ses positions GPS ?`;
+  document.getElementById("suppr-msg").innerHTML=
+    `Supprimer le client <strong style="color:var(--text)">${label}</strong>, ses véhicules et historiques ?`;
   document.getElementById("m-suppr").classList.add("open");
 }
 
@@ -1089,12 +1025,12 @@ async function executerSuppression(){
     else loadP();
     loadStats();
   } else {
-    alert(data.error||"Erreur lors de la suppression");
+    alert(data.error||"Erreur");
   }
   _supprId=null; _supprType=null;
 }
 
-/* ── Modification Propriétaire ── */
+/* ── Modification ── */
 async function ouvrirModifP(id){
   const data=await fetch(`/api/admin/proprietaires/${id}`).then(r=>r.json());
   document.getElementById("mp-id").value=id;
@@ -1109,6 +1045,7 @@ async function ouvrirModifP(id){
 async function sauvegarderP(){
   const id=document.getElementById("mp-id").value;
   const e=document.getElementById("emp"),o=document.getElementById("omp");
+  const et=document.getElementById("emp-t"),ot=document.getElementById("omp-t");
   e.style.display=o.style.display="none";
   const body={
     nom:document.getElementById("mp-nom").value.trim(),
@@ -1121,12 +1058,11 @@ async function sauvegarderP(){
   const res=await fetch(`/api/admin/proprietaires/${id}`,{method:"PUT",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   const data=await res.json();
-  if(res.ok){o.textContent="✓ Propriétaire modifié !";o.style.display="block";
+  if(res.ok){ot.textContent="Client mis à jour !";o.style.display="flex";
     setTimeout(()=>closeM("m-modif-p"),1200);loadP();}
-  else{e.textContent=data.error;e.style.display="block";}
+  else{et.textContent=data.error;e.style.display="flex";}
 }
 
-/* ── Modification Véhicule ── */
 async function ouvrirModifV(id){
   const data=await fetch(`/api/admin/vehicules/${id}`).then(r=>r.json());
   document.getElementById("mv-id").value=id;
@@ -1143,6 +1079,7 @@ async function ouvrirModifV(id){
 async function sauvegarderV(){
   const id=document.getElementById("mv-id").value;
   const e=document.getElementById("emv"),o=document.getElementById("omv");
+  const et=document.getElementById("emv-t"),ot=document.getElementById("omv-t");
   e.style.display=o.style.display="none";
   const body={
     marque:document.getElementById("mv-marque").value.trim(),
@@ -1156,73 +1093,60 @@ async function sauvegarderV(){
   const res=await fetch(`/api/admin/vehicules/${id}`,{method:"PUT",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   const data=await res.json();
-  if(res.ok){o.textContent="✓ Véhicule modifié !";o.style.display="block";
+  if(res.ok){ot.textContent="Véhicule mis à jour !";o.style.display="flex";
     setTimeout(()=>closeM("m-modif-v"),1200);loadV();}
-  else{e.textContent=data.error;e.style.display="block";}
+  else{et.textContent=data.error;e.style.display="flex";}
 }
 
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadStats();
 </script>
 
-<!-- MODAL CONFIRMATION SUPPRESSION -->
 <div class="mbg" id="m-suppr">
-  <div class="modal" style="max-width:420px">
-    <div class="mh">
-      <h3 style="color:var(--red)">⚠️ Confirmation de suppression</h3>
-      <button class="mc" onclick="closeM('m-suppr')">✕</button>
-    </div>
-    <p id="suppr-msg" style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px"></p>
-    <div style="background:var(--red-bg);border:1px solid var(--red-bd);border-radius:10px;
-      padding:11px 14px;font-size:12px;color:var(--red);margin-bottom:20px">
-      ⚠️ Cette action est irréversible. Toutes les données seront perdues définitivement.
-    </div>
-    <div class="ma">
-      <button class="btn btn-success" onclick="closeM('m-suppr')" style="flex:1;justify-content:center">
-        Annuler
-      </button>
-      <button class="btn btn-danger" onclick="executerSuppression()" style="flex:1;justify-content:center">
-        🗑️ Supprimer définitivement
-      </button>
+  <div class="modal" style="max-width:420px; text-align:center;">
+    <div style="font-size:48px; color:var(--red); margin-bottom:16px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <h3 style="color:var(--text); font-size:20px; font-weight:700; margin-bottom:12px;">Action irréversible</h3>
+    <p id="suppr-msg" style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:24px"></p>
+    <div class="ma" style="margin-top:0; border-top:none; padding-top:0;">
+      <button class="btn btn-success" onclick="closeM('m-suppr')" style="flex:1;">Annuler</button>
+      <button class="btn btn-danger" onclick="executerSuppression()" style="flex:1; background:var(--red); color:#fff;"><i class="fa-solid fa-trash"></i> Confirmer</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL MODIFICATION PROPRIÉTAIRE -->
 <div class="mbg" id="m-modif-p">
   <div class="modal">
     <div class="mh">
-      <h3>✏️ Modifier le propriétaire</h3>
-      <button class="mc" onclick="closeM('m-modif-p')">✕</button>
+      <h3>Modifier le client</h3>
+      <button class="mc" onclick="closeM('m-modif-p')"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <input type="hidden" id="mp-id"/>
-    <div class="al al-e" id="emp"></div>
-    <div class="al al-o" id="omp"></div>
+    <div class="al al-e" id="emp"><i class="fa-solid fa-circle-exclamation"></i> <span id="emp-t"></span></div>
+    <div class="al al-o" id="omp"><i class="fa-solid fa-circle-check"></i> <span id="omp-t"></span></div>
     <div class="fg2">
       <div class="fg"><label>Nom *</label><input id="mp-nom"/></div>
       <div class="fg"><label>Prénom *</label><input id="mp-prenom"/></div>
     </div>
     <div class="fg"><label>Email *</label><input type="email" id="mp-email"/></div>
     <div class="fg"><label>Téléphone *</label><input id="mp-tel"/></div>
-    <div class="fg"><label>Nouveau mot de passe <span style="color:var(--text3);font-weight:400">(laisser vide = inchangé)</span></label>
-      <input type="password" id="mp-pw" placeholder="Laisser vide pour ne pas changer"/></div>
+    <div class="fg"><label>Nouveau mot de passe <span style="font-weight:400;color:var(--text3)">(laisser vide si inchangé)</span></label>
+      <input type="password" id="mp-pw"/></div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('m-modif-p')">Annuler</button>
-      <button class="btn btn-primary" onclick="sauvegarderP()">💾 Sauvegarder</button>
+      <button class="btn btn-primary" onclick="sauvegarderP()"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL MODIFICATION VÉHICULE -->
 <div class="mbg" id="m-modif-v">
   <div class="modal">
     <div class="mh">
-      <h3>✏️ Modifier le véhicule</h3>
-      <button class="mc" onclick="closeM('m-modif-v')">✕</button>
+      <h3>Modifier le véhicule</h3>
+      <button class="mc" onclick="closeM('m-modif-v')"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <input type="hidden" id="mv-id"/>
-    <div class="al al-e" id="emv"></div>
-    <div class="al al-o" id="omv"></div>
+    <div class="al al-e" id="emv"><i class="fa-solid fa-circle-exclamation"></i> <span id="emv-t"></span></div>
+    <div class="al al-o" id="omv"><i class="fa-solid fa-circle-check"></i> <span id="omv-t"></span></div>
     <div class="fg2">
       <div class="fg"><label>Marque *</label><input id="mv-marque"/></div>
       <div class="fg"><label>Modèle *</label><input id="mv-modele"/></div>
@@ -1230,11 +1154,11 @@ loadStats();
     <div class="fg2">
       <div class="fg"><label>Type *</label>
         <select id="mv-type">
-          <option value="voiture">🚗 Voiture</option>
-          <option value="moto">🏍️ Moto</option>
-          <option value="camion">🚛 Camion</option>
-          <option value="bus">🚌 Bus</option>
-          <option value="autre">🚙 Autre</option>
+          <option value="voiture">Voiture</option>
+          <option value="moto">Moto</option>
+          <option value="camion">Camion</option>
+          <option value="bus">Bus</option>
+          <option value="autre">Autre</option>
         </select>
       </div>
       <div class="fg"><label>Couleur</label><input id="mv-couleur"/></div>
@@ -1246,42 +1170,43 @@ loadStats();
     <div class="fg"><label>Device ID (ESP32) *</label><input id="mv-device"/></div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('m-modif-v')">Annuler</button>
-      <button class="btn btn-primary" onclick="sauvegarderV()">💾 Sauvegarder</button>
+      <button class="btn btn-primary" onclick="sauvegarderV()"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
     </div>
   </div>
 </div>
 </body></html>"""
 
 # ═════════════════════════════════════════════════════════════
-#  PAGE USER — CORRIGÉE (responsive mobile)
+#  PAGE USER
 # ═════════════════════════════════════════════════════════════
 
 USER_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GPS Tracker — Mon suivi</title>
-<meta name="theme-color" content="#6366F1">
+<title>GPS Tracker — Mon Suivi</title>
+<meta name="theme-color" content="#0B3D91">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GPS Tracker">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/twemoji@14/assets/72x72/1f6f0.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{
-  --bg:#F8F7FF;--surface:#FFFFFF;--surface2:#F9FAFB;--border:#E5E7EB;
-  --primary:#6366F1;--violet:#7C3AED;--cyan:#06B6D4;
-  --grad:linear-gradient(135deg,#7C3AED,#6366F1,#06B6D4);
-  --grad2:linear-gradient(135deg,#6366F1,#06B6D4);
-  --green:#10B981;--green-bg:rgba(16,185,129,0.08);--green-bd:rgba(16,185,129,0.2);
-  --red:#F43F5E;--red-bg:rgba(244,63,94,0.08);--red-bd:rgba(244,63,94,0.2);
-  --text:#111827;--text2:#6B7280;--text3:#9CA3AF;
-  --sidebar-w:240px;
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface2:#F8FAFC; --border:#E2E8F0;
+  --primary:#4FC3F7; --primary-dark:#0B3D91;
+  --grad:linear-gradient(135deg, #0B3D91, #4FC3F7);
+  --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+  --text:#1E293B; --text2:#475569; --text3:#94A3B8;
+  --sidebar-w:260px;
+  --shadow-sm: 0 4px 6px -1px rgba(11,61,145,0.05);
+  --shadow-md: 0 10px 15px -3px rgba(11,61,145,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   height:100vh;display:flex;overflow:hidden;font-size:14px}
 
 /* SIDEBAR */
@@ -1289,175 +1214,147 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
   background:var(--surface);border-right:1px solid var(--border);
   display:flex;flex-direction:column;z-index:2000;
-  transition:left 0.25s ease;overflow-y:auto
+  transition:left 0.3s ease;overflow-y:auto; box-shadow:var(--shadow-md);
 }
-.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:160px;
-  background:linear-gradient(180deg,rgba(124,58,237,0.05),transparent);pointer-events:none}
-.s-logo{padding:20px;border-bottom:1px solid var(--border);position:relative}
-.s-logo-row{display:flex;align-items:center;gap:10px}
-.s-logo-icon{width:36px;height:36px;border-radius:10px;background:var(--grad);
-  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
-  box-shadow:0 3px 10px rgba(99,102,241,0.3)}
-.s-logo-name{font-size:14px;font-weight:700;color:var(--text)}
-.s-logo-sub{font-size:10px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600}
-.s-user{margin:12px;padding:11px 13px;
-  background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(99,102,241,0.04));
-  border:1px solid rgba(124,58,237,0.14);border-radius:12px}
-.s-user-name{font-size:13px;font-weight:600;color:var(--text)}
-.s-user-role{font-size:10px;font-weight:600;margin-top:2px;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.s-section{padding:14px 20px 5px;font-size:10px;font-weight:700;
-  color:var(--text3);text-transform:uppercase;letter-spacing:1.5px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;
-  margin:2px 8px;border-radius:10px;cursor:pointer;color:var(--text2);
-  font-size:13px;font-weight:500;transition:all 0.15s;border-left:3px solid transparent}
-.nav-item:hover{background:rgba(99,102,241,0.06);color:var(--primary)}
-.nav-item.active{background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.06));
-  color:var(--primary);font-weight:600;border-left-color:var(--violet)}
-.nav-ico{font-size:15px;width:20px;text-align:center;flex-shrink:0}
-.s-section2{padding:10px 20px 5px;font-size:10px;font-weight:700;
-  color:var(--text3);text-transform:uppercase;letter-spacing:1.5px}
-.veh-list{flex:1;overflow-y:auto;padding:4px 8px}
-.veh-card{padding:11px 13px;border-radius:10px;cursor:pointer;
-  border:1px solid transparent;margin-bottom:4px;transition:all 0.15s}
-.veh-card:hover{background:var(--surface2);border-color:var(--border)}
-.veh-card.sel{background:linear-gradient(135deg,rgba(124,58,237,0.07),rgba(99,102,241,0.05));
-  border-color:rgba(99,102,241,0.2)}
-.veh-immat{font-size:13px;font-weight:700;color:var(--text)}
-.veh-info{font-size:11px;color:var(--text3);margin-top:2px}
-.veh-live{display:flex;align-items:center;gap:5px;margin-top:5px}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:all 0.3s;flex-shrink:0}
+.s-logo{padding:24px 20px;border-bottom:1px solid var(--border);}
+.s-logo-row{display:flex;align-items:center;gap:12px}
+.s-logo-icon{width:38px;height:38px;border-radius:10px;background:var(--grad);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(79,195,247,0.3)}
+.s-logo-name{font-size:16px;font-weight:700;color:var(--primary-dark)}
+.s-logo-sub{font-size:11px;color:var(--primary);font-weight:600}
+
+.s-user{margin:16px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px}
+.s-user-name{font-size:14px;font-weight:600;color:var(--text)}
+.s-user-role{font-size:11px;font-weight:600;color:var(--primary-dark);margin-top:2px}
+
+.s-section{padding:16px 20px 8px;font-size:11px;font-weight:700;
+  color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;
+  margin:2px 12px;border-radius:12px;cursor:pointer;color:var(--text2);
+  font-size:14px;font-weight:500;transition:all 0.2s;}
+.nav-item:hover{background:var(--surface2);color:var(--primary-dark)}
+.nav-item.active{background:var(--primary-dark);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(11,61,145,0.2)}
+.nav-ico{font-size:16px;width:24px;text-align:center;flex-shrink:0}
+
+.veh-list{flex:1;overflow-y:auto;padding:8px 12px}
+.veh-card{padding:14px;border-radius:12px;cursor:pointer;
+  border:1px solid var(--border);background:var(--surface);margin-bottom:8px;transition:all 0.2s}
+.veh-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-sm)}
+.veh-card.sel{background:var(--surface2);border-color:var(--primary-dark);border-width:2px;}
+.veh-immat{font-size:14px;font-weight:700;color:var(--primary-dark)}
+.veh-info{font-size:12px;color:var(--text2);margin-top:4px}
+.veh-live{display:flex;align-items:center;gap:6px;margin-top:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--text3);transition:all 0.3s;flex-shrink:0}
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.8)}}
-.dot.live{background:var(--green);animation:blink 1.5s infinite}
-.dot-lbl{font-size:10px;color:var(--text3);font-weight:500}
-.s-bottom{padding:12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.btn-logout{width:100%;padding:10px;background:var(--red-bg);color:var(--red);
-  border:1px solid var(--red-bd);border-radius:10px;cursor:pointer;
-  font-size:13px;font-weight:600;font-family:'Inter',sans-serif;
-  display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.15s}
-.btn-logout:hover{background:rgba(244,63,94,0.14)}
+.dot.live{background:var(--green);animation:blink 1.5s infinite;box-shadow:0 0 8px rgba(16,185,129,0.4)}
+.dot-lbl{font-size:11px;color:var(--text2);font-weight:600}
+
+.s-bottom{padding:16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.btn-logout{width:100%;padding:12px;background:var(--surface);color:var(--text2);
+  border:1px solid var(--border);border-radius:12px;cursor:pointer;
+  font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
+.btn-logout:hover{background:rgba(239,68,68,0.1);color:var(--red);border-color:rgba(239,68,68,0.2)}
 
 /* MAIN */
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.topbar{height:56px;padding:0 20px;background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar{height:70px;padding:0 24px;background:rgba(255,255,255,0.9);
+  backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0; z-index:10;}
 .menu-btn{display:none;background:none;border:none;cursor:pointer;
-  font-size:22px;color:var(--text);padding:4px 8px;margin-right:4px}
-.tb-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-0.2px}
-.live-pill{display:flex;align-items:center;gap:6px;padding:5px 13px;
-  background:var(--green-bg);border:1px solid var(--green-bd);
-  border-radius:99px;font-size:11px;color:var(--green);font-weight:600}
+  font-size:20px;color:var(--text);padding:8px;border-radius:8px;}
+.menu-btn:hover{background:var(--surface2);}
+.tb-title{font-size:18px;font-weight:700;color:var(--primary-dark);}
+.live-pill{display:flex;align-items:center;gap:8px;padding:6px 14px;
+  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
+  border-radius:20px;font-size:12px;color:var(--green);font-weight:600}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.live-blink{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
-.upd{font-size:11px;color:var(--text3);margin-left:8px}
+.live-blink{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+.upd{font-size:12px;color:var(--text3);margin-left:12px;font-weight:500;}
 
-.infobar{height:52px;padding:0 20px;background:var(--surface2);
-  border-bottom:1px solid var(--border);display:flex;align-items:center;flex-shrink:0}
-.isep{width:1px;height:24px;background:var(--border);margin:0 16px}
-.iitem{display:flex;flex-direction:column}
-.ilbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
-.ival{font-size:14px;font-weight:700;color:var(--text);margin-top:1px}
-.ival.grad{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* Floating Info Panel for Map */
+.infobar{position:absolute; top:20px; left:50%; transform:translateX(-50%); z-index:1000;
+  background:rgba(255,255,255,0.95); backdrop-filter:blur(10px); border:1px solid var(--border);
+  border-radius:16px; padding:12px 24px; display:flex; align-items:center; gap:20px;
+  box-shadow:var(--shadow-md);}
+.isep{width:1px;height:30px;background:var(--border);}
+.iitem{display:flex;flex-direction:column; align-items:center;}
+.ilbl{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
+.ival{font-size:16px;font-weight:700;color:var(--text);margin-top:2px}
+.ival.grad{color:var(--primary-dark);}
 
-#map{flex:1}
+#map{flex:1; width:100%; height:100%; z-index:1;}
 .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:12px}
-.es-ico{font-size:60px;opacity:0.15}
-.es-title{font-size:16px;font-weight:600;color:var(--text2)}
-.es-sub{font-size:13px;color:var(--text3);text-align:center;padding:0 20px}
+  justify-content:center;gap:16px; background:var(--bg);}
+.es-ico{font-size:64px;color:var(--border)}
+.es-title{font-size:20px;font-weight:700;color:var(--primary-dark)}
+.es-sub{font-size:14px;color:var(--text2);text-align:center;padding:0 24px; max-width:400px;}
 
-.usec{display:none;flex:1;overflow-y:auto;padding:24px}
-.usec.active{display:block}
+.usec{display:none;flex:1;overflow-y:auto;padding:32px; background:var(--bg);}
+.usec.active{display:block; animation:fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 
-/* Historique user */
-.h-filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.h-select{height:38px;padding:0 13px;background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none}
-.h-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
-.htable{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+/* Dash / Hist / Params */
+.stat-cards-container { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:32px; }
+.card-modern { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; position:relative; overflow:hidden; box-shadow:var(--shadow-sm); transition:transform 0.2s;}
+.card-modern:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+
+.h-filters{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.h-select{height:44px;padding:0 16px;background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;font-size:14px;font-family:'Poppins',sans-serif;color:var(--text);outline:none; box-shadow:var(--shadow-sm);}
+.htable{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);}
 .htable-wrap{overflow-x:auto}
-.htable table{width:100%;border-collapse:collapse;min-width:480px}
-.htable th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--text3);
-  text-transform:uppercase;letter-spacing:0.8px;background:var(--surface2);
-  border-bottom:1px solid var(--border)}
-.htable td{padding:11px 14px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border)}
-.htable tr:last-child td{border-bottom:none}
-.htable tr:hover td{background:rgba(99,102,241,0.02)}
+.htable table{width:100%;border-collapse:collapse;min-width:600px}
+.htable th{padding:16px 20px;font-size:12px;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:0.5px;background:var(--surface2); border-bottom:2px solid var(--border)}
+.htable td{padding:16px 20px;font-size:14px;color:var(--text);border-bottom:1px solid var(--border)}
+.htable tr:hover td{background:var(--surface2)}
 
-/* Paramètres user */
-.pcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px}
-.ptitle{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
-.psub{font-size:12px;color:var(--text3);margin-bottom:18px}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;box-shadow:var(--shadow-sm);}
+.ptitle{font-size:18px;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
+.psub{font-size:13px;color:var(--text2);margin-bottom:24px}
 .prow{display:flex;justify-content:space-between;align-items:center;
-  padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+  padding:16px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
 .prow:last-child{border-bottom:none;padding-bottom:0}
-.plbl{font-size:13px;font-weight:500;color:var(--text)}
-.pdesc{font-size:11px;color:var(--text3);margin-top:2px}
-.pbadge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;
-  background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.plbl{font-size:14px;font-weight:600;color:var(--text)}
+.pdesc{font-size:12px;color:var(--text3);margin-top:4px}
+.pbadge{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;
+  background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
 
-/* Overlay mobile */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;backdrop-filter:blur(3px);}
 .overlay.open{display:block}
 
-/* ══ RESPONSIVE MOBILE ══ */
+/* MOBILE */
 @media(max-width:768px){
   body{overflow:auto;height:auto;display:block}
   .sidebar{left:calc(-1 * var(--sidebar-w));box-shadow:none;bottom:0;height:100vh}
   .sidebar.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.15)}
   .main{margin-left:0!important;height:100vh;display:flex;flex-direction:column}
   .menu-btn{display:inline-flex;align-items:center;justify-content:center}
-  .topbar{padding:0 12px;flex-shrink:0;z-index:50;position:relative}
-  .tb-title{font-size:13px}
+  .topbar{padding:0 16px;flex-shrink:0;z-index:50;position:relative; height:60px;}
+  .tb-title{font-size:16px}
   .upd{display:none}
 
-  /* Carte : hauteur limitée, topbar toujours visible */
-  #tab-carte{
-    height:calc(100vh - 56px);
-    flex-direction:column;
-    overflow:hidden;
-    position:relative
-  }
-  #map-wrap{
-    flex:1;
-    min-height:0;
-    overflow:hidden;
-    position:relative
-  }
-  #map{height:100%!important}
+  #tab-carte{height:calc(100vh - 60px);flex-direction:column;overflow:hidden;position:relative}
+  #map-wrap{flex:1;min-height:0;overflow:hidden;position:relative}
+  
+  .infobar{width:90%; border-radius:12px; padding:10px 16px; gap:10px; justify-content:space-between;}
+  .isep{display:none}
+  .iitem{flex-direction:column; gap:2px;}
+  .ilbl{font-size:9px;}
+  .ival{font-size:13px;}
 
-  /* Bouton retour flottant sur la carte */
   #btn-retour-carte{
-    display:none;
-    position:absolute;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:1000;
-    background:linear-gradient(135deg,#7C3AED,#6366F1);
-    color:#fff;
-    border:none;
-    border-radius:99px;
-    padding:10px 22px;
-    font-size:13px;
-    font-weight:600;
-    font-family:Inter,sans-serif;
-    cursor:pointer;
-    box-shadow:0 4px 16px rgba(99,102,241,0.45);
-    align-items:center;
-    gap:7px;
-    white-space:nowrap
+    display:none; position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+    z-index:1000; background:var(--primary-dark); color:#fff; border:none; border-radius:24px;
+    padding:12px 24px; font-size:14px; font-weight:600; cursor:pointer;
+    box-shadow:0 8px 16px rgba(11,61,145,0.3); align-items:center; gap:8px; font-family:'Poppins',sans-serif;
   }
   #btn-retour-carte[data-active="true"]{display:flex}
 
-  .infobar{height:auto!important;padding:6px 12px;flex-wrap:wrap;gap:6px;flex-shrink:0}
-  .isep{display:none}
-  .iitem{flex-direction:row;align-items:center;gap:5px}
-  .ilbl{font-size:9px}
-  .ival{font-size:12px}
-
-  .usec{padding:14px;height:calc(100vh - 56px);overflow-y:auto}
+  .usec{padding:20px;height:calc(100vh - 60px);overflow-y:auto}
+  .stat-cards-container{grid-template-columns:1fr; gap:16px;}
   .h-filters{flex-direction:column}
   .h-select{width:100%}
 }
@@ -1468,8 +1365,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 <div class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-logo-row">
-      <div class="s-logo-icon">🛰️</div>
-      <div><div class="s-logo-name">GPS Tracker</div><div class="s-logo-sub">Suivi en direct</div></div>
+      <div class="s-logo-icon"><i class="fa-solid fa-location-arrow"></i></div>
+      <div><div class="s-logo-name">GPS Tracker</div><div class="s-logo-sub">Espace Client</div></div>
     </div>
   </div>
   <div class="s-user">
@@ -1478,117 +1375,120 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   </div>
   <div class="s-section">Navigation</div>
   <div class="nav-item active" onclick="showTab('dashboard',this)">
-    <span class="nav-ico">📊</span>Tableau de bord
+    <i class="fa-solid fa-chart-line nav-ico"></i> Tableau de bord
   </div>
   <div class="nav-item" onclick="showTab('carte',this)">
-    <span class="nav-ico">🗺️</span>Carte GPS
+    <i class="fa-solid fa-map-location-dot nav-ico"></i> Carte GPS
   </div>
   <div class="nav-item" onclick="showTab('historique',this)">
-    <span class="nav-ico">📍</span>Historique
+    <i class="fa-solid fa-route nav-ico"></i> Historique
   </div>
   <div class="nav-item" onclick="showTab('parametres',this)">
-    <span class="nav-ico">⚙️</span>Paramètres
+    <i class="fa-solid fa-sliders nav-ico"></i> Paramètres
   </div>
-  <div class="s-section2">Mes véhicules</div>
+  <div class="s-section" style="margin-top:10px;">Ma Flotte</div>
   <div class="veh-list" id="veh-list">
-    <div style="padding:14px;color:var(--text3);font-size:12px">Chargement...</div>
+    <div style="padding:14px;color:var(--text3);font-size:13px;text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
   </div>
   <div class="s-bottom">
-    <button class="btn-logout" onclick="doLogout()">🚪 Déconnexion</button>
+    <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-power-off"></i> Déconnexion</button>
   </div>
 </div>
 
 <div class="main">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:4px">
-      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
       <div class="tb-title" id="ttl">Sélectionnez un véhicule</div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
       <div class="live-pill"><div class="live-blink"></div>Temps réel</div>
-      <span class="upd" id="tupd">—</span>
+      <span class="upd" id="tupd"><i class="fa-regular fa-clock"></i> —</span>
     </div>
   </div>
 
-  <!-- TABLEAU DE BORD -->
   <div id="tab-dashboard" class="usec active">
-    <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">Vue d'ensemble de la flotte</h2>
+    <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark);margin-bottom:24px">Vue d'ensemble</h2>
 
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px" id="stat-cards">
-      <div style="background:var(--surface);border:1px solid var(--green-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden">
-        <div style="font-size:22px;margin-bottom:6px">🟢</div>
-        <div style="font-size:30px;font-weight:700;color:var(--green)" id="cnt-mouvement">0</div>
-        <div style="font-size:12px;color:var(--text3);font-weight:500">En mouvement</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--green)"></div>
+    <div class="stat-cards-container" id="stat-cards">
+      <div class="card-modern" style="border-top:4px solid var(--green);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fa-solid fa-truck-fast"></i></div>
+        </div>
+        <div style="font-size:36px;font-weight:700;color:var(--green);line-height:1;" id="cnt-mouvement">0</div>
+        <div style="font-size:14px;color:var(--text2);font-weight:600;margin-top:8px;">En mouvement</div>
       </div>
-      <div style="background:var(--surface);border:1px solid #FDE68A;border-radius:14px;padding:18px;position:relative;overflow:hidden">
-        <div style="font-size:22px;margin-bottom:6px">🟡</div>
-        <div style="font-size:30px;font-weight:700;color:#D97706" id="cnt-immobile">0</div>
-        <div style="font-size:12px;color:var(--text3);font-weight:500">Immobile</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:#F59E0B"></div>
+      <div class="card-modern" style="border-top:4px solid var(--amber);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(245,158,11,0.1);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fa-solid fa-square-parking"></i></div>
+        </div>
+        <div style="font-size:36px;font-weight:700;color:var(--amber);line-height:1;" id="cnt-immobile">0</div>
+        <div style="font-size:14px;color:var(--text2);font-weight:600;margin-top:8px;">Immobile</div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--red-bd);border-radius:14px;padding:18px;position:relative;overflow:hidden">
-        <div style="font-size:22px;margin-bottom:6px">🔴</div>
-        <div style="font-size:30px;font-weight:700;color:var(--red)" id="cnt-signal">0</div>
-        <div style="font-size:12px;color:var(--text3);font-weight:500">Sans signal</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--red)"></div>
+      <div class="card-modern" style="border-top:4px solid var(--red);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,0.1);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fa-solid fa-satellite-dish"></i></div>
+        </div>
+        <div style="font-size:36px;font-weight:700;color:var(--red);line-height:1;" id="cnt-signal">0</div>
+        <div style="font-size:14px;color:var(--text2);font-weight:600;margin-top:8px;">Sans signal</div>
       </div>
     </div>
 
-    <div id="dash-list" style="display:flex;flex-direction:column;gap:10px">
-      <div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">Chargement...</div>
+    <h3 style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:16px;">État de la flotte</h3>
+    <div id="dash-list" style="display:flex;flex-direction:column;gap:12px">
+      <div style="text-align:center;padding:40px;color:var(--text3);font-size:14px"><i class="fa-solid fa-spinner fa-spin"></i> Analyse en cours...</div>
     </div>
   </div>
 
-  <!-- CARTE -->
-  <div id="tab-carte" style="flex:1;display:none;flex-direction:column;overflow:hidden">
-    <div class="infobar" id="infobar" style="display:none">
-      <div class="iitem">
-        <span class="ilbl">Latitude</span>
-        <span class="ival grad" id="ilat">—</span>
-      </div>
-      <div class="isep"></div>
-      <div class="iitem">
-        <span class="ilbl">Longitude</span>
-        <span class="ival grad" id="ilng">—</span>
-      </div>
-      <div class="isep"></div>
-      <div class="iitem">
-        <span class="ilbl">Vitesse</span>
-        <span class="ival" id="ispd">—</span>
-      </div>
-      <div class="isep"></div>
-      <div class="iitem">
-        <span class="ilbl">Satellites</span>
-        <span class="ival" id="isat">—</span>
-      </div>
-    </div>
+  <div id="tab-carte" style="flex:1;display:none;flex-direction:column;overflow:hidden; position:relative;">
+    
     <div id="map-wrap" style="flex:1;display:none;position:relative">
-      <div id="map" style="height:100%"></div>
+      <div class="infobar" id="infobar">
+        <div class="iitem">
+          <span class="ilbl">Latitude</span>
+          <span class="ival grad" id="ilat">—</span>
+        </div>
+        <div class="isep"></div>
+        <div class="iitem">
+          <span class="ilbl">Longitude</span>
+          <span class="ival grad" id="ilng">—</span>
+        </div>
+        <div class="isep"></div>
+        <div class="iitem">
+          <span class="ilbl">Vitesse</span>
+          <span class="ival" id="ispd">—</span>
+        </div>
+        <div class="isep"></div>
+        <div class="iitem">
+          <span class="ilbl">Satellites</span>
+          <span class="ival" id="isat">—</span>
+        </div>
+      </div>
+      <div id="map"></div>
       <button id="btn-retour-carte" onclick="toggleMenu()">
-        ☰ Menu
+        <i class="fa-solid fa-bars"></i> Menu
       </button>
     </div>
+    
     <div class="empty-state" id="empty">
-      <div class="es-ico">🗺️</div>
+      <div class="es-ico"><i class="fa-solid fa-map-location-dot"></i></div>
       <div class="es-title">Aucun véhicule sélectionné</div>
-      <div class="es-sub">Appuyez sur ☰ puis choisissez un véhicule pour démarrer le suivi</div>
+      <div class="es-sub">Veuillez sélectionner un véhicule dans le menu latéral pour débuter le suivi en temps réel.</div>
     </div>
   </div>
 
-  <!-- HISTORIQUE -->
   <div id="tab-historique" class="usec">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-      <h2 style="font-size:16px;font-weight:700;color:var(--text)">Historique GPS</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark)">Historique des trajets</h2>
     </div>
     <div class="h-filters">
-      <select class="h-select" id="uhv" onchange="loadUH()">
+      <select class="h-select" id="uhv" onchange="loadUH()" style="min-width:250px;">
         <option value="">Sélectionnez un véhicule...</option>
       </select>
       <select class="h-select" id="uhl" onchange="loadUH()">
-        <option value="50">50 positions</option>
-        <option value="100">100 positions</option>
-        <option value="200">200 positions</option>
+        <option value="50">50 dernières positions</option>
+        <option value="100">100 dernières positions</option>
+        <option value="200">200 dernières positions</option>
       </select>
     </div>
     <div class="htable">
@@ -1596,10 +1496,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
         <table>
           <thead><tr>
             <th>#</th><th>Date / Heure</th><th>Latitude</th>
-            <th>Longitude</th><th>Vitesse</th><th>Satellites</th>
+            <th>Longitude</th><th>Vitesse</th><th>Signal</th>
           </tr></thead>
           <tbody id="uhtb">
-            <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">
+            <tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)">
+              <i class="fa-solid fa-list" style="font-size:24px; margin-bottom:12px; display:block;"></i>
               Sélectionnez un véhicule pour afficher l'historique
             </td></tr>
           </tbody>
@@ -1608,35 +1509,38 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
     </div>
   </div>
 
-  <!-- PARAMÈTRES -->
   <div id="tab-parametres" class="usec">
-    <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">Paramètres</h2>
+    <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark);margin-bottom:24px">Paramètres</h2>
+    
     <div class="pcard">
-      <div class="ptitle">Mon compte</div>
-      <div class="psub">Informations de votre compte propriétaire</div>
-      <div class="prow"><div><div class="plbl">Nom complet</div><div class="pdesc" id="pcn">—</div></div><span class="pbadge">Actif</span></div>
+      <div class="ptitle">Mon profil</div>
+      <div class="psub">Informations associées à votre compte</div>
+      <div class="prow"><div><div class="plbl">Nom complet</div><div class="pdesc" id="pcn">—</div></div><span class="pbadge"><i class="fa-solid fa-check"></i> Actif</span></div>
       <div class="prow"><div><div class="plbl">Email</div><div class="pdesc" id="pce">—</div></div></div>
       <div class="prow"><div><div class="plbl">Téléphone</div><div class="pdesc" id="pct">—</div></div></div>
       <div class="prow"><div><div class="plbl">Membre depuis</div><div class="pdesc" id="pcd">—</div></div></div>
     </div>
+
     <div class="pcard">
       <div class="ptitle">Mes véhicules</div>
-      <div class="psub">Véhicules associés à votre compte</div>
-      <div id="pcv">Chargement...</div>
+      <div class="psub">Flotte active sous surveillance</div>
+      <div id="pcv"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
     </div>
+
     <div class="pcard">
-      <div class="ptitle">Notifications</div>
-      <div class="psub">Alertes en temps réel sur votre téléphone</div>
+      <div class="ptitle">Notifications & Alertes</div>
+      <div class="psub">Soyez prévenu en cas de perte de signal prolongée</div>
       <div id="notif-wrap">
-        <div style="font-size:12px;color:var(--text3)">Chargement...</div>
+        <div style="font-size:13px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i> Vérification...</div>
       </div>
     </div>
+
     <div class="pcard">
-      <div class="ptitle">Système</div>
-      <div class="psub">Informations sur l'application</div>
+      <div class="ptitle">À propos du système</div>
+      <div class="psub">Détails de l'application</div>
       <div class="prow">
-        <div><div class="plbl">GPS Tracker v3.0</div><div class="pdesc">Ocean Blue + Violet · Style Stripe</div></div>
-        <span class="pbadge">Flask · SQLite</span>
+        <div><div class="plbl">GPS Tracker SaaS</div><div class="pdesc">Version 3.1 — Modern UI</div></div>
+        <span class="pbadge" style="background:var(--surface2); color:var(--text2); border-color:var(--border);"><i class="fa-solid fa-code"></i> Python / Flask</span>
       </div>
     </div>
   </div>
@@ -1660,7 +1564,6 @@ function showTab(n,el){
   document.getElementById("tab-carte").style.display=n==="carte"?"flex":"none";
   document.querySelectorAll(".usec").forEach(s=>s.classList.remove("active"));
   if(n!=="carte")document.getElementById("tab-"+n).classList.add("active");
-  // Cacher bouton retour si on quitte la carte
   const btnRetour=document.getElementById("btn-retour-carte");
   if(btnRetour)delete btnRetour.dataset.active;
   if(n==="dashboard")loadDashboard();
@@ -1669,7 +1572,7 @@ function showTab(n,el){
   closeMenu();
 }
 
-/* ── Tableau de bord : mouvement / immobile / sans signal ── */
+/* ── Tableau de bord ── */
 let _dashInterval=null;
 
 async function loadDashboard(){
@@ -1686,44 +1589,44 @@ async function loadDashboard(){
 
     const list = document.getElementById("dash-list");
     if(!data.length){
-      list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">Aucun véhicule associé</div>';
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;background:var(--surface);border-radius:16px;"><i class="fa-solid fa-car-side" style="font-size:32px;margin-bottom:12px;"></i><br>Aucun véhicule n\\'est actuellement assigné à votre compte.</div>';
       return;
     }
 
     const config = {
-      mouvement:  {icone:'🟢', label:'En mouvement', couleur:'var(--green)', bg:'var(--green-bg)', bd:'var(--green-bd)'},
-      immobile:   {icone:'🟡', label:'Immobile',      couleur:'#D97706',     bg:'rgba(245,158,11,0.08)', bd:'#FDE68A'},
-      sans_signal:{icone:'🔴', label:'Sans signal',   couleur:'var(--red)',  bg:'var(--red-bg)', bd:'var(--red-bd)'}
+      mouvement:  {icone:'<i class="fa-solid fa-truck-fast"></i>', label:'En mouvement', couleur:'var(--green)', bg:'rgba(16,185,129,0.1)', bd:'rgba(16,185,129,0.2)'},
+      immobile:   {icone:'<i class="fa-solid fa-square-parking"></i>', label:'Immobile',      couleur:'var(--amber)',     bg:'rgba(245,158,11,0.1)', bd:'rgba(245,158,11,0.2)'},
+      sans_signal:{icone:'<i class="fa-solid fa-satellite-dish"></i>', label:'Sans signal',   couleur:'var(--red)',  bg:'rgba(239,68,68,0.1)', bd:'rgba(239,68,68,0.2)'}
     };
 
     list.innerHTML = data.map(v=>{
       const cfg = config[v.statut];
       const infoSignal = v.statut==='sans_signal'
         ? (v.minutes_sans_signal!==null
-            ? `Aucun signal depuis ${Math.round(v.minutes_sans_signal)} min`
-            : 'Aucune position enregistrée')
-        : `${(v.vitesse||0).toFixed(0)} km/h · ${v.satellites||0} satellites`;
+            ? `Perte de signal depuis ${Math.round(v.minutes_sans_signal)} min`
+            : 'Aucune donnée enregistrée')
+        : `<i class="fa-solid fa-gauge-high"></i> ${(v.vitesse||0).toFixed(0)} km/h &nbsp; <i class="fa-solid fa-satellite"></i> ${v.satellites||0} sats`;
 
       return `<div onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
         style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;
-          background:var(--surface);border:1px solid var(--border);border-radius:12px;
-          padding:14px 16px;transition:all 0.15s"
-        onmouseover="this.style.borderColor='${cfg.couleur}'"
-        onmouseout="this.style.borderColor='var(--border)'">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:38px;height:38px;border-radius:10px;background:${cfg.bg};
-            display:flex;align-items:center;justify-content:center;font-size:17px">${cfg.icone}</div>
+          background:var(--surface);border:1px solid var(--border);border-radius:16px;
+          padding:20px;transition:all 0.2s; box-shadow:var(--shadow-sm);"
+        onmouseover="this.style.borderColor='${cfg.couleur}'; this.style.transform='translateY(-2px)';"
+        onmouseout="this.style.borderColor='var(--border)'; this.style.transform='translateY(0)';">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="width:48px;height:48px;border-radius:12px;background:${cfg.bg};color:${cfg.couleur};
+            display:flex;align-items:center;justify-content:center;font-size:20px">${cfg.icone}</div>
           <div>
-            <div style="font-size:13px;font-weight:700;color:var(--text)">${v.immatriculation}</div>
-            <div style="font-size:11px;color:var(--text3)">${v.marque} ${v.modele}</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text)">${v.immatriculation}</div>
+            <div style="font-size:13px;color:var(--text2)">${v.marque} ${v.modele}</div>
           </div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;
+          <div style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;
             background:${cfg.bg};color:${cfg.couleur};border:1px solid ${cfg.bd};display:inline-block">
             ${cfg.label}
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">${infoSignal}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:8px;font-weight:500;">${infoSignal}</div>
         </div>
       </div>`;
     }).join("");
@@ -1734,14 +1637,15 @@ async function loadDashboard(){
 
 function initMap(){
   if(map)return;
-  map=L.map("map",{zoomControl:true}).setView([14.8500,-15.8833],15);
+  map=L.map("map",{zoomControl:false}).setView([14.8500,-15.8833],15);
+  L.control.zoom({position: 'bottomright'}).addTo(map);
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
-    attribution:"© Esri, Maxar, Earthstar Geographics",
+    attribution:"© Esri",
     maxZoom:20,
-        maxNativeZoom:17,
+    maxNativeZoom:17,
     minZoom:3
   }).addTo(map);
-  poly=L.polyline([],{color:"#FFD700",weight:4,opacity:0.9}).addTo(map);
+  poly=L.polyline([],{color:"#4FC3F7",weight:5,opacity:0.9,lineCap:"round",lineJoin:"round"}).addTo(map);
 }
 
 async function loadVehicules(){
@@ -1752,14 +1656,13 @@ async function loadVehicules(){
   document.getElementById("uname").textContent=m.prenom+" "+m.nom;
   const list=document.getElementById("veh-list");
   if(!vehs.length){
-    list.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Aucun véhicule associé</div>';
+    list.innerHTML='<div style="padding:20px;color:var(--text3);font-size:13px;text-align:center;">Aucun véhicule</div>';
     return;
   }
   list.innerHTML=vehs.map(v=>`
     <div class="veh-card" id="vc${v.id}" onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')">
       <div class="veh-immat">${v.immatriculation}</div>
-      <div class="veh-info">${v.marque} ${v.modele} · ${v.type_vehicule}</div>
-      <div class="veh-info">${v.couleur||""} ${v.annee||""}</div>
+      <div class="veh-info">${v.marque} ${v.modele}</div>
       <div class="veh-live">
         <div class="dot" id="dot${v.id}"></div>
         <span class="dot-lbl" id="dlbl${v.id}">En attente</span>
@@ -1769,23 +1672,19 @@ async function loadVehicules(){
 
 async function selV(id,label,immat){
   document.querySelectorAll(".veh-card").forEach(c=>c.classList.remove("sel"));
-  document.getElementById("vc"+id).classList.add("sel");
+  if(document.getElementById("vc"+id)) document.getElementById("vc"+id).classList.add("sel");
   selId=id;
   document.getElementById("ttl").textContent=immat+" — "+label;
   document.getElementById("empty").style.display="none";
-  document.getElementById("infobar").style.display="flex";
   document.getElementById("map-wrap").style.display="block";
-  // Affiche bouton retour sur mobile (géré par CSS media query, juste on l'active)
   const btnRetour = document.getElementById("btn-retour-carte");
   if(btnRetour) btnRetour.dataset.active="true";
-  /* Ferme le menu sur mobile après sélection */
   closeMenu();
-  /* Bascule vers l'onglet carte */
   document.getElementById("tab-carte").style.display="flex";
   document.querySelectorAll(".usec").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
   const navItems = document.querySelectorAll(".nav-item");
-  if(navItems[1]) navItems[1].classList.add("active"); // "Carte GPS" est en 2e position
+  if(navItems[1]) navItems[1].classList.add("active");
   initMap();
   if(poly)poly.setLatLngs([]);
   if(marker){map.removeLayer(marker);marker=null;}
@@ -1805,34 +1704,34 @@ async function refresh(){
     const p=await res.json();
     const ll=[p.latitude,p.longitude];
     const icon=L.divIcon({
-      html:`<div style="position:relative;width:24px;height:24px">
-        <div style="position:absolute;top:0;left:0;width:24px;height:24px;
-          background:rgba(244,63,94,0.35);border-radius:50%;
-          animation:pulseMarker 1.5s infinite"></div>
-        <div style="position:absolute;top:5px;left:5px;width:14px;height:14px;
-          background:linear-gradient(135deg,#F43F5E,#DC2626);
+      html:`<div style="position:relative;width:28px;height:28px">
+        <div style="position:absolute;top:0;left:0;width:28px;height:28px;
+          background:rgba(79, 195, 247, 0.4);border-radius:50%;
+          animation:pulseMarker 2s infinite"></div>
+        <div style="position:absolute;top:6px;left:6px;width:16px;height:16px;
+          background:linear-gradient(135deg, #0B3D91, #4FC3F7);
           border:3px solid #fff;border-radius:50%;
-          box-shadow:0 2px 8px rgba(0,0,0,0.5)"></div>
+          box-shadow:0 4px 10px rgba(0,0,0,0.3)"></div>
       </div>
       <style>
         @keyframes pulseMarker{
-          0%{transform:scale(0.6);opacity:0.8}
-          100%{transform:scale(1.8);opacity:0}
+          0%{transform:scale(0.6);opacity:1}
+          100%{transform:scale(2);opacity:0}
         }
       </style>`,
-      iconSize:[24,24],iconAnchor:[12,12]});
+      iconSize:[28,28],iconAnchor:[14,14]});
     if(!marker){marker=L.marker(ll,{icon}).addTo(map);map.setView(ll,17);}
     else marker.setLatLng(ll);
     poly.addLatLng(ll);
     document.getElementById("ilat").textContent=p.latitude.toFixed(6)+"°";
     document.getElementById("ilng").textContent=p.longitude.toFixed(6)+"°";
-    document.getElementById("ispd").textContent=(p.vitesse||0).toFixed(1)+" km/h";
-    document.getElementById("isat").textContent=p.satellites||"—";
-    document.getElementById("tupd").textContent="Mis à jour "+new Date().toLocaleTimeString();
+    document.getElementById("ispd").innerHTML= `<i class="fa-solid fa-gauge-high" style="color:var(--text3);font-size:12px;margin-right:4px;"></i>` + (p.vitesse||0).toFixed(1)+" km/h";
+    document.getElementById("isat").innerHTML= `<i class="fa-solid fa-satellite" style="color:var(--text3);font-size:12px;margin-right:4px;"></i>` + (p.satellites||"—");
+    document.getElementById("tupd").innerHTML= `<i class="fa-solid fa-rotate"></i> ` + new Date().toLocaleTimeString();
     const dot=document.getElementById("dot"+selId);
     const lbl=document.getElementById("dlbl"+selId);
     if(dot)dot.className="dot live";
-    if(lbl)lbl.textContent="En direct";
+    if(lbl)lbl.innerHTML="Live Tracker";
   }catch(e){}
 }
 
@@ -1849,19 +1748,17 @@ async function loadUH(){
   const data=await fetch(`/api/positions/${vid}?limit=${lim}`).then(r=>r.json());
   const tb=document.getElementById("uhtb");
   if(!data.length){
-    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">Aucune position enregistrée</td></tr>';
+    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)"><i class="fa-solid fa-clock-rotate-left" style="font-size:24px; margin-bottom:12px; display:block;"></i>Aucune donnée pour ce véhicule</td></tr>';
     return;
   }
   const rev=[...data].reverse();
   tb.innerHTML=rev.map((p,i)=>`<tr>
-    <td style="color:var(--text3)">#${data.length-i}</td>
-    <td>${p.created_at||"—"}</td>
-    <td style="font-family:monospace;font-weight:600;font-size:12px;
-      background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${(p.latitude||0).toFixed(6)}</td>
-    <td style="font-family:monospace;font-weight:600;font-size:12px;
-      background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${(p.longitude||0).toFixed(6)}</td>
-    <td style="font-weight:600">${(p.vitesse||0).toFixed(1)} km/h</td>
-    <td>${p.satellites||"—"}</td>
+    <td style="color:var(--text3);font-weight:600">#${data.length-i}</td>
+    <td style="color:var(--text2);font-size:13px"><i class="fa-regular fa-clock" style="margin-right:6px"></i>${p.created_at||"—"}</td>
+    <td style="font-family:monospace;font-weight:600;color:var(--primary-dark)">${(p.latitude||0).toFixed(6)}</td>
+    <td style="font-family:monospace;font-weight:600;color:var(--primary-dark)">${(p.longitude||0).toFixed(6)}</td>
+    <td style="font-weight:600; color:${(p.vitesse||0)>80?'var(--red)':'var(--text)'}">${(p.vitesse||0).toFixed(1)} km/h</td>
+    <td><i class="fa-solid fa-satellite" style="color:var(--text3);margin-right:6px"></i>${p.satellites||"—"}</td>
   </tr>`).join("");
 }
 
@@ -1873,15 +1770,17 @@ async function loadParams(){
   document.getElementById("pcd").textContent=(meD.date_creation||"").slice(0,10);
   document.getElementById("pcv").innerHTML=vehD.length
     ?vehD.map(v=>`<div style="display:flex;justify-content:space-between;align-items:center;
-        padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">${v.immatriculation}</div>
-          <div style="font-size:11px;color:var(--text3)">${v.marque} ${v.modele} · ${v.type_vehicule}</div>
+        padding:16px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--primary-dark)"><i class="fa-solid fa-car"></i></div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--text)">${v.immatriculation}</div>
+            <div style="font-size:13px;color:var(--text2)">${v.marque} ${v.modele}</div>
+          </div>
         </div>
-        <span class="pbadge">Actif</span>
+        <span class="pbadge"><i class="fa-solid fa-satellite-dish"></i> Actif</span>
       </div>`).join("")
-    :'<div style="color:var(--text3);font-size:13px">Aucun véhicule associé</div>';
-  // Affiche le statut des notifications
+    :'<div style="color:var(--text3);font-size:14px">Aucun véhicule assigné à votre compte.</div>';
   await refreshNotifStatus();
 }
 
@@ -1899,53 +1798,48 @@ async function refreshNotifStatus(){
   const wrap=document.getElementById("notif-wrap");
   if(!wrap)return;
   if(!("Notification" in window)||!("serviceWorker" in navigator)){
-    wrap.innerHTML='<div style="font-size:12px;color:var(--text3)">Notifications non supportées par ce navigateur.</div>';
+    wrap.innerHTML='<div style="font-size:13px;color:var(--text3)"><i class="fa-solid fa-triangle-exclamation"></i> Notifications non supportées par ce navigateur.</div>';
     return;
   }
   const res=await fetch("/api/push/status").then(r=>r.json());
   const abonne=res.subscribed;
   wrap.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
       <div>
-        <div style="font-size:13px;font-weight:600;color:var(--text)">Notifications push</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:3px">
-          Alertes si un véhicule perd le réseau depuis 5 min
+        <div style="font-size:15px;font-weight:600;color:var(--text)"><i class="fa-solid fa-bell" style="color:var(--primary); margin-right:8px;"></i>Alertes de sécurité</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px">
+          Recevez des notifications si un véhicule perd le réseau.
         </div>
       </div>
       <button onclick="${abonne?'desactiverNotifs':'activerNotifs'}()"
-        style="padding:8px 18px;border-radius:10px;border:none;cursor:pointer;
-          font-size:13px;font-weight:600;font-family:Inter,sans-serif;
-          background:${abonne?'rgba(244,63,94,0.08)':'linear-gradient(135deg,#7C3AED,#6366F1)'};
-          color:${abonne?'#F43F5E':'#fff'};
-          border:${abonne?'1px solid rgba(244,63,94,0.2)':'none'}">
-        ${abonne?'🔕 Désactiver':'🔔 Activer'}
+        style="padding:10px 24px;border-radius:12px;border:none;cursor:pointer;
+          font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;
+          background:${abonne?'var(--surface2)':'var(--primary-dark)'};
+          color:${abonne?'var(--red)':'#fff'};
+          border:1px solid ${abonne?'var(--border)':'transparent'}; transition:all 0.2s; box-shadow:${abonne?'none':'0 4px 12px rgba(11,61,145,0.2)'};">
+        ${abonne?'<i class="fa-solid fa-bell-slash"></i> Désactiver':'<i class="fa-solid fa-bell"></i> Activer'}
       </button>
     </div>
-    <div id="notif-msg" style="margin-top:10px;font-size:12px;color:var(--text3)">
-      Statut : ${abonne?'<span style="color:#10B981;font-weight:600">✅ Activées</span>':'<span style="color:#9CA3AF">❌ Désactivées</span>'}
+    <div id="notif-msg" style="margin-top:16px;font-size:13px;font-weight:500;">
+      Statut : ${abonne?'<span style="color:var(--green)"><i class="fa-solid fa-check-double"></i> Alertes activées</span>':'<span style="color:var(--text3)"><i class="fa-solid fa-minus"></i> Alertes désactivées</span>'}
     </div>`;
 }
 
 async function activerNotifs(){
   const msg=document.getElementById("notif-msg");
   try{
-    // Demande permission
     const perm=await Notification.requestPermission();
     if(perm!=="granted"){
-      if(msg)msg.innerHTML='<span style="color:#F43F5E">Permission refusée. Autorisez les notifications dans les paramètres du navigateur.</span>';
+      if(msg)msg.innerHTML='<span style="color:var(--red)"><i class="fa-solid fa-circle-xmark"></i> Permission refusée par le navigateur.</span>';
       return;
     }
-    // Récupère la clé publique VAPID
     const{publicKey}=await fetch("/api/push/vapid-public-key").then(r=>r.json());
-    // Enregistre le service worker
     const reg=await navigator.serviceWorker.register("/sw.js");
     await navigator.serviceWorker.ready;
-    // S'abonne aux push
     const sub=await reg.pushManager.subscribe({
       userVisibleOnly:true,
       applicationServerKey:urlBase64ToUint8Array(publicKey)
     });
-    // Envoie l'abonnement au serveur
     await fetch("/api/push/subscribe",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -1953,13 +1847,12 @@ async function activerNotifs(){
     });
     await refreshNotifStatus();
   }catch(e){
-    if(msg)msg.innerHTML=`<span style="color:#F43F5E">Erreur : ${e.message}</span>`;
+    if(msg)msg.innerHTML=`<span style="color:var(--red)"><i class="fa-solid fa-circle-exclamation"></i> Erreur : ${e.message}</span>`;
   }
 }
 
 async function desactiverNotifs(){
   await fetch("/api/push/unsubscribe",{method:"POST"});
-  // Désabonne aussi le navigateur
   try{
     const reg=await navigator.serviceWorker.getRegistration("/sw.js");
     if(reg){
@@ -1975,5 +1868,3 @@ loadVehicules();
 loadDashboard();
 setInterval(loadDashboard, 30000);
 </script></body></html>"""
-
-# ─────────────────────────────────────────────────────────────
