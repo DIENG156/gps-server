@@ -1,4 +1,3 @@
-
 # ============================================================
 #  templates.py — GPS Tracker v3 (SaaS Modern Redesign)
 #  Toutes les pages HTML (Login, Admin, User, Reset)
@@ -1435,10 +1434,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   <div class="nav-item" onclick="showTab('parametres',this)">
     <i class="fa-solid fa-sliders nav-ico"></i> Paramètres
   </div>
-  <div class="s-section" style="margin-top:10px;">Ma Flotte</div>
-  <div class="veh-list" id="veh-list">
-    <div style="padding:14px;color:var(--text3);font-size:13px;text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
-  </div>
+  <div style="flex:1"></div>
   <div class="s-bottom">
     <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-power-off"></i> Déconnexion</button>
   </div>
@@ -1489,40 +1485,70 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
     </div>
   </div>
  
-  <div id="tab-carte" style="flex:1;display:none;flex-direction:column;overflow:hidden; position:relative;">
-    
-    <div id="map-wrap" style="flex:1;display:none;position:relative">
-      <div class="infobar" id="infobar">
-        <div class="iitem">
-          <span class="ilbl">Latitude</span>
-          <span class="ival grad" id="ilat">—</span>
-        </div>
-        <div class="isep"></div>
-        <div class="iitem">
-          <span class="ilbl">Longitude</span>
-          <span class="ival grad" id="ilng">—</span>
-        </div>
-        <div class="isep"></div>
-        <div class="iitem">
-          <span class="ilbl">Vitesse</span>
-          <span class="ival" id="ispd">—</span>
-        </div>
-        <div class="isep"></div>
-        <div class="iitem">
-          <span class="ilbl">Satellites</span>
-          <span class="ival" id="isat">—</span>
-        </div>
+  <div id="tab-carte" style="flex:1;display:none;overflow:hidden; position:relative;">
+ 
+    <div class="fleet-panel" id="fleet-panel">
+      <div class="fleet-search">
+        <div class="iw"><i class="fa-solid fa-magnifying-glass ii"></i>
+          <input id="fleet-search-input" placeholder="Rechercher (immat, marque...)" oninput="renderFleetPanel()"/></div>
       </div>
-      <div id="map"></div>
-      <button id="btn-retour-carte" onclick="toggleMenu()">
-        <i class="fa-solid fa-bars"></i> Menu
-      </button>
+      <div class="fleet-filters">
+        <button class="filter-pill active" data-f="all" onclick="setFleetFilter('all',this)">Tous</button>
+        <button class="filter-pill" data-f="mouvement" onclick="setFleetFilter('mouvement',this)">
+          <i class="fa-solid fa-circle" style="color:var(--green);font-size:6px"></i> En route</button>
+        <button class="filter-pill" data-f="immobile" onclick="setFleetFilter('immobile',this)">
+          <i class="fa-solid fa-circle" style="color:var(--amber);font-size:6px"></i> Immobile</button>
+        <button class="filter-pill" data-f="sans_signal" onclick="setFleetFilter('sans_signal',this)">
+          <i class="fa-solid fa-circle" style="color:var(--red);font-size:6px"></i> Signal</button>
+      </div>
+      <div class="fleet-count" id="fleet-count">Chargement...</div>
+      <div class="fleet-cards" id="fleet-cards">
+        <div style="padding:14px;color:var(--text3);font-size:13px;text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
+      </div>
     </div>
-    
-    <div class="empty-state" id="empty">
-      <div class="es-ico"><i class="fa-solid fa-map-location-dot"></i></div>
-      <div class="es-title">Aucun véhicule sélectionné</div>
-      <div class="es-sub">Veuillez sélectionner un véhicule dans le menu latéral pour débuter le suivi en temps réel.</div>
+ 
+    <div id="map-column" style="flex:1;display:flex;flex-direction:column;position:relative;min-width:0;">
+      <div id="map-wrap" style="flex:1;display:none;position:relative">
+        <div id="map"></div>
+        <button class="fleet-toggle-btn" id="fleet-toggle-btn" onclick="toggleFleetPanel()"><i class="fa-solid fa-list"></i></button>
+        <div class="detail-card" id="detail-card" style="display:none">
+          <div class="dc-head">
+            <div class="dc-head-info">
+              <div class="dc-ico"><i class="fa-solid fa-car" id="dc-vico"></i></div>
+              <div>
+                <div class="dc-immat" id="dc-immat">—</div>
+                <div class="dc-model" id="dc-model">—</div>
+              </div>
+            </div>
+            <button class="dc-close" onclick="closeDetailCard()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="dc-body">
+            <div class="dc-status-row">
+              <span class="veh-status-badge" id="dc-badge">—</span>
+              <span style="font-size:11px;color:var(--text3);font-weight:500" id="dc-updated">—</span>
+            </div>
+            <div class="dc-grid">
+              <div class="dc-item"><div class="dc-item-lbl">Vitesse</div><div class="dc-item-val" id="dc-speed">—</div></div>
+              <div class="dc-item"><div class="dc-item-lbl">Satellites</div><div class="dc-item-val" id="dc-sat">—</div></div>
+              <div class="dc-item"><div class="dc-item-lbl">Latitude</div><div class="dc-item-val" id="dc-lat" style="font-size:12px;font-family:monospace">—</div></div>
+              <div class="dc-item"><div class="dc-item-lbl">Longitude</div><div class="dc-item-val" id="dc-lng" style="font-size:12px;font-family:monospace">—</div></div>
+            </div>
+          </div>
+          <div class="dc-foot">
+            <button onclick="goToHistorique()"><i class="fa-solid fa-route"></i> Historique</button>
+            <button onclick="recenterMap()"><i class="fa-solid fa-crosshairs"></i> Recentrer</button>
+          </div>
+        </div>
+        <button id="btn-retour-carte" onclick="toggleMenu()">
+          <i class="fa-solid fa-bars"></i> Menu
+        </button>
+      </div>
+ 
+      <div class="empty-state" id="empty">
+        <div class="es-ico"><i class="fa-solid fa-map-location-dot"></i></div>
+        <div class="es-title">Aucun véhicule sélectionné</div>
+        <div class="es-sub">Choisissez un véhicule dans le panneau flotte pour démarrer le suivi en temps réel.</div>
+      </div>
     </div>
   </div>
  
@@ -1596,7 +1622,8 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 </div>
  
 <script>
-let map=null,marker=null,poly=null,selId=null,interval=null,meD=null,vehD=[];
+let map=null,marker=null,poly=null,startMarker=null,selId=null,interval=null,meD=null,vehD=[];
+let vehStatusMap={}, fleetFilter="all";
  
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("open");
@@ -1605,6 +1632,12 @@ function toggleMenu(){
 function closeMenu(){
   document.getElementById("sidebar").classList.remove("open");
   document.getElementById("overlay").classList.remove("open");
+}
+function toggleFleetPanel(){
+  document.getElementById("fleet-panel").classList.toggle("open");
+}
+function closeFleetPanel(){
+  document.getElementById("fleet-panel").classList.remove("open");
 }
  
 function showTab(n,el){
@@ -1616,18 +1649,19 @@ function showTab(n,el){
   const btnRetour=document.getElementById("btn-retour-carte");
   if(btnRetour)delete btnRetour.dataset.active;
   if(n==="dashboard")loadDashboard();
+  if(n==="carte")renderFleetPanel();
   if(n==="historique")initUH();
   if(n==="parametres")loadParams();
   closeMenu();
 }
  
 /* ── Tableau de bord ── */
-let _dashInterval=null;
- 
 async function loadDashboard(){
   try{
     const data = await fetch("/api/user/vehicules/statut").then(r=>r.json());
-    syncSidebarStatusFromData(data);
+    data.forEach(v=>vehStatusMap[v.id]=v);
+    updateFleetCardsStatus();
+    updateDetailCardLive();
  
     const nbMouvement = data.filter(v=>v.statut==='mouvement').length;
     const nbImmobile  = data.filter(v=>v.statut==='immobile').length;
@@ -1657,7 +1691,7 @@ async function loadDashboard(){
             : 'Aucune donnée enregistrée')
         : `<i class="fa-solid fa-gauge-high"></i> ${(v.vitesse||0).toFixed(0)} km/h &nbsp; <i class="fa-solid fa-satellite"></i> ${v.satellites||0} sats`;
  
-      return `<div onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
+      return `<div onclick="showTab('carte',document.querySelectorAll('.nav-item')[1]); selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
         style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;
           background:var(--surface);border:1px solid var(--border);border-radius:16px;
           padding:20px;transition:all 0.2s; box-shadow:var(--shadow-sm);"
@@ -1704,13 +1738,40 @@ async function loadVehicules(){
     fetch("/api/me").then(r=>r.json())]);
   meD=m; vehD=vehs;
   document.getElementById("uname").textContent=m.prenom+" "+m.nom;
-  const list=document.getElementById("veh-list");
-  if(!vehs.length){
-    list.innerHTML='<div style="padding:20px;color:var(--text3);font-size:13px;text-align:center;">Aucun véhicule</div>';
+  renderFleetPanel();
+}
+ 
+/* ── Panneau flotte (Carte GPS) — style Wialon/Samsara ── */
+function setFleetFilter(f,btn){
+  fleetFilter=f;
+  document.querySelectorAll(".filter-pill").forEach(b=>b.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  renderFleetPanel();
+}
+ 
+function renderFleetPanel(){
+  const cards=document.getElementById("fleet-cards");
+  const countEl=document.getElementById("fleet-count");
+  if(!cards)return;
+  if(!vehD.length){
+    cards.innerHTML='<div style="padding:20px;color:var(--text3);font-size:13px;text-align:center;">Aucun véhicule assigné</div>';
+    if(countEl)countEl.textContent="0 véhicule";
     return;
   }
-  list.innerHTML=vehs.map(v=>`
-    <div class="veh-card" id="vc${v.id}" onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')">
+  const term=(document.getElementById("fleet-search-input")?.value||"").toLowerCase().trim();
+  let filtered=vehD.filter(v=>{
+    const st=vehStatusMap[v.id]?.statut;
+    if(fleetFilter!=="all" && st!==fleetFilter)return false;
+    if(term && !(`${v.immatriculation} ${v.marque} ${v.modele}`.toLowerCase().includes(term)))return false;
+    return true;
+  });
+  if(countEl)countEl.textContent=`${filtered.length} véhicule${filtered.length>1?'s':''} sur ${vehD.length}`;
+  if(!filtered.length){
+    cards.innerHTML='<div style="padding:20px;color:var(--text3);font-size:13px;text-align:center;">Aucun résultat</div>';
+    return;
+  }
+  cards.innerHTML=filtered.map(v=>`
+    <div class="veh-card ${v.id===selId?'sel':''}" id="vc${v.id}" onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')">
       <div class="veh-top">
         <div>
           <div class="veh-immat">${v.immatriculation}</div>
@@ -1727,20 +1788,12 @@ async function loadVehicules(){
         <span class="veh-mini-stat"><i class="fa-solid fa-satellite"></i> <span id="msat${v.id}">—</span></span>
       </div>
     </div>`).join("");
-  syncSidebarStatus();
+  updateFleetCardsStatus();
 }
  
-/* ── Synchro panneau latéral ↔ statut flotte ── */
-async function syncSidebarStatus(){
-  try{
-    const data=await fetch("/api/user/vehicules/statut").then(r=>r.json());
-    syncSidebarStatusFromData(data);
-  }catch(e){}
-}
- 
-function syncSidebarStatusFromData(data){
+function updateFleetCardsStatus(){
   const cfgLbl={mouvement:"En mouvement",immobile:"Immobile",sans_signal:"Sans signal"};
-  data.forEach(v=>{
+  Object.values(vehStatusMap).forEach(v=>{
     const badge=document.getElementById("badge"+v.id);
     const mstats=document.getElementById("mstats"+v.id);
     const mspd=document.getElementById("mspd"+v.id);
@@ -1759,28 +1812,66 @@ function syncSidebarStatusFromData(data){
   });
 }
  
+function updateDetailCardLive(){
+  if(!selId)return;
+  const v=vehStatusMap[selId];
+  if(!v)return;
+  const cfgLbl={mouvement:"En mouvement",immobile:"Immobile",sans_signal:"Sans signal"};
+  const badge=document.getElementById("dc-badge");
+  if(badge){
+    badge.className="veh-status-badge st-"+v.statut;
+    badge.textContent=cfgLbl[v.statut]||"—";
+  }
+}
+ 
+function closeDetailCard(){
+  document.getElementById("detail-card").style.display="none";
+}
+function recenterMap(){
+  if(marker && map)map.setView(marker.getLatLng(),17);
+}
+function goToHistorique(){
+  showTab("historique", document.querySelectorAll(".nav-item")[2]);
+  const sel=document.getElementById("uhv");
+  if(sel && selId){sel.value=selId; loadUH();}
+}
+ 
 async function selV(id,label,immat){
-  document.querySelectorAll(".veh-card").forEach(c=>c.classList.remove("sel"));
-  if(document.getElementById("vc"+id)) document.getElementById("vc"+id).classList.add("sel");
   selId=id;
   document.getElementById("ttl").textContent=immat+" — "+label;
   document.getElementById("empty").style.display="none";
   document.getElementById("map-wrap").style.display="block";
   const btnRetour = document.getElementById("btn-retour-carte");
   if(btnRetour) btnRetour.dataset.active="true";
-  closeMenu();
   document.getElementById("tab-carte").style.display="flex";
   document.querySelectorAll(".usec").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
   const navItems = document.querySelectorAll(".nav-item");
   if(navItems[1]) navItems[1].classList.add("active");
+  closeFleetPanel();
+ 
+  const v=vehD.find(x=>x.id===id);
+  document.getElementById("dc-immat").textContent=immat;
+  document.getElementById("dc-model").textContent=v?`${v.marque} ${v.modele}`:label;
+  document.getElementById("detail-card").style.display="block";
+  updateDetailCardLive();
+ 
+  renderFleetPanel();
+ 
   initMap();
   if(poly)poly.setLatLngs([]);
   if(marker){map.removeLayer(marker);marker=null;}
+  if(startMarker){map.removeLayer(startMarker);startMarker=null;}
   setTimeout(()=>map.invalidateSize(),150);
   setTimeout(()=>map.invalidateSize(),400);
   const hist=await fetch(`/api/positions/${id}?limit=200`).then(r=>r.json());
-  if(hist.length)poly.setLatLngs(hist.map(p=>[p.latitude,p.longitude]));
+  if(hist.length){
+    poly.setLatLngs(hist.map(p=>[p.latitude,p.longitude]));
+    const first=hist[0];
+    startMarker=L.circleMarker([first.latitude,first.longitude],{
+      radius:6,color:"#fff",weight:2,fillColor:"#10B981",fillOpacity:1
+    }).addTo(map).bindTooltip("Départ du trajet",{direction:"top"});
+  }
   if(interval)clearInterval(interval);
   refresh(); interval=setInterval(refresh,2000);
 }
@@ -1812,10 +1903,11 @@ async function refresh(){
     if(!marker){marker=L.marker(ll,{icon}).addTo(map);map.setView(ll,17);}
     else marker.setLatLng(ll);
     poly.addLatLng(ll);
-    document.getElementById("ilat").textContent=p.latitude.toFixed(6)+"°";
-    document.getElementById("ilng").textContent=p.longitude.toFixed(6)+"°";
-    document.getElementById("ispd").innerHTML= `<i class="fa-solid fa-gauge-high" style="color:var(--text3);font-size:12px;margin-right:4px;"></i>` + (p.vitesse||0).toFixed(1)+" km/h";
-    document.getElementById("isat").innerHTML= `<i class="fa-solid fa-satellite" style="color:var(--text3);font-size:12px;margin-right:4px;"></i>` + (p.satellites||"—");
+    document.getElementById("dc-lat").textContent=p.latitude.toFixed(6)+"°";
+    document.getElementById("dc-lng").textContent=p.longitude.toFixed(6)+"°";
+    document.getElementById("dc-speed").textContent=(p.vitesse||0).toFixed(1)+" km/h";
+    document.getElementById("dc-sat").textContent=p.satellites||"—";
+    document.getElementById("dc-updated").innerHTML=`<i class="fa-regular fa-clock"></i> `+new Date().toLocaleTimeString();
     document.getElementById("tupd").innerHTML= `<i class="fa-solid fa-rotate"></i> ` + new Date().toLocaleTimeString();
     const dot=document.getElementById("dot"+selId);
     const lbl=document.getElementById("dlbl"+selId);
