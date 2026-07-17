@@ -550,6 +550,11 @@ tbody tr:last-child{border-bottom:none}
     <div class="nav-item" onclick="show('historique',this)">
       <i class="fa-solid fa-map-location-dot nav-ico"></i> Historique GPS
     </div>
+    <div class="nav-item" onclick="show('alertes',this)" style="justify-content:space-between">
+      <span><i class="fa-solid fa-triangle-exclamation nav-ico"></i> Alertes Système</span>
+      <span id="nav-alert-badge" style="display:none;background:var(--red);color:#fff;font-size:11px;
+        font-weight:700;padding:2px 8px;border-radius:20px;">0</span>
+    </div>
     <div class="nav-item" onclick="show('parametres',this)">
       <i class="fa-solid fa-sliders nav-ico"></i> Paramètres
     </div>
@@ -718,6 +723,77 @@ tbody tr:last-child{border-bottom:none}
       </div>
     </div>
  
+    <div class="section" id="s-alertes">
+      <div class="sh">
+        <div>
+          <h2>Alertes Système</h2>
+          <div class="sh-sub">Supervision de la connectivité et de l'infrastructure IoT</div>
+        </div>
+        <button class="btn btn-danger" onclick="loadAlertes()"><i class="fa-solid fa-arrows-rotate"></i> Actualiser</button>
+      </div>
+ 
+      <div class="stats" style="grid-template-columns:repeat(2,1fr);margin-bottom:32px">
+        <div class="stat" style="border-top:4px solid var(--red)">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:var(--red-bg);color:var(--red)"><i class="fa-solid fa-satellite-dish"></i></div>
+            <span class="stat-trend" style="background:var(--red-bg);color:var(--red)"><i class="fa-solid fa-triangle-exclamation"></i> Actif</span>
+          </div>
+          <div class="stat-val" id="al-signal-count" style="color:var(--red)">—</div>
+          <div class="stat-lbl">Véhicules hors ligne / panne technique</div>
+        </div>
+        <div class="stat" style="border-top:4px solid var(--amber)">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:rgba(245,158,11,0.1);color:var(--amber)"><i class="fa-solid fa-sim-card"></i></div>
+            <span class="stat-trend" style="background:rgba(245,158,11,0.1);color:var(--amber)"><i class="fa-solid fa-triangle-exclamation"></i> Actif</span>
+          </div>
+          <div class="stat-val" id="al-sim-count" style="color:var(--amber)">—</div>
+          <div class="stat-lbl">Puces SIM800L sous 100 Mo</div>
+        </div>
+      </div>
+ 
+      <div class="sh">
+        <div>
+          <h2 style="font-size:18px">Perte de signal &amp; pannes techniques</h2>
+          <div class="sh-sub">Véhicules dont le traceur n'a plus émis de position récente</div>
+        </div>
+      </div>
+      <div class="table-card" style="margin-bottom:32px">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Immatriculation</th><th>Device ID</th><th>Propriétaire</th>
+              <th>Dernière position</th><th>Hors ligne depuis</th><th>Statut</th>
+            </tr></thead>
+            <tbody id="tb-al-signal">
+              <tr><td colspan="6"><div class="empty"><i class="fa-solid fa-satellite-dish empty-ico"></i>
+                <div class="empty-txt">Chargement...</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+ 
+      <div class="sh">
+        <div>
+          <h2 style="font-size:18px">Recharge de données — Puces SIM800L</h2>
+          <div class="sh-sub">Traceurs dont le forfait data descend sous le seuil critique (100 Mo)</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Device ID</th><th>Véhicule</th><th>Propriétaire</th>
+              <th>Data restante</th><th>Seuil</th><th>Action</th>
+            </tr></thead>
+            <tbody id="tb-al-sim">
+              <tr><td colspan="6"><div class="empty"><i class="fa-solid fa-sim-card empty-ico"></i>
+                <div class="empty-txt">Chargement...</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+ 
     <div class="section" id="s-parametres">
       <div class="sh">
         <div>
@@ -812,7 +888,7 @@ tbody tr:last-child{border-bottom:none}
  
 <script>
 const T={dashboard:"Tableau de bord",proprietaires:"Propriétaires",vehicules:"Flotte de Véhicules",
-  historique:"Historique de Tracking",parametres:"Paramètres Système"};
+  historique:"Historique de Tracking",alertes:"Alertes Système",parametres:"Paramètres Système"};
  
 setInterval(()=>{document.getElementById("clk").textContent=new Date().toLocaleTimeString('fr-FR')},1000);
  
@@ -835,6 +911,7 @@ function show(n,el){
   if(n==="proprietaires")loadP();
   if(n==="vehicules")loadV();
   if(n==="historique")initHist();
+  if(n==="alertes")loadAlertes();
 }
  
 async function loadStats(){
@@ -843,6 +920,84 @@ async function loadStats(){
     fetch("/api/admin/vehicules").then(r=>r.json())]);
   document.getElementById("stp").textContent=p.length||0;
   document.getElementById("stv").textContent=v.filter(x=>x.actif).length||0;
+}
+ 
+/* ── Alertes Système : perte de signal / panne technique + quota SIM800L ── */
+async function loadAlertes(){
+  await Promise.all([loadAlertesSignal(), loadAlertesSim()]);
+  refreshNavAlertBadge();
+}
+ 
+async function loadAlertesSignal(){
+  const tb=document.getElementById("tb-al-signal");
+  try{
+    const data=await fetch("/api/admin/alertes/signal").then(r=>{
+      if(!r.ok)throw new Error("indisponible");
+      return r.json();
+    });
+    document.getElementById("al-signal-count").textContent=data.length;
+    if(!data.length){
+      tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-circle-check empty-ico" style="color:var(--green)"></i><div class="empty-txt">Aucune alerte — tous les traceurs émettent normalement</div></div></td></tr>';
+      return;
+    }
+    tb.innerHTML=data.map(v=>`<tr>
+      <td class="td-main">${v.immatriculation}</td>
+      <td><span class="device"><i class="fa-solid fa-microchip" style="margin-right:4px;"></i>${v.device_id}</span></td>
+      <td><i class="fa-regular fa-user" style="color:var(--text3);margin-right:6px"></i>${v.proprietaire_nom||"—"}</td>
+      <td style="font-size:13px;color:var(--text2)">${v.derniere_position||"Aucune donnée"}</td>
+      <td><span style="font-weight:600;color:var(--red)">${v.minutes_hors_ligne!=null?Math.round(v.minutes_hors_ligne)+" min":"—"}</span></td>
+      <td><span class="badge badge-off"><i class="fa-solid fa-satellite-dish"></i> Hors ligne</span></td>
+    </tr>`).join("");
+  }catch(e){
+    document.getElementById("al-signal-count").textContent="0";
+    tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-satellite-dish empty-ico"></i><div class="empty-txt">Aucune donnée disponible</div><div class="empty-sub">Ce module nécessite l\\'endpoint /api/admin/alertes/signal côté serveur</div></div></td></tr>';
+  }
+}
+ 
+async function loadAlertesSim(){
+  const tb=document.getElementById("tb-al-sim");
+  try{
+    const data=await fetch("/api/admin/alertes/sim-data").then(r=>{
+      if(!r.ok)throw new Error("indisponible");
+      return r.json();
+    });
+    document.getElementById("al-sim-count").textContent=data.length;
+    if(!data.length){
+      tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-circle-check empty-ico" style="color:var(--green)"></i><div class="empty-txt">Toutes les puces ont un quota data suffisant</div></div></td></tr>';
+      return;
+    }
+    tb.innerHTML=data.map(v=>`<tr>
+      <td><span class="device"><i class="fa-solid fa-microchip" style="margin-right:4px;"></i>${v.device_id}</span></td>
+      <td class="td-main">${v.immatriculation}</td>
+      <td><i class="fa-regular fa-user" style="color:var(--text3);margin-right:6px"></i>${v.proprietaire_nom||"—"}</td>
+      <td><span style="font-weight:700;color:${v.data_restante_mo<20?'var(--red)':'var(--amber)'}">${v.data_restante_mo} Mo</span></td>
+      <td style="color:var(--text3);font-size:13px">${v.seuil_mo||100} Mo</td>
+      <td><button class="btn btn-sm btn-primary" onclick="rechargerSim(${v.id})"><i class="fa-solid fa-bolt"></i> Recharger</button></td>
+    </tr>`).join("");
+  }catch(e){
+    document.getElementById("al-sim-count").textContent="0";
+    tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-sim-card empty-ico"></i><div class="empty-txt">Aucune donnée disponible</div><div class="empty-sub">Ce module nécessite l\\'endpoint /api/admin/alertes/sim-data côté serveur</div></div></td></tr>';
+  }
+}
+ 
+async function rechargerSim(vehiculeId){
+  try{
+    const res=await fetch(`/api/admin/vehicules/${vehiculeId}/recharger-sim`,{method:"POST"});
+    if(!res.ok)throw new Error();
+    loadAlertes();
+  }catch(e){
+    alert("Impossible de confirmer la recharge — endpoint serveur non disponible pour le moment.");
+  }
+}
+ 
+async function refreshNavAlertBadge(){
+  const s=parseInt(document.getElementById("al-signal-count").textContent)||0;
+  const d=parseInt(document.getElementById("al-sim-count").textContent)||0;
+  const total=s+d;
+  const badge=document.getElementById("nav-alert-badge");
+  if(!badge)return;
+  if(total>0){badge.style.display="inline-block";badge.textContent=total;}
+  else badge.style.display="none";
 }
  
 /* ── Propriétaires ── */
@@ -1100,6 +1255,7 @@ async function sauvegarderV(){
  
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadStats();
+loadAlertes();
 </script>
  
 <div class="mbg" id="m-suppr">
@@ -1472,10 +1628,10 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
       </div>
       <div class="card-modern" style="border-top:4px solid var(--red);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,0.1);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fa-solid fa-satellite-dish"></i></div>
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,0.1);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fa-solid fa-location-crosshairs" style="opacity:0.5"></i></div>
         </div>
         <div style="font-size:36px;font-weight:700;color:var(--red);line-height:1;" id="cnt-signal">0</div>
-        <div style="font-size:14px;color:var(--text2);font-weight:600;margin-top:8px;">Sans signal</div>
+        <div style="font-size:14px;color:var(--text2);font-weight:600;margin-top:8px;">Hors ligne</div>
       </div>
     </div>
  
@@ -1499,7 +1655,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
         <button class="filter-pill" data-f="immobile" onclick="setFleetFilter('immobile',this)">
           <i class="fa-solid fa-circle" style="color:var(--amber);font-size:6px"></i> Immobile</button>
         <button class="filter-pill" data-f="sans_signal" onclick="setFleetFilter('sans_signal',this)">
-          <i class="fa-solid fa-circle" style="color:var(--red);font-size:6px"></i> Signal</button>
+          <i class="fa-solid fa-circle" style="color:var(--red);font-size:6px"></i> Hors ligne</button>
       </div>
       <div class="fleet-count" id="fleet-count">Chargement...</div>
       <div class="fleet-cards" id="fleet-cards">
@@ -1680,15 +1836,15 @@ async function loadDashboard(){
     const config = {
       mouvement:  {icone:'<i class="fa-solid fa-truck-fast"></i>', label:'En mouvement', couleur:'var(--green)', bg:'rgba(16,185,129,0.1)', bd:'rgba(16,185,129,0.2)'},
       immobile:   {icone:'<i class="fa-solid fa-square-parking"></i>', label:'Immobile',      couleur:'var(--amber)',     bg:'rgba(245,158,11,0.1)', bd:'rgba(245,158,11,0.2)'},
-      sans_signal:{icone:'<i class="fa-solid fa-satellite-dish"></i>', label:'Sans signal',   couleur:'var(--red)',  bg:'rgba(239,68,68,0.1)', bd:'rgba(239,68,68,0.2)'}
+      sans_signal:{icone:'<i class="fa-solid fa-location-crosshairs" style="opacity:0.5"></i>', label:'Hors ligne',   couleur:'var(--red)',  bg:'rgba(239,68,68,0.1)', bd:'rgba(239,68,68,0.2)'}
     };
  
     list.innerHTML = data.map(v=>{
       const cfg = config[v.statut];
       const infoSignal = v.statut==='sans_signal'
         ? (v.minutes_sans_signal!==null
-            ? `Perte de signal depuis ${Math.round(v.minutes_sans_signal)} min`
-            : 'Aucune donnée enregistrée')
+            ? `Hors ligne depuis ${Math.round(v.minutes_sans_signal)} min · Nous surveillons la situation`
+            : 'Aucune donnée enregistrée pour le moment')
         : `<i class="fa-solid fa-gauge-high"></i> ${(v.vitesse||0).toFixed(0)} km/h &nbsp; <i class="fa-solid fa-satellite"></i> ${v.satellites||0} sats`;
  
       return `<div onclick="showTab('carte',document.querySelectorAll('.nav-item')[1]); selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
@@ -1792,7 +1948,7 @@ function renderFleetPanel(){
 }
  
 function updateFleetCardsStatus(){
-  const cfgLbl={mouvement:"En mouvement",immobile:"Immobile",sans_signal:"Sans signal"};
+  const cfgLbl={mouvement:"En mouvement",immobile:"Immobile",sans_signal:"Hors ligne"};
   Object.values(vehStatusMap).forEach(v=>{
     const badge=document.getElementById("badge"+v.id);
     const mstats=document.getElementById("mstats"+v.id);
@@ -1816,7 +1972,7 @@ function updateDetailCardLive(){
   if(!selId)return;
   const v=vehStatusMap[selId];
   if(!v)return;
-  const cfgLbl={mouvement:"En mouvement",immobile:"Immobile",sans_signal:"Sans signal"};
+  const cfgLbl={mouvement:"En mouvement",immobile:"Immobile",sans_signal:"Hors ligne"};
   const badge=document.getElementById("dc-badge");
   if(badge){
     badge.className="veh-status-badge st-"+v.statut;
@@ -1987,9 +2143,9 @@ async function refreshNotifStatus(){
   wrap.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
       <div>
-        <div style="font-size:15px;font-weight:600;color:var(--text)"><i class="fa-solid fa-bell" style="color:var(--primary); margin-right:8px;"></i>Alertes de sécurité</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text)"><i class="fa-solid fa-bell" style="color:var(--primary); margin-right:8px;"></i>Alertes de disponibilité</div>
         <div style="font-size:13px;color:var(--text2);margin-top:4px">
-          Recevez des notifications si un véhicule perd le réseau.
+          Recevez une notification si le suivi d'un véhicule devient indisponible.
         </div>
       </div>
       <button onclick="${abonne?'desactiverNotifs':'activerNotifs'}()"
