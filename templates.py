@@ -448,6 +448,36 @@ tbody tr:last-child{border-bottom:none}
 .empty-txt{font-size:16px;font-weight:600;color:var(--text2)}
 .empty-sub{font-size:13px;color:var(--text3);margin-top:6px}
  
+/* ── Véhicules regroupés par propriétaire (accordéon) ── */
+.veh-search{margin-bottom:20px}
+.owner-group{border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow 0.2s;}
+.owner-group.hl{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(79,195,247,0.15)}
+.owner-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;
+  cursor:pointer;transition:background 0.2s;user-select:none}
+.owner-header:hover{background:var(--surface2)}
+.owner-header-left{display:flex;align-items:center;gap:14px}
+.owner-avatar{width:44px;height:44px;border-radius:12px;background:var(--grad-light);color:var(--primary-dark);
+  display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.owner-name{font-size:15px;font-weight:700;color:var(--text)}
+.owner-count{font-size:12px;color:var(--text3);margin-top:2px;font-weight:500}
+.owner-chevron{font-size:14px;color:var(--text3);transition:transform 0.25s}
+.owner-group.open .owner-chevron{transform:rotate(180deg)}
+.owner-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.owner-group.open .owner-body{max-height:3000px}
+.owner-body-inner{padding:4px 24px 22px;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;border-top:1px solid var(--border);padding-top:18px}
+.veh-mini-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all 0.2s}
+.veh-mini-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-sm)}
+.veh-mini-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.veh-mini-immat{font-size:14px;font-weight:700;color:var(--primary-dark)}
+.veh-mini-model{font-size:12px;color:var(--text2);margin-top:2px}
+.veh-mini-driver{font-size:12px;color:var(--text2);margin-top:10px;display:flex;align-items:center;gap:6px}
+.veh-mini-driver i{color:var(--text3);width:12px}
+.veh-mini-device{font-size:11px;color:var(--text3);margin-top:6px;font-family:monospace}
+.veh-mini-actions{display:flex;gap:6px;margin-top:12px}
+.veh-mini-actions .btn-sm{flex:1;justify-content:center}
+ 
 /* ── Historique & Params ── */
 .h-filters{display:flex;gap:12px;margin-bottom:24px;align-items:center;flex-wrap:wrap}
 .h-select{height:44px;padding:0 16px;background:var(--surface);border:1px solid var(--border);
@@ -661,23 +691,19 @@ tbody tr:last-child{border-bottom:none}
       <div class="sh">
         <div>
           <h2>Flotte de Véhicules</h2>
-          <div class="sh-sub">Gérez les traceurs GPS et assignations</div>
+          <div class="sh-sub">Gérez les traceurs GPS et assignations, regroupés par propriétaire</div>
         </div>
         <button class="btn btn-primary" onclick="openMV()"><i class="fa-solid fa-plus"></i> Nouveau</button>
       </div>
-      <div class="table-card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th>Immatriculation</th><th>Modèle</th><th>Type</th>
-              <th>Propriétaire</th><th>Device ID</th><th>Statut</th><th style="min-width:260px">Actions</th>
-            </tr></thead>
-            <tbody id="tbv">
-              <tr><td colspan="7"><div class="empty"><i class="fa-solid fa-car empty-ico"></i>
-                <div class="empty-txt">Chargement des données...</div></div></td></tr>
-            </tbody>
-          </table>
+      <div class="veh-search">
+        <div class="iw" style="max-width:420px">
+          <i class="fa-solid fa-magnifying-glass ii"></i>
+          <input id="veh-search-input" placeholder="Rechercher (immatriculation, propriétaire, conducteur...)" oninput="renderVehiculesGroupes()"/>
         </div>
+      </div>
+      <div id="veh-groups">
+        <div class="empty"><i class="fa-solid fa-car empty-ico"></i>
+          <div class="empty-txt">Chargement des données...</div></div>
       </div>
     </div>
  
