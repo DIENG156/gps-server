@@ -1,3 +1,4 @@
+
 # ============================================================
 #  templates.py — GPS Tracker v3 (SaaS Modern Redesign)
 #  Toutes les pages HTML (Login, Admin, User, Reset)
