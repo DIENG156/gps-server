@@ -30,25 +30,12 @@ LOGIN_PAGE = """<!DOCTYPE html>
   --shadow-lg: 0 20px 25px -5px rgba(11, 61, 145, 0.1), 0 10px 10px -5px rgba(11, 61, 145, 0.04);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Poppins',sans-serif;min-height:100vh;margin:0;
+body{font-family:'Poppins',sans-serif;min-height:100vh;display:flex;
+  align-items:center;justify-content:center;position:relative;overflow:hidden;
   background:var(--bg); color:var(--text);}
-.login-shell{display:flex;min-height:100vh;width:100%}
-.login-hero{flex:1.1;position:relative;overflow:hidden;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:48px;color:#fff;
-  background:linear-gradient(160deg, var(--primary-dark) 0%, #123f82 55%, var(--primary-light) 130%);}
-.login-hero-content{position:relative;z-index:1;text-align:center;max-width:400px}
-.login-hero-content h2{font-size:26px;font-weight:700;margin-top:28px;letter-spacing:-0.5px}
-.login-hero-content p{font-size:14px;opacity:0.88;margin-top:10px;line-height:1.7;font-weight:400}
-.login-hero-badges{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}
-.login-hero-badge{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
-  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-  padding:8px 14px;border-radius:20px;backdrop-filter:blur(6px)}
-.login-right{flex:1;display:flex;align-items:center;justify-content:center;
-  position:relative;padding:24px;background:var(--bg)}
-@media(max-width:900px){.login-hero{display:none}}
-.orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0;filter:blur(60px);opacity:0.6;}
-.o1{width:340px;height:340px;background:#fff;top:-100px;right:-80px;opacity:0.12;}
-.o2{width:420px;height:420px;background:#fff;bottom:-140px;left:-120px;opacity:0.10;}
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(60px);opacity:0.6;}
+.o1{width:400px;height:400px;background:var(--primary-light);top:-100px;right:-100px;opacity:0.3;}
+.o2{width:500px;height:500px;background:var(--primary-dark);bottom:-150px;left:-150px;opacity:0.15;}
 .card{position:relative;z-index:1;background:rgba(255,255,255,0.85);
   backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.9);
   border-radius:24px;padding:50px 40px;width:100%;max-width:420px;
@@ -88,44 +75,7 @@ input::placeholder{color:var(--text3);font-weight:300;}
 .trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);font-weight:500;}
 .trust-item i {color:var(--primary-light);font-size:10px;}
 </style></head><body>
-<div class="login-shell">
-  <div class="login-hero">
-    <div class="orb o1"></div><div class="orb o2"></div>
-    <div class="login-hero-content">
-      <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="150" cy="150" r="140" fill="#fff" opacity="0.06"/>
-        <circle cx="150" cy="150" r="95" fill="#fff" opacity="0.05"/>
-        <g transform="translate(198,55)">
-          <rect x="-8" y="-8" width="16" height="16" rx="4" fill="#fff"/>
-          <rect x="-40" y="-4" width="26" height="8" rx="2" fill="#fff" opacity="0.75"/>
-          <rect x="14" y="-4" width="26" height="8" rx="2" fill="#fff" opacity="0.75"/>
-          <line x1="0" y1="8" x2="0" y2="26" stroke="#fff" stroke-width="3"/>
-          <path d="M-14 26 A16 16 0 0 0 14 26" stroke="#fff" stroke-width="3" fill="none"/>
-        </g>
-        <path d="M198 95 C178 145 138 185 118 240" stroke="#fff" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" fill="none" opacity="0.8"/>
-        <rect x="45" y="205" width="170" height="120" rx="18" fill="#fff" opacity="0.97"/>
-        <rect x="61" y="221" width="138" height="64" rx="10" fill="#F5F7FA"/>
-        <path d="M69 270 Q100 245 128 262 T192 245" stroke="#4FC3F7" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <circle cx="128" cy="258" r="6" fill="#0B3D91"/>
-        <rect x="61" y="297" width="80" height="9" rx="4.5" fill="#E2E8F0"/>
-        <rect x="61" y="312" width="54" height="7" rx="3.5" fill="#E2E8F0"/>
-        <g transform="translate(222,270)">
-          <rect x="-22" y="-9" width="44" height="18" rx="7" fill="#0B3D91"/>
-          <rect x="-13" y="-18" width="26" height="13" rx="5" fill="#0B3D91"/>
-          <circle cx="-13" cy="10" r="6" fill="#123f82"/>
-          <circle cx="13" cy="10" r="6" fill="#123f82"/>
-        </g>
-      </svg>
-      <h2>Suivi GPS intelligent de votre flotte</h2>
-      <p>Localisez, analysez et sécurisez vos véhicules en temps réel, où que vous soyez.</p>
-      <div class="login-hero-badges">
-        <div class="login-hero-badge"><i class="fa-solid fa-shield-halved"></i> Sécurisé</div>
-        <div class="login-hero-badge"><i class="fa-solid fa-bolt"></i> Temps réel</div>
-        <div class="login-hero-badge"><i class="fa-solid fa-cloud"></i> IoT Cloud</div>
-      </div>
-    </div>
-  </div>
-  <div class="login-right">
+<div class="orb o1"></div><div class="orb o2"></div>
 <div class="card">
   <div class="logo">
     <div class="logo-wrap">
@@ -156,8 +106,6 @@ input::placeholder{color:var(--text3);font-weight:300;}
     <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> Sécurisé</div>
     <div class="trust-item"><i class="fa-solid fa-bolt"></i> Temps réel</div>
     <div class="trust-item"><i class="fa-solid fa-cloud"></i> IoT Cloud</div>
-  </div>
-</div>
   </div>
 </div>
 
@@ -754,13 +702,7 @@ tbody tr:last-child{border-bottom:none}
         </div>
       </div>
       <div id="veh-groups">
-        <div class="empty">
-          <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block">
-            <circle cx="50" cy="50" r="38" stroke="var(--border)" stroke-width="6" fill="none"/>
-            <circle cx="50" cy="50" r="38" stroke="var(--primary-light)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="55 200">
-              <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="1s" repeatCount="indefinite"/>
-            </circle>
-          </svg>
+        <div class="empty"><i class="fa-solid fa-car empty-ico"></i>
           <div class="empty-txt">Chargement des données...</div></div>
       </div>
     </div>
@@ -797,11 +739,7 @@ tbody tr:last-child{border-bottom:none}
             </tr></thead>
             <tbody id="tbh">
               <tr><td colspan="6"><div class="empty">
-                <svg width="120" height="82" viewBox="0 0 160 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block">
-                  <path d="M15 85 Q45 30 80 55 T150 35" stroke="var(--border)" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round" fill="none"/>
-                  <circle cx="15" cy="85" r="7" fill="var(--primary-dark)"/>
-                  <circle cx="150" cy="35" r="4" fill="var(--border)"/>
-                </svg>
+                <i class="fa-solid fa-map-location-dot empty-ico"></i>
                 <div class="empty-txt">Sélectionnez un véhicule</div>
                 <div class="empty-sub">pour afficher l'historique des trajets</div>
               </div></td></tr>
@@ -1028,7 +966,7 @@ async function loadAlertesSignal(){
     });
     document.getElementById("al-signal-count").textContent=data.length;
     if(!data.length){
-      tb.innerHTML='<tr><td colspan="6"><div class="empty"><svg width="70" height="64" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block"><circle cx="55" cy="50" r="42" fill="var(--green)" opacity="0.10"/><path d="M55 15 L82 25 V50 c0 20-13 32-27 37 C41 82 28 70 28 50 V25 Z" fill="var(--green)" opacity="0.15" stroke="var(--green)" stroke-width="2.5"/><path d="M42 50 L51 59 L69 40" stroke="var(--green)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><div class="empty-txt">Aucune alerte — tous les traceurs émettent normalement</div></div></td></tr>';
+      tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-circle-check empty-ico" style="color:var(--green)"></i><div class="empty-txt">Aucune alerte — tous les traceurs émettent normalement</div></div></td></tr>';
       return;
     }
     tb.innerHTML=data.map(v=>`<tr>
@@ -1054,7 +992,7 @@ async function loadAlertesSim(){
     });
     document.getElementById("al-sim-count").textContent=data.length;
     if(!data.length){
-      tb.innerHTML='<tr><td colspan="6"><div class="empty"><svg width="70" height="64" viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block"><circle cx="55" cy="50" r="42" fill="var(--green)" opacity="0.10"/><path d="M55 15 L82 25 V50 c0 20-13 32-27 37 C41 82 28 70 28 50 V25 Z" fill="var(--green)" opacity="0.15" stroke="var(--green)" stroke-width="2.5"/><path d="M42 50 L51 59 L69 40" stroke="var(--green)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><div class="empty-txt">Toutes les puces ont un quota data suffisant</div></div></td></tr>';
+      tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-circle-check empty-ico" style="color:var(--green)"></i><div class="empty-txt">Toutes les puces ont un quota data suffisant</div></div></td></tr>';
       return;
     }
     tb.innerHTML=data.map(v=>`<tr>
@@ -1173,7 +1111,7 @@ function renderVehiculesGroupes(){
   const wrap=document.getElementById("veh-groups");
   if(!wrap)return;
   if(!vehiculesData.length){
-    wrap.innerHTML='<div class="empty"><svg width="110" height="88" viewBox="0 0 150 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block"><rect x="20" y="30" width="110" height="70" rx="14" fill="var(--surface2)" stroke="var(--border)" stroke-width="2" stroke-dasharray="8 6"/><circle cx="75" cy="62" r="20" fill="var(--primary-light)" opacity="0.15"/><path d="M65 62h20M75 52v20" stroke="var(--primary-dark)" stroke-width="4" stroke-linecap="round"/></svg><div class="empty-txt">Flotte vide</div></div>';
+    wrap.innerHTML='<div class="empty"><i class="fa-solid fa-car empty-ico"></i><div class="empty-txt">Flotte vide</div></div>';
     return;
   }
   const term=(document.getElementById("veh-search-input")?.value||"").toLowerCase().trim();
@@ -1291,7 +1229,7 @@ async function loadHist(){
   const tb=document.getElementById("tbh");
   if(!data.length){
     hs.style.display="none";
-    tb.innerHTML='<tr><td colspan="6"><div class="empty"><svg width="120" height="82" viewBox="0 0 160 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block"><path d="M15 85 Q45 30 80 55 T150 35" stroke="var(--border)" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round" fill="none"/><circle cx="15" cy="85" r="7" fill="var(--primary-dark)"/><circle cx="150" cy="35" r="4" fill="var(--border)"/></svg><div class="empty-txt">Aucune donnée GPS trouvée</div></div></td></tr>';
+    tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-route empty-ico"></i><div class="empty-txt">Aucune donnée GPS trouvée</div></div></td></tr>';
     return;
   }
   hs.style.display="grid";
@@ -1875,16 +1813,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
       </div>
 
       <div class="empty-state" id="empty">
-        <svg width="160" height="130" viewBox="0 0 160 130" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:20px">
-          <rect x="10" y="10" width="140" height="100" rx="16" fill="var(--surface2)"/>
-          <path d="M10 70 Q40 40 70 60 T130 50" stroke="var(--border)" stroke-width="3" stroke-dasharray="6 6" fill="none"/>
-          <circle cx="80" cy="55" r="28" fill="var(--primary-light)" opacity="0.12"/>
-          <path d="M80 30c-11 0-20 9-20 20 0 15 20 34 20 34s20-19 20-34c0-11-9-20-20-20z" fill="var(--primary-dark)"/>
-          <circle cx="80" cy="50" r="8" fill="#fff"/>
-          <rect x="55" y="95" width="50" height="18" rx="9" fill="var(--primary-light)"/>
-          <circle cx="65" cy="115" r="6" fill="var(--primary-dark)"/>
-          <circle cx="95" cy="115" r="6" fill="var(--primary-dark)"/>
-        </svg>
+        <div class="es-ico"><i class="fa-solid fa-map-location-dot"></i></div>
         <div class="es-title">Aucun véhicule sélectionné</div>
         <div class="es-sub">Choisissez un véhicule dans le panneau flotte pour démarrer le suivi en temps réel.</div>
       </div>
@@ -1914,11 +1843,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
           </tr></thead>
           <tbody id="uhtb">
             <tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)">
-              <svg width="120" height="82" viewBox="0 0 160 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 14px;display:block">
-                <path d="M15 85 Q45 30 80 55 T150 35" stroke="var(--border)" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round" fill="none"/>
-                <circle cx="15" cy="85" r="7" fill="var(--primary-dark)"/>
-                <circle cx="150" cy="35" r="4" fill="var(--border)"/>
-              </svg>
+              <i class="fa-solid fa-list" style="font-size:24px; margin-bottom:12px; display:block;"></i>
               Sélectionnez un véhicule pour afficher l'historique
             </td></tr>
           </tbody>
@@ -2016,7 +1941,7 @@ async function loadDashboard(){
 
     const list = document.getElementById("dash-list");
     if(!data.length){
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;background:var(--surface);border-radius:16px;"><svg width="100" height="80" viewBox="0 0 150 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 12px;display:block"><rect x="20" y="30" width="110" height="70" rx="14" fill="var(--surface2)" stroke="var(--border)" stroke-width="2" stroke-dasharray="8 6"/><circle cx="75" cy="62" r="20" fill="var(--primary-light)" opacity="0.15"/><path d="M65 62h20M75 52v20" stroke="var(--primary-dark)" stroke-width="4" stroke-linecap="round"/></svg>Aucun véhicule n\\'est actuellement assigné à votre compte.</div>';
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;background:var(--surface);border-radius:16px;"><i class="fa-solid fa-car-side" style="font-size:32px;margin-bottom:12px;"></i><br>Aucun véhicule n\\'est actuellement assigné à votre compte.</div>';
       return;
     }
 
@@ -2097,7 +2022,7 @@ function renderFleetPanel(){
   const countEl=document.getElementById("fleet-count");
   if(!cards)return;
   if(!vehD.length){
-    cards.innerHTML='<div style="padding:24px 12px;text-align:center;"><svg width="100" height="80" viewBox="0 0 150 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 12px;display:block"><rect x="20" y="30" width="110" height="70" rx="14" fill="var(--surface2)" stroke="var(--border)" stroke-width="2" stroke-dasharray="8 6"/><circle cx="75" cy="62" r="20" fill="var(--primary-light)" opacity="0.15"/><path d="M65 62h20M75 52v20" stroke="var(--primary-dark)" stroke-width="4" stroke-linecap="round"/></svg><div style="color:var(--text3);font-size:13px;">Aucun véhicule assigné</div></div>';
+    cards.innerHTML='<div style="padding:20px;color:var(--text3);font-size:13px;text-align:center;">Aucun véhicule assigné</div>';
     if(countEl)countEl.textContent="0 véhicule";
     return;
   }
@@ -2272,7 +2197,7 @@ async function loadUH(){
   const data=await fetch(`/api/positions/${vid}?limit=${lim}`).then(r=>r.json());
   const tb=document.getElementById("uhtb");
   if(!data.length){
-    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)"><svg width="120" height="82" viewBox="0 0 160 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 14px;display:block"><path d="M15 85 Q45 30 80 55 T150 35" stroke="var(--border)" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round" fill="none"/><circle cx="15" cy="85" r="7" fill="var(--primary-dark)"/><circle cx="150" cy="35" r="4" fill="var(--border)"/></svg>Aucune donnée pour ce véhicule</td></tr>';
+    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)"><i class="fa-solid fa-clock-rotate-left" style="font-size:24px; margin-bottom:12px; display:block;"></i>Aucune donnée pour ce véhicule</td></tr>';
     return;
   }
   const rev=[...data].reverse();
@@ -2392,87 +2317,3 @@ loadVehicules();
 loadDashboard();
 setInterval(loadDashboard, 30000);
 </script></body></html>"""
-
-# ═════════════════════════════════════════════════════════════
-#  PAGES D'ERREUR — 404 / 403 / 500
-# ═════════════════════════════════════════════════════════════
-
-def _error_page(code, titre, message, accent, illus_svg):
-    return f"""<!DOCTYPE html>
-<html lang="fr"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GPS Tracker — {titre}</title>
-<meta name="theme-color" content="#0B3D91">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-:root{{
-  --bg:#F5F7FA; --surface:#FFFFFF; --border:#E2E8F0;
-  --primary-light:#4FC3F7; --primary-dark:#0B3D91;
-  --green:#10B981; --red:#EF4444; --amber:#F59E0B;
-  --text:#1E293B; --text2:#64748B; --text3:#94A3B8;
-  --shadow-lg: 0 20px 25px -5px rgba(11, 61, 145, 0.1);
-}}
-*{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:'Poppins',sans-serif;min-height:100vh;display:flex;align-items:center;
-  justify-content:center;background:var(--bg);padding:24px;color:var(--text);}}
-.card{{background:var(--surface);border:1px solid var(--border);border-radius:24px;
-  padding:48px 40px;width:100%;max-width:440px;text-align:center;box-shadow:var(--shadow-lg)}}
-.code{{font-size:13px;font-weight:700;letter-spacing:2px;color:{accent};text-transform:uppercase;margin-top:24px}}
-h1{{font-size:22px;font-weight:700;color:var(--primary-dark);margin-top:8px}}
-p{{color:var(--text2);font-size:14px;margin-top:10px;line-height:1.6}}
-.btn{{display:inline-flex;align-items:center;gap:10px;margin-top:28px;height:48px;padding:0 28px;
-  background:linear-gradient(135deg, #0B3D91, #4FC3F7);border:none;border-radius:14px;color:#fff;
-  font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;
-  box-shadow:0 8px 20px rgba(11, 61, 145, 0.2);transition:all 0.3s;}}
-.btn:hover{{transform:translateY(-2px);box-shadow:0 12px 25px rgba(11, 61, 145, 0.3);}}
-</style></head><body>
-<div class="card">
-  {illus_svg}
-  <div class="code">Erreur {code}</div>
-  <h1>{titre}</h1>
-  <p>{message}</p>
-  <a href="/" class="btn"><i class="fa-solid fa-house"></i> Retour à l'accueil</a>
-</div>
-</body></html>"""
-
-_ILLUS_404 = """<svg width="180" height="150" viewBox="0 0 180 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;display:block">
-  <circle cx="90" cy="75" r="65" fill="var(--primary-light)" opacity="0.08"/>
-  <path d="M25 120 Q60 60 90 95 T160 55" stroke="var(--border)" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
-  <path d="M90 35c-22 0-40 18-40 40 0 30 40 68 40 68s40-38 40-68c0-22-18-40-40-40z" fill="var(--primary-dark)"/>
-  <circle cx="90" cy="75" r="18" fill="#fff"/>
-  <text x="90" y="83" text-anchor="middle" font-family="Poppins,sans-serif" font-size="20" font-weight="700" fill="var(--primary-dark)">?</text>
-</svg>"""
-
-_ILLUS_403 = """<svg width="170" height="150" viewBox="0 0 170 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;display:block">
-  <circle cx="85" cy="75" r="65" fill="var(--red)" opacity="0.07"/>
-  <path d="M85 20 L135 37 V88 c0 42-27 65-50 75 -23-10-50-33-50-75 V37 Z" fill="var(--red)" opacity="0.10" stroke="var(--red)" stroke-width="3"/>
-  <rect x="66" y="80" width="38" height="30" rx="6" fill="var(--red)"/>
-  <path d="M74 80v-11a11 11 0 0 1 22 0v11" stroke="var(--red)" stroke-width="5" fill="none"/>
-</svg>"""
-
-_ILLUS_500 = """<svg width="170" height="150" viewBox="0 0 170 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;display:block">
-  <circle cx="85" cy="75" r="65" fill="var(--amber)" opacity="0.08"/>
-  <rect x="40" y="35" width="90" height="24" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="2"/>
-  <rect x="40" y="65" width="90" height="24" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="2"/>
-  <rect x="40" y="95" width="90" height="24" rx="6" fill="var(--surface)" stroke="var(--amber)" stroke-width="2" transform="rotate(-4 85 107)"/>
-  <circle cx="52" cy="47" r="3" fill="var(--green)"/>
-  <circle cx="52" cy="77" r="3" fill="var(--green)"/>
-  <circle cx="52" cy="107" r="3" fill="var(--red)"/>
-  <path d="M112 128 l8 -16 l6 10 l8 -14" stroke="var(--amber)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-</svg>"""
-
-ERROR_404_PAGE = _error_page(
-    "404", "Page introuvable",
-    "La page que vous cherchez n'existe pas ou a été déplacée. Vérifiez l'adresse ou retournez à l'accueil.",
-    "var(--primary-dark)", _ILLUS_404)
-
-ERROR_403_PAGE = _error_page(
-    "403", "Accès refusé",
-    "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
-    "var(--red)", _ILLUS_403)
-
-ERROR_500_PAGE = _error_page(
-    "500", "Erreur serveur",
-    "Une erreur inattendue s'est produite de notre côté. Notre équipe technique a été notifiée.",
-    "var(--amber)", _ILLUS_500)
