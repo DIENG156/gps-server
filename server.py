@@ -107,6 +107,7 @@ def init_db_migrations():
     utilisé par la section Alertes Système (admin)."""
     conn = get_db(); c = conn.cursor()
     c.execute(f"ALTER TABLE vehicules ADD COLUMN IF NOT EXISTS data_restante_mo REAL DEFAULT {DATA_INITIALE_MO}")
+    c.execute("ALTER TABLE vehicules ADD COLUMN IF NOT EXISTS conducteur_nom TEXT")
     conn.commit(); c.close(); conn.close()
     print("[DB] Migrations additives appliquées ✅ (data_restante_mo)")
  
@@ -242,10 +243,11 @@ def creer_vehicule():
     conn = get_db(); c = conn.cursor()
     try:
         c.execute("""INSERT INTO vehicules
-            (proprietaire_id,marque,modele,immatriculation,type_vehicule,couleur,annee,device_id)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id""",
+            (proprietaire_id,marque,modele,immatriculation,type_vehicule,couleur,annee,device_id,conducteur_nom)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id""",
             (data["proprietaire_id"],data["marque"],data["modele"],data["immatriculation"],
-             data["type_vehicule"],data.get("couleur",""),data.get("annee",2024),data["device_id"]))
+             data["type_vehicule"],data.get("couleur",""),data.get("annee",2024),data["device_id"],
+             data.get("conducteur_nom") or None))
         new_id = c.fetchone()["id"]
         conn.commit(); c.close(); conn.close()
         return jsonify({"status":"ok","id":new_id}), 201
@@ -567,6 +569,9 @@ def modifier_vehicule(vid):
     if data.get("annee"):
         champs.append("annee=%s")
         valeurs.append(int(data["annee"]))
+    if "conducteur_nom" in data:
+        champs.append("conducteur_nom=%s")
+        valeurs.append(data.get("conducteur_nom") or None)
     if not champs:
         c.close(); conn.close(); return jsonify({"error":"Rien à modifier"}), 400
     valeurs.append(vid)
