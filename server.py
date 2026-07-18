@@ -3,7 +3,7 @@
 #  Design : Ocean Blue + Violet — Style Stripe Premium
 #  DB      : PostgreSQL (psycopg2)
 # ============================================================
- 
+
 from flask import Flask, jsonify, request, session, redirect
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,40 +11,40 @@ import psycopg2, psycopg2.extras, os, json, threading, time, secrets
 from functools import wraps
 from pywebpush import webpush, WebPushException
 import urllib.request, urllib.error
- 
+
 app = Flask(__name__)
 app.secret_key = "gps_tracker_secret_key_2026"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("RENDER") is not None
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 CORS(app)
- 
+
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
- 
+
 # ── VAPID Push Notifications ──
 VAPID_PRIVATE_KEY   = os.environ.get("VAPID_PRIVATE_KEY", "")
 VAPID_PUBLIC_KEY    = os.environ.get("VAPID_PUBLIC_KEY", "")
 VAPID_CLAIMS_EMAIL  = os.environ.get("VAPID_CLAIMS_EMAIL", "admin@gps.com")
 ALERTE_MINUTES      = 5   # minutes sans position → alerte
- 
+
 # ── Resend Email ──
 RESEND_API_KEY   = os.environ.get("RESEND_API_KEY", "")
 RESEND_FROM      = os.environ.get("RESEND_FROM_EMAIL", "onboarding@resend.dev")
 APP_URL          = os.environ.get("APP_URL", "http://localhost:5000")
- 
+
 # ── Alertes Système : quota data SIM800L ──
 SEUIL_DATA_SIM_MO         = 100    # seuil critique déclenchant l'alerte admin
 DATA_INITIALE_MO          = 500    # quota par défaut attribué à une puce
 TAILLE_MOYENNE_POSITION_MO = 0.01  # estimation moyenne d'un envoi de position (≈10 Ko)
- 
+
 # ─────────────────────────────────────────────────────────────
 #  BASE DE DONNÉES — PostgreSQL
 # ─────────────────────────────────────────────────────────────
- 
+
 def get_db():
     conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
     return conn
- 
+
 def init_db():
     conn = get_db()
     c = conn.cursor()
@@ -100,7 +100,7 @@ def init_db():
         utilise INTEGER NOT NULL DEFAULT 0)""")
     conn.commit(); c.close(); conn.close()
     print("[DB] Base initialisée ✅")
- 
+
 def init_db_migrations():
     """Ajouts additifs au schéma existant — n'altère aucune table/colonne déjà en place.
     Ajoute le quota data restant (Mo) de la puce SIM800L de chaque véhicule,
@@ -110,11 +110,11 @@ def init_db_migrations():
     c.execute("ALTER TABLE vehicules ADD COLUMN IF NOT EXISTS conducteur_nom TEXT")
     conn.commit(); c.close(); conn.close()
     print("[DB] Migrations additives appliquées ✅ (data_restante_mo)")
- 
+
 # ─────────────────────────────────────────────────────────────
 #  DÉCORATEURS
 # ─────────────────────────────────────────────────────────────
- 
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -122,7 +122,7 @@ def login_required(f):
             return jsonify({"error": "Connexion requise"}), 401
         return f(*args, **kwargs)
     return decorated
- 
+
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -132,11 +132,11 @@ def admin_required(f):
             return jsonify({"error": "Accès admin uniquement"}), 403
         return f(*args, **kwargs)
     return decorated
- 
+
 # ─────────────────────────────────────────────────────────────
 #  AUTH
 # ─────────────────────────────────────────────────────────────
- 
+
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -158,12 +158,12 @@ def login():
     session["nom"]     = user["nom"]
     session["prenom"]  = user["prenom"]
     return jsonify({"status":"ok","role":user["role"],"user_id":user["id"],"prenom":user["prenom"]}), 200
- 
+
 @app.route("/api/logout", methods=["POST"])
 def logout():
     session.clear()
     return jsonify({"status":"ok"}), 200
- 
+
 @app.route("/api/me", methods=["GET"])
 @login_required
 def me():
@@ -174,11 +174,11 @@ def me():
     user = c.fetchone()
     c.close(); conn.close()
     return jsonify(dict(user)), 200
- 
+
 # ─────────────────────────────────────────────────────────────
 #  API ADMIN
 # ─────────────────────────────────────────────────────────────
- 
+
 @app.route("/api/admin/proprietaires", methods=["GET"])
 @admin_required
 def get_proprietaires():
@@ -192,7 +192,7 @@ def get_proprietaires():
     rows = c.fetchall()
     c.close(); conn.close()
     return jsonify([dict(r) for r in rows]), 200
- 
+
 @app.route("/api/admin/proprietaires", methods=["POST"])
 @admin_required
 def creer_proprietaire():
@@ -209,7 +209,7 @@ def creer_proprietaire():
     new_id = c.fetchone()["id"]
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok","id":new_id}), 201
- 
+
 @app.route("/api/admin/proprietaires/<int:uid>/toggle", methods=["POST"])
 @admin_required
 def toggle_proprietaire(uid):
@@ -221,7 +221,7 @@ def toggle_proprietaire(uid):
     c.execute("UPDATE utilisateurs SET actif=%s WHERE id=%s", (nouvel, uid))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok","actif":nouvel}), 200
- 
+
 @app.route("/api/admin/vehicules", methods=["GET"])
 @admin_required
 def get_all_vehicules():
@@ -233,7 +233,7 @@ def get_all_vehicules():
     rows = c.fetchall()
     c.close(); conn.close()
     return jsonify([dict(r) for r in rows]), 200
- 
+
 @app.route("/api/admin/vehicules", methods=["POST"])
 @admin_required
 def creer_vehicule():
@@ -254,7 +254,7 @@ def creer_vehicule():
     except Exception:
         conn.rollback(); c.close(); conn.close()
         return jsonify({"error":"Immatriculation ou device_id déjà utilisé"}), 409
- 
+
 @app.route("/api/admin/vehicules/<int:vid>/toggle", methods=["POST"])
 @admin_required
 def toggle_vehicule(vid):
@@ -266,7 +266,7 @@ def toggle_vehicule(vid):
     c.execute("UPDATE vehicules SET actif=%s WHERE id=%s", (nouvel, vid))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok","actif":nouvel}), 200
- 
+
 @app.route("/api/admin/vehicules/<int:vid>", methods=["DELETE"])
 @admin_required
 def supprimer_vehicule(vid):
@@ -283,7 +283,7 @@ def supprimer_vehicule(vid):
     c.execute("DELETE FROM vehicules WHERE id=%s", (vid,))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok"}), 200
- 
+
 @app.route("/api/admin/proprietaires/<int:uid>", methods=["DELETE"])
 @admin_required
 def supprimer_proprietaire(uid):
@@ -308,12 +308,12 @@ def supprimer_proprietaire(uid):
     c.execute("DELETE FROM utilisateurs WHERE id=%s", (uid,))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok"}), 200
- 
+
 # ─────────────────────────────────────────────────────────────
 #  ALERTES SYSTÈME (ADMIN) — perte de signal / panne technique
 #  + quota data des puces SIM800L
 # ─────────────────────────────────────────────────────────────
- 
+
 @app.route("/api/admin/alertes/signal", methods=["GET"])
 @admin_required
 def get_alertes_signal():
@@ -361,7 +361,7 @@ def get_alertes_signal():
             })
     c.close(); conn.close()
     return jsonify(result), 200
- 
+
 @app.route("/api/admin/alertes/sim-data", methods=["GET"])
 @admin_required
 def get_alertes_sim_data():
@@ -387,7 +387,7 @@ def get_alertes_sim_data():
     } for r in rows]
     c.close(); conn.close()
     return jsonify(result), 200
- 
+
 @app.route("/api/admin/vehicules/<int:vid>/recharger-sim", methods=["POST"])
 @admin_required
 def recharger_sim(vid):
@@ -402,7 +402,7 @@ def recharger_sim(vid):
     c.execute("UPDATE vehicules SET data_restante_mo=%s WHERE id=%s", (montant, vid))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status": "ok", "data_restante_mo": montant}), 200
- 
+
 @app.route("/api/user/vehicules", methods=["GET"])
 @login_required
 def get_user_vehicules():
@@ -413,11 +413,11 @@ def get_user_vehicules():
     rows = c.fetchall()
     c.close(); conn.close()
     return jsonify([dict(r) for r in rows]), 200
- 
+
 # ─────────────────────────────────────────────────────────────
 #  STATUT FLOTTE (PROPRIÉTAIRE) — mouvement / immobile / hors ligne
 # ─────────────────────────────────────────────────────────────
- 
+
 @app.route("/api/user/vehicules/statut", methods=["GET"])
 @login_required
 def get_user_vehicules_statut():
@@ -464,7 +464,7 @@ def get_user_vehicules_statut():
         })
     c.close(); conn.close()
     return jsonify(result), 200
- 
+
 @app.route("/api/position", methods=["POST"])
 def receive_position():
     data = request.get_json()
@@ -480,7 +480,7 @@ def receive_position():
          data.get("altitude",0),data.get("satellites",0),data.get("timestamp","")))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok"}), 200
- 
+
 @app.route("/api/positions/<int:vid>", methods=["GET"])
 @login_required
 def get_positions(vid):
@@ -497,7 +497,7 @@ def get_positions(vid):
     result = [dict(r) for r in rows]
     result.reverse()
     return jsonify(result), 200
- 
+
 @app.route("/api/positions/<int:vid>/last", methods=["GET"])
 @login_required
 def get_last_position(vid):
@@ -507,11 +507,11 @@ def get_last_position(vid):
     c.close(); conn.close()
     if not row: return jsonify({"error":"Aucune position"}), 404
     return jsonify(dict(row)), 200
- 
+
 # ─────────────────────────────────────────────────────────────
 #  MODIFICATION PROPRIÉTAIRE & VÉHICULE
 # ─────────────────────────────────────────────────────────────
- 
+
 @app.route("/api/admin/proprietaires/<int:uid>", methods=["PUT"])
 @admin_required
 def modifier_proprietaire(uid):
@@ -541,7 +541,7 @@ def modifier_proprietaire(uid):
     c.execute(f"UPDATE utilisateurs SET {','.join(champs)} WHERE id=%s", valeurs)
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok"}), 200
- 
+
 @app.route("/api/admin/proprietaires/<int:uid>", methods=["GET"])
 @admin_required
 def get_proprietaire(uid):
@@ -551,7 +551,7 @@ def get_proprietaire(uid):
     c.close(); conn.close()
     if not row: return jsonify({"error":"Introuvable"}), 404
     return jsonify(dict(row)), 200
- 
+
 @app.route("/api/admin/vehicules/<int:vid>", methods=["PUT"])
 @admin_required
 def modifier_vehicule(vid):
@@ -582,7 +582,7 @@ def modifier_vehicule(vid):
     except Exception:
         conn.rollback(); c.close(); conn.close()
         return jsonify({"error":"Immatriculation ou device_id déjà utilisé"}), 409
- 
+
 @app.route("/api/admin/vehicules/<int:vid>", methods=["GET"])
 @admin_required
 def get_vehicule(vid):
@@ -592,11 +592,11 @@ def get_vehicule(vid):
     c.close(); conn.close()
     if not row: return jsonify({"error":"Introuvable"}), 404
     return jsonify(dict(row)), 200
- 
+
 # ─────────────────────────────────────────────────────────────
 #  MOT DE PASSE OUBLIÉ
 # ─────────────────────────────────────────────────────────────
- 
+
 def envoyer_email_reset(email, prenom, lien):
     """Envoie l'email de réinitialisation via Resend API."""
     try:
@@ -644,7 +644,7 @@ def envoyer_email_reset(email, prenom, lien):
     except Exception as e:
         print(f"[EMAIL] Erreur envoi : {e}")
         return False
- 
+
 @app.route("/api/forgot-password", methods=["POST"])
 def forgot_password():
     data = request.get_json()
@@ -668,7 +668,7 @@ def forgot_password():
     lien = f"{APP_URL}/reset-password?token={token}"
     envoyer_email_reset(data["email"], user["prenom"], lien)
     return jsonify({"status":"ok"}), 200
- 
+
 @app.route("/api/reset-password", methods=["POST"])
 def reset_password():
     data = request.get_json()
@@ -687,7 +687,7 @@ def reset_password():
     c.execute("UPDATE reset_tokens SET utilise=1 WHERE token=%s", (data["token"],))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status":"ok"}), 200
- 
+
 @app.route("/api/reset-password/check", methods=["GET"])
 def check_reset_token():
     token = request.args.get("token","")
@@ -697,16 +697,16 @@ def check_reset_token():
     row = c.fetchone()
     c.close(); conn.close()
     return jsonify({"valid": row is not None}), 200
- 
+
 # ─────────────────────────────────────────────────────────────
 #  PUSH NOTIFICATIONS
 # ─────────────────────────────────────────────────────────────
- 
+
 @app.route("/api/push/vapid-public-key", methods=["GET"])
 @login_required
 def get_vapid_public_key():
     return jsonify({"publicKey": VAPID_PUBLIC_KEY}), 200
- 
+
 @app.route("/api/push/subscribe", methods=["POST"])
 @login_required
 def push_subscribe():
@@ -721,7 +721,7 @@ def push_subscribe():
               (session["user_id"], sub_str))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status": "ok"}), 200
- 
+
 @app.route("/api/push/unsubscribe", methods=["POST"])
 @login_required
 def push_unsubscribe():
@@ -729,7 +729,7 @@ def push_unsubscribe():
     c.execute("DELETE FROM push_subscriptions WHERE user_id=%s", (session["user_id"],))
     conn.commit(); c.close(); conn.close()
     return jsonify({"status": "ok"}), 200
- 
+
 @app.route("/api/push/status", methods=["GET"])
 @login_required
 def push_status():
@@ -738,7 +738,7 @@ def push_status():
     row = c.fetchone()
     c.close(); conn.close()
     return jsonify({"subscribed": row is not None}), 200
- 
+
 def envoyer_push(subscription_str, titre, corps):
     """Envoie une notification push à un abonné."""
     try:
@@ -756,7 +756,7 @@ def envoyer_push(subscription_str, titre, corps):
     except Exception as e:
         print(f"[PUSH] Erreur inattendue : {e}")
         return False
- 
+
 def surveillance_vehicules():
     """Thread : vérifie toutes les 2 minutes si un véhicule est hors réseau."""
     print("[SURVEILLANCE] Thread démarré ✅")
@@ -822,7 +822,7 @@ def surveillance_vehicules():
             c.close(); conn.close()
         except Exception as e:
             print(f"[SURVEILLANCE] Erreur : {e}")
- 
+
 def surveillance_data_sim():
     """Thread : estime la consommation data des puces SIM800L à partir du
     nombre de positions reçues depuis le dernier passage, et décrémente
@@ -854,17 +854,17 @@ def surveillance_data_sim():
             c.close(); conn.close()
         except Exception as e:
             print(f"[SURVEILLANCE SIM] Erreur : {e}")
- 
+
 # ─────────────────────────────────────────────────────────────
 #  ROUTES HTML
 # ─────────────────────────────────────────────────────────────
- 
+
 @app.route("/sw.js")
 def service_worker():
     sw_code = """
 const CACHE_NAME = 'gps-tracker-v1';
 const URLS_TO_CACHE = ['/', '/dashboard', '/admin'];
- 
+
 // Installation - mise en cache
 self.addEventListener('install', function(e){
   e.waitUntil(
@@ -874,7 +874,7 @@ self.addEventListener('install', function(e){
   );
   self.skipWaiting();
 });
- 
+
 // Activation - nettoyage anciens caches
 self.addEventListener('activate', function(e){
   e.waitUntil(
@@ -886,7 +886,7 @@ self.addEventListener('activate', function(e){
   );
   self.clients.claim();
 });
- 
+
 // Fetch - réseau d'abord, cache en fallback
 self.addEventListener('fetch', function(e){
   if(e.request.method !== 'GET') return;
@@ -903,7 +903,7 @@ self.addEventListener('fetch', function(e){
       })
   );
 });
- 
+
 // Push notifications
 self.addEventListener('push', function(e){
   const data = e.data ? e.data.json() : {};
@@ -918,7 +918,7 @@ self.addEventListener('push', function(e){
   };
   e.waitUntil(self.registration.showNotification(title, options));
 });
- 
+
 // Clic notification
 self.addEventListener('notificationclick', function(e){
   e.notification.close();
@@ -928,7 +928,7 @@ self.addEventListener('notificationclick', function(e){
     from flask import Response
     return Response(sw_code, mimetype="application/javascript",
                    headers={"Service-Worker-Allowed": "/"})
- 
+
 @app.route("/manifest.json")
 def manifest():
     data = {
@@ -962,48 +962,64 @@ def manifest():
     }
     from flask import Response
     return Response(json.dumps(data), mimetype="application/manifest+json")
- 
+
 @app.route("/reset-password")
 def reset_password_page():
     return RESET_PAGE
- 
+
 @app.route("/")
 def index():
     return LOGIN_PAGE
- 
+
 @app.route("/admin")
 def admin_page():
     if "user_id" not in session or session.get("role") != "admin":
         return redirect("/")
     return ADMIN_PAGE
- 
+
 @app.route("/dashboard")
 def user_dashboard():
     if "user_id" not in session or session.get("role") != "user":
         return redirect("/")
     return USER_PAGE
- 
- 
+
+# ─────────────────────────────────────────────────────────────
+#  PAGES D'ERREUR
+# ─────────────────────────────────────────────────────────────
+
+@app.errorhandler(404)
+def erreur_404(e):
+    return ERROR_404_PAGE, 404
+
+@app.errorhandler(403)
+def erreur_403(e):
+    return ERROR_403_PAGE, 403
+
+@app.errorhandler(500)
+def erreur_500(e):
+    return ERROR_500_PAGE, 500
+
+
 # ─────────────────────────────────────────────────────────────
 #  IMPORT PAGES HTML
 # ─────────────────────────────────────────────────────────────
-from templates import LOGIN_PAGE, ADMIN_PAGE, USER_PAGE, RESET_PAGE
- 
+from templates import LOGIN_PAGE, ADMIN_PAGE, USER_PAGE, RESET_PAGE, ERROR_404_PAGE, ERROR_403_PAGE, ERROR_500_PAGE
+
 # ─────────────────────────────────────────────────────────────
 #  DÉMARRAGE
 # ─────────────────────────────────────────────────────────────
 with app.app_context():
     init_db()
     init_db_migrations()
- 
+
 # Démarrage du thread de surveillance
 _t = threading.Thread(target=surveillance_vehicules, daemon=True)
 _t.start()
- 
+
 # Démarrage du thread de suivi data SIM800L (Alertes Système admin)
 _t2 = threading.Thread(target=surveillance_data_sim, daemon=True)
 _t2.start()
- 
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
