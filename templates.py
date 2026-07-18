@@ -2,11 +2,11 @@
 #  templates.py — GPS Tracker v3 (SaaS Modern Redesign)
 #  Toutes les pages HTML (Login, Admin, User, Reset)
 # ============================================================
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE LOGIN
 # ═════════════════════════════════════════════════════════════
- 
+
 LOGIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -108,7 +108,7 @@ input::placeholder{color:var(--text3);font-weight:300;}
     <div class="trust-item"><i class="fa-solid fa-cloud"></i> IoT Cloud</div>
   </div>
 </div>
- 
+
 <div id="forgot-bg" style="display:none;position:fixed;inset:0;background:rgba(15, 23, 42, 0.6);
   backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:16px">
   <div style="background:#fff;border-radius:24px;padding:36px;width:100%;max-width:420px;
@@ -178,11 +178,11 @@ async function doForgot(){
   ok.style.display="block";
 }
 </script></body></html>"""
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE RESET PASSWORD
 # ═════════════════════════════════════════════════════════════
- 
+
 RESET_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -297,11 +297,11 @@ async function doReset(){
 }
 init();
 </script></body></html>"""
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE ADMIN
 # ═════════════════════════════════════════════════════════════
- 
+
 ADMIN_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -330,7 +330,7 @@ ADMIN_PAGE = """<!DOCTYPE html>
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);font-size:14px;display:flex;min-height:100vh}
- 
+
 /* ══ SIDEBAR ══ */
 .sidebar{
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
@@ -345,7 +345,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);fon
   box-shadow:0 4px 14px rgba(79, 195, 247, 0.3);flex-shrink:0}
 .s-logo-name{font-size:16px;font-weight:700;color:var(--primary-dark);letter-spacing:-0.3px}
 .s-logo-sub{font-size:11px;color:var(--text3);margin-top:2px;font-weight:500;}
- 
+
 .s-admin{margin:20px 16px;padding:14px;
   background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-md)}
 .s-admin-row{display:flex;align-items:center;gap:12px}
@@ -353,7 +353,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);fon
   display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .s-admin-name{font-size:14px;font-weight:600;color:var(--text)}
 .s-admin-role{font-size:11px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:0.5px;}
- 
+
 .s-nav{flex:1;padding:0 16px;overflow-y:auto}
 .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;
   border-radius:var(--radius-md);cursor:pointer;color:var(--text2);font-size:14px;
@@ -361,14 +361,14 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);fon
 .nav-item:hover{background:var(--surface2);color:var(--primary-dark)}
 .nav-item.active{background:var(--primary-dark);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(11, 61, 145, 0.2);}
 .nav-ico{font-size:16px;width:24px;text-align:center;flex-shrink:0;transition:all 0.2s;}
- 
+
 .s-bottom{padding:20px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
 .btn-logout{width:100%;padding:12px;background:var(--surface);color:var(--text2);
   border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;font-size:14px;font-weight:600;
   font-family:'Poppins',sans-serif;transition:all 0.2s;
   display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-logout:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
- 
+
 /* ══ MAIN ══ */
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{position:sticky;top:0;z-index:50;height:70px;padding:0 32px;
@@ -385,12 +385,12 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);fon
 .clock{padding:8px 16px;background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius-md);font-size:13px;color:var(--primary-dark);font-weight:600;
   box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px;}
- 
+
 .content{padding:32px;flex:1}
 .section{display:none}
 .section.active{display:block;animation:fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
- 
+
 /* ── Stats Modernes ── */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:32px}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
@@ -403,12 +403,12 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);fon
   background:var(--green-bg);color:var(--green);}
 .stat-val{font-size:38px;font-weight:700;color:var(--primary-dark);letter-spacing:-1px;line-height:1}
 .stat-lbl{font-size:14px;color:var(--text2);margin-top:8px;font-weight:500}
- 
+
 /* ── Section header ── */
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px}
 .sh h2{font-size:22px;font-weight:700;color:var(--primary-dark);}
 .sh-sub{font-size:14px;color:var(--text3);margin-top:4px}
- 
+
 /* ── Boutons ── */
 .btn{height:44px;padding:0 20px;border:none;border-radius:var(--radius-md);cursor:pointer;
   font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;
@@ -420,7 +420,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);fon
 .btn-success{background:var(--surface);color:var(--green);border:1px solid var(--border);}
 .btn-success:hover{background:var(--green-bg); border-color:var(--green-bd);}
 .btn-sm{height:34px;padding:0 14px;font-size:12px;border-radius:8px}
- 
+
 /* ── Table SaaS ── */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
   box-shadow:var(--shadow-sm);}
@@ -441,13 +441,13 @@ tbody tr:last-child{border-bottom:none}
 .badge::before{content:'\\f111'; font-family:'Font Awesome 6 Free'; font-weight:900; font-size:8px;}
 .badge-on{background:var(--green-bg);color:var(--green);}
 .badge-off{background:var(--red-bg);color:var(--red);}
- 
+
 /* ── Empty ── */
 .empty{padding:60px 20px;text-align:center}
 .empty-ico{font-size:50px;margin-bottom:16px;color:var(--border)}
 .empty-txt{font-size:16px;font-weight:600;color:var(--text2)}
 .empty-sub{font-size:13px;color:var(--text3);margin-top:6px}
- 
+
 /* ── Véhicules regroupés par propriétaire (accordéon) ── */
 .veh-search{margin-bottom:20px}
 .owner-group{border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
@@ -477,14 +477,14 @@ tbody tr:last-child{border-bottom:none}
 .veh-mini-device{font-size:11px;color:var(--text3);margin-top:6px;font-family:monospace}
 .veh-mini-actions{display:flex;gap:6px;margin-top:12px}
 .veh-mini-actions .btn-sm{flex:1;justify-content:center}
- 
+
 /* ── Historique & Params ── */
 .h-filters{display:flex;gap:12px;margin-bottom:24px;align-items:center;flex-wrap:wrap}
 .h-select{height:44px;padding:0 16px;background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius-md);font-size:14px;font-family:'Poppins',sans-serif;color:var(--text);
   outline:none;transition:all 0.3s; box-shadow:var(--shadow-sm);}
 .h-select:focus{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(79, 195, 247, 0.15)}
- 
+
 .param-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   padding:28px;margin-bottom:24px; box-shadow:var(--shadow-sm);}
 .param-title{font-size:16px;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
@@ -495,7 +495,7 @@ tbody tr:last-child{border-bottom:none}
 .p-lbl{font-size:14px;font-weight:600;color:var(--text)}
 .p-desc{font-size:12px;color:var(--text3);margin-top:4px}
 .p-badge{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px; background:var(--surface2); color:var(--text2); border:1px solid var(--border);}
- 
+
 /* ── Modal Glassmorphism ── */
 .mbg{display:none;position:fixed;inset:0;background:rgba(15, 23, 42, 0.5);
   backdrop-filter:blur(6px);z-index:200;align-items:center;justify-content:center;padding:16px}
@@ -525,11 +525,11 @@ tbody tr:last-child{border-bottom:none}
 .al{padding:14px 16px;border-radius:12px;font-size:13px;font-weight:500;margin-bottom:20px;display:none; align-items:center; gap:8px;}
 .al-e{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red)}
 .al-o{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green)}
- 
+
 /* Overlay mobile */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99; backdrop-filter:blur(4px);}
 .overlay.open{display:block}
- 
+
 /* ══ RESPONSIVE MOBILE ══ */
 @media(max-width:768px){
   .sidebar{left:calc(-1 * var(--sidebar-w));}
@@ -545,9 +545,9 @@ tbody tr:last-child{border-bottom:none}
   .modal{padding:24px 20px}
 }
 </style></head><body>
- 
+
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
- 
+
 <div class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-logo-row">
@@ -593,7 +593,7 @@ tbody tr:last-child{border-bottom:none}
     <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion</button>
   </div>
 </div>
- 
+
 <div class="main">
   <div class="topbar">
     <div class="tb-left">
@@ -607,9 +607,9 @@ tbody tr:last-child{border-bottom:none}
       <div class="clock"><i class="fa-regular fa-clock"></i> <span id="clk">--:--:--</span></div>
     </div>
   </div>
- 
+
   <div class="content">
- 
+
     <div class="section active" id="s-dashboard">
       <div class="stats">
         <div class="stat">
@@ -645,7 +645,7 @@ tbody tr:last-child{border-bottom:none}
         </p>
       </div>
     </div>
- 
+
     <div class="section" id="s-proprietaires">
       <div class="stats" id="prop-pos" style="margin-bottom:24px;">
         <div class="stat" style="padding:20px;">
@@ -686,7 +686,7 @@ tbody tr:last-child{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
     <div class="section" id="s-vehicules">
       <div class="sh">
         <div>
@@ -706,7 +706,7 @@ tbody tr:last-child{border-bottom:none}
           <div class="empty-txt">Chargement des données...</div></div>
       </div>
     </div>
- 
+
     <div class="section" id="s-historique">
       <div class="sh">
         <div>
@@ -748,7 +748,7 @@ tbody tr:last-child{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
     <div class="section" id="s-alertes">
       <div class="sh">
         <div>
@@ -757,7 +757,7 @@ tbody tr:last-child{border-bottom:none}
         </div>
         <button class="btn btn-danger" onclick="loadAlertes()"><i class="fa-solid fa-arrows-rotate"></i> Actualiser</button>
       </div>
- 
+
       <div class="stats" style="grid-template-columns:repeat(2,1fr);margin-bottom:32px">
         <div class="stat" style="border-top:4px solid var(--red)">
           <div class="stat-top">
@@ -776,7 +776,7 @@ tbody tr:last-child{border-bottom:none}
           <div class="stat-lbl">Puces SIM800L sous 100 Mo</div>
         </div>
       </div>
- 
+
       <div class="sh">
         <div>
           <h2 style="font-size:18px">Perte de signal &amp; pannes techniques</h2>
@@ -797,7 +797,7 @@ tbody tr:last-child{border-bottom:none}
           </table>
         </div>
       </div>
- 
+
       <div class="sh">
         <div>
           <h2 style="font-size:18px">Recharge de données — Puces SIM800L</h2>
@@ -819,7 +819,7 @@ tbody tr:last-child{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
     <div class="section" id="s-parametres">
       <div class="sh">
         <div>
@@ -848,10 +848,10 @@ tbody tr:last-child{border-bottom:none}
         </div>
       </div>
     </div>
- 
+
   </div>
 </div>
- 
+
 <div class="mbg" id="mp">
   <div class="modal">
     <div class="mh">
@@ -873,7 +873,7 @@ tbody tr:last-child{border-bottom:none}
     </div>
   </div>
 </div>
- 
+
 <div class="mbg" id="mv">
   <div class="modal">
     <div class="mh">
@@ -905,19 +905,22 @@ tbody tr:last-child{border-bottom:none}
     </div>
     <div class="fg"><label>Device ID (Tracker ESP32) *</label><input id="vd" placeholder="Identifiant unique"/>
     </div>
+    <div class="fg"><label>Nom complet du conducteur <span style="font-weight:400;color:var(--text3)">(optionnel)</span></label>
+      <input id="v-conducteur" placeholder="Ousmane Ndiaye"/>
+    </div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('mv')">Annuler</button>
       <button class="btn btn-primary" onclick="creerV()"><i class="fa-solid fa-check"></i> Assigner</button>
     </div>
   </div>
 </div>
- 
+
 <script>
 const T={dashboard:"Tableau de bord",proprietaires:"Propriétaires",vehicules:"Flotte de Véhicules",
   historique:"Historique de Tracking",alertes:"Alertes Système",parametres:"Paramètres Système"};
- 
+
 setInterval(()=>{document.getElementById("clk").textContent=new Date().toLocaleTimeString('fr-FR')},1000);
- 
+
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("open");
@@ -926,7 +929,7 @@ function closeMenu(){
   document.getElementById("sidebar").classList.remove("open");
   document.getElementById("overlay").classList.remove("open");
 }
- 
+
 function show(n,el){
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
@@ -939,7 +942,7 @@ function show(n,el){
   if(n==="historique")initHist();
   if(n==="alertes")loadAlertes();
 }
- 
+
 async function loadStats(){
   const[p,v]=await Promise.all([
     fetch("/api/admin/proprietaires").then(r=>r.json()),
@@ -947,13 +950,13 @@ async function loadStats(){
   document.getElementById("stp").textContent=p.length||0;
   document.getElementById("stv").textContent=v.filter(x=>x.actif).length||0;
 }
- 
+
 /* ── Alertes Système : perte de signal / panne technique + quota SIM800L ── */
 async function loadAlertes(){
   await Promise.all([loadAlertesSignal(), loadAlertesSim()]);
   refreshNavAlertBadge();
 }
- 
+
 async function loadAlertesSignal(){
   const tb=document.getElementById("tb-al-signal");
   try{
@@ -979,7 +982,7 @@ async function loadAlertesSignal(){
     tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-satellite-dish empty-ico"></i><div class="empty-txt">Aucune donnée disponible</div><div class="empty-sub">Ce module nécessite l\\'endpoint /api/admin/alertes/signal côté serveur</div></div></td></tr>';
   }
 }
- 
+
 async function loadAlertesSim(){
   const tb=document.getElementById("tb-al-sim");
   try{
@@ -1005,7 +1008,7 @@ async function loadAlertesSim(){
     tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-sim-card empty-ico"></i><div class="empty-txt">Aucune donnée disponible</div><div class="empty-sub">Ce module nécessite l\\'endpoint /api/admin/alertes/sim-data côté serveur</div></div></td></tr>';
   }
 }
- 
+
 async function rechargerSim(vehiculeId){
   try{
     const res=await fetch(`/api/admin/vehicules/${vehiculeId}/recharger-sim`,{method:"POST"});
@@ -1015,7 +1018,7 @@ async function rechargerSim(vehiculeId){
     alert("Impossible de confirmer la recharge — endpoint serveur non disponible pour le moment.");
   }
 }
- 
+
 async function refreshNavAlertBadge(){
   const s=parseInt(document.getElementById("al-signal-count").textContent)||0;
   const d=parseInt(document.getElementById("al-sim-count").textContent)||0;
@@ -1025,7 +1028,7 @@ async function refreshNavAlertBadge(){
   if(total>0){badge.style.display="inline-block";badge.textContent=total;}
   else badge.style.display="none";
 }
- 
+
 /* ── Propriétaires ── */
 async function loadP(){
   const data=await fetch("/api/admin/proprietaires").then(r=>r.json());
@@ -1043,17 +1046,18 @@ async function loadP(){
     <td class="td-main">${p.prenom} ${p.nom}</td>
     <td><i class="fa-regular fa-envelope" style="color:var(--text3);margin-right:6px"></i>${p.email}</td>
     <td>${p.telephone||"—"}</td>
-    <td><span style="font-weight:600; padding:4px 12px; border-radius:20px; background:var(--surface2); border:1px solid var(--border);">${p.nb_vehicules} <i class="fa-solid fa-car" style="color:var(--primary);margin-left:4px;"></i></span></td>
+    <td><span onclick="ouvrirVehiculesDe(${p.id},'${p.prenom} ${p.nom}')" style="cursor:pointer;font-weight:600; padding:4px 12px; border-radius:20px; background:var(--surface2); border:1px solid var(--border); transition:all 0.2s;" onmouseover="this.style.borderColor='var(--primary-light)'" onmouseout="this.style.borderColor='var(--border)'">${p.nb_vehicules} <i class="fa-solid fa-car" style="color:var(--primary);margin-left:4px;"></i></span></td>
     <td style="font-size:12px;color:var(--text3)">${(p.date_creation||"").slice(0,10)}</td>
     <td><span class="badge ${p.actif?'badge-on':'badge-off'}">${p.actif?'Actif':'Inactif'}</span></td>
     <td style="white-space:nowrap"><div style="display:flex;gap:8px;align-items:center">
+    <button class="btn btn-sm" style="background:var(--surface); color:var(--primary-dark); border:1px solid var(--border);" onclick="ouvrirVehiculesDe(${p.id},'${p.prenom} ${p.nom}')" title="Voir ses véhicules"><i class="fa-solid fa-car"></i></button>
     <button class="btn btn-sm ${p.actif?'btn-danger':'btn-success'}" onclick="toggleP(${p.id})"><i class="fa-solid fa-power-off"></i></button>
     <button class="btn btn-sm btn-primary" style="background:var(--surface2); color:var(--primary-dark); border:1px solid var(--border); box-shadow:none;" onclick="ouvrirModifP(${p.id})"><i class="fa-solid fa-pen"></i></button>
     <button class="btn btn-sm btn-danger" onclick="confirmerSuppressionP(${p.id},'${p.prenom} ${p.nom}')"><i class="fa-solid fa-trash"></i></button>
     </div></td>
   </tr>`).join("");
 }
- 
+
 async function creerP(){
   const e=document.getElementById("ep"),o=document.getElementById("op");
   const et=document.getElementById("ep-t"),ot=document.getElementById("op-t");
@@ -1076,36 +1080,112 @@ async function creerP(){
     loadStats();
   }else{et.textContent=data.error;e.style.display="flex";}
 }
- 
+
 async function toggleP(id){await fetch(`/api/admin/proprietaires/${id}/toggle`,{method:"POST"});loadP();}
- 
-/* ── Véhicules ── */
+
+/* ── Véhicules — regroupés par propriétaire (accordéon) ── */
+let vehiculesData=[], openOwnerGroups=new Set(), focusOwnerId=null;
+
 async function loadV(){
-  const data=await fetch("/api/admin/vehicules").then(r=>r.json());
-  const tb=document.getElementById("tbv");
-  if(!data.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fa-solid fa-car empty-ico"></i><div class="empty-txt">Flotte vide</div></div></td></tr>';return;}
-  tb.innerHTML=data.map(v=>`<tr>
-    <td class="td-main">${v.immatriculation}</td>
-    <td>${v.marque} <span style="color:var(--text2);font-weight:400">${v.modele}</span></td>
-    <td style="text-transform:capitalize"><i class="fa-solid fa-car" style="color:var(--text3);margin-right:6px"></i>${v.type_vehicule}</td>
-    <td><i class="fa-regular fa-user" style="color:var(--text3);margin-right:6px"></i>${v.proprietaire_nom}</td>
-    <td><span class="device"><i class="fa-solid fa-microchip" style="margin-right:4px;"></i>${v.device_id}</span></td>
-    <td><span class="badge ${v.actif?'badge-on':'badge-off'}">${v.actif?'Actif':'Inactif'}</span></td>
-    <td style="white-space:nowrap"><div style="display:flex;gap:8px;align-items:center">
-    <button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})"><i class="fa-solid fa-power-off"></i></button>
-    <button class="btn btn-sm btn-primary" style="background:var(--surface2); color:var(--primary-dark); border:1px solid var(--border); box-shadow:none;" onclick="ouvrirModifV(${v.id})"><i class="fa-solid fa-pen"></i></button>
-    <button class="btn btn-sm btn-danger" onclick="confirmerSuppressionV(${v.id},'${v.immatriculation}')"><i class="fa-solid fa-trash"></i></button>
-    </div></td>
-  </tr>`).join("");
+  vehiculesData=await fetch("/api/admin/vehicules").then(r=>r.json());
+  renderVehiculesGroupes();
 }
- 
+
+function toggleOwnerGroup(pid){
+  if(openOwnerGroups.has(pid))openOwnerGroups.delete(pid);
+  else openOwnerGroups.add(pid);
+  renderVehiculesGroupes();
+}
+
+function ouvrirVehiculesDe(proprietaireId,proprietaireLabel){
+  focusOwnerId=proprietaireId;
+  openOwnerGroups.add(proprietaireId);
+  show("vehicules", document.querySelectorAll(".nav-item")[2]);
+  setTimeout(()=>{
+    const el=document.getElementById("owner-"+proprietaireId);
+    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+  },80);
+}
+
+function renderVehiculesGroupes(){
+  const wrap=document.getElementById("veh-groups");
+  if(!wrap)return;
+  if(!vehiculesData.length){
+    wrap.innerHTML='<div class="empty"><i class="fa-solid fa-car empty-ico"></i><div class="empty-txt">Flotte vide</div></div>';
+    return;
+  }
+  const term=(document.getElementById("veh-search-input")?.value||"").toLowerCase().trim();
+
+  // Regroupement par propriétaire
+  const groupes={};
+  vehiculesData.forEach(v=>{
+    const key=v.proprietaire_id;
+    if(!groupes[key])groupes[key]={id:key,nom:v.proprietaire_nom,vehicules:[]};
+    groupes[key].vehicules.push(v);
+  });
+  let liste=Object.values(groupes).sort((a,b)=>a.nom.localeCompare(b.nom));
+
+  if(term){
+    liste=liste.map(g=>{
+      const ownerMatch=g.nom.toLowerCase().includes(term);
+      const vehsFiltres=ownerMatch?g.vehicules:g.vehicules.filter(v=>
+        `${v.immatriculation} ${v.marque} ${v.modele} ${v.conducteur_nom||""}`.toLowerCase().includes(term));
+      return {...g,vehicules:vehsFiltres};
+    }).filter(g=>g.vehicules.length>0);
+    // Auto-ouvre les groupes qui matchent une recherche
+    liste.forEach(g=>openOwnerGroups.add(g.id));
+  }
+
+  if(!liste.length){
+    wrap.innerHTML='<div class="empty"><i class="fa-solid fa-magnifying-glass empty-ico"></i><div class="empty-txt">Aucun résultat</div></div>';
+    return;
+  }
+
+  wrap.innerHTML=liste.map(g=>{
+    const isOpen=openOwnerGroups.has(g.id);
+    const initiales=g.nom.split(" ").map(s=>s[0]).join("").slice(0,2).toUpperCase();
+    return `<div class="owner-group ${isOpen?'open':''} ${focusOwnerId===g.id?'hl':''}" id="owner-${g.id}">
+      <div class="owner-header" onclick="toggleOwnerGroup(${g.id})">
+        <div class="owner-header-left">
+          <div class="owner-avatar">${initiales}</div>
+          <div>
+            <div class="owner-name">${g.nom}</div>
+            <div class="owner-count">${g.vehicules.length} véhicule${g.vehicules.length>1?'s':''}</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-down owner-chevron"></i>
+      </div>
+      <div class="owner-body"><div class="owner-body-inner">
+        ${g.vehicules.map(v=>`
+          <div class="veh-mini-card">
+            <div class="veh-mini-top">
+              <div>
+                <div class="veh-mini-immat">${v.immatriculation}</div>
+                <div class="veh-mini-model">${v.marque} ${v.modele} · <span style="text-transform:capitalize">${v.type_vehicule}</span></div>
+              </div>
+              <span class="badge ${v.actif?'badge-on':'badge-off'}" style="flex-shrink:0">${v.actif?'Actif':'Inactif'}</span>
+            </div>
+            ${v.conducteur_nom?`<div class="veh-mini-driver"><i class="fa-solid fa-id-card"></i> ${v.conducteur_nom}</div>`:''}
+            <div class="veh-mini-device"><i class="fa-solid fa-microchip"></i> ${v.device_id}</div>
+            <div class="veh-mini-actions">
+              <button class="btn btn-sm ${v.actif?'btn-danger':'btn-success'}" onclick="toggleV(${v.id})"><i class="fa-solid fa-power-off"></i></button>
+              <button class="btn btn-sm" style="background:var(--surface); color:var(--primary-dark); border:1px solid var(--border);" onclick="ouvrirModifV(${v.id})"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="confirmerSuppressionV(${v.id},'${v.immatriculation}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>`).join("")}
+      </div></div>
+    </div>`;
+  }).join("");
+  focusOwnerId=null;
+}
+
 async function openMV(){
   const data=await fetch("/api/admin/proprietaires").then(r=>r.json());
   document.getElementById("vp").innerHTML=data.map(p=>`<option value="${p.id}">${p.prenom} ${p.nom}</option>`).join("");
   document.getElementById("ev").style.display=document.getElementById("ov").style.display="none";
   document.getElementById("mv").classList.add("open");
 }
- 
+
 async function creerV(){
   const e=document.getElementById("ev"),o=document.getElementById("ov");
   const et=document.getElementById("ev-t"),ot=document.getElementById("ov-t");
@@ -1118,17 +1198,18 @@ async function creerV(){
     type_vehicule:document.getElementById("vt").value,
     couleur:document.getElementById("vc").value.trim(),
     annee:parseInt(document.getElementById("va").value)||2024,
-    device_id:document.getElementById("vd").value.trim()
+    device_id:document.getElementById("vd").value.trim(),
+    conducteur_nom:document.getElementById("v-conducteur").value.trim()
   };
   const res=await fetch("/api/admin/vehicules",{method:"POST",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   const data=await res.json();
-  if(res.ok){ot.textContent="Traceur assigné au véhicule.";o.style.display="flex";loadStats();}
+  if(res.ok){ot.textContent="Traceur assigné au véhicule.";o.style.display="flex";loadStats();loadV();}
   else{et.textContent=data.error;e.style.display="flex";}
 }
- 
+
 async function toggleV(id){await fetch(`/api/admin/vehicules/${id}/toggle`,{method:"POST"});loadV();}
- 
+
 /* ── Historique ── */
 async function initHist(){
   const vehs=await fetch("/api/admin/vehicules").then(r=>r.json());
@@ -1138,7 +1219,7 @@ async function initHist(){
     vehs.filter(v=>v.actif).map(v=>`<option value="${v.id}">${v.immatriculation} — ${v.marque} ${v.modele}</option>`).join("");
   if(cur)sel.value=cur;
 }
- 
+
 async function loadHist(){
   const vid=document.getElementById("hv").value;
   const lim=document.getElementById("hl").value;
@@ -1169,30 +1250,30 @@ async function loadHist(){
     <td><i class="fa-solid fa-satellite" style="color:var(--text3);margin-right:6px"></i>${p.satellites||"—"}</td>
   </tr>`).join("");
 }
- 
+
 function openMP(){
   document.getElementById("ep").style.display=document.getElementById("op").style.display="none";
   document.getElementById("mp").classList.add("open");
 }
 function closeM(id){document.getElementById(id).classList.remove("open");}
- 
+
 /* ── Confirmation Suppression ── */
 let _supprId=null, _supprType=null;
- 
+
 function confirmerSuppressionV(id, label){
   _supprId=id; _supprType='vehicule';
   document.getElementById("suppr-msg").innerHTML=
     `Supprimer le véhicule <strong style="color:var(--text)">${label}</strong> et tout son historique GPS ?`;
   document.getElementById("m-suppr").classList.add("open");
 }
- 
+
 function confirmerSuppressionP(id, label){
   _supprId=id; _supprType='proprietaire';
   document.getElementById("suppr-msg").innerHTML=
     `Supprimer le client <strong style="color:var(--text)">${label}</strong>, ses véhicules et historiques ?`;
   document.getElementById("m-suppr").classList.add("open");
 }
- 
+
 async function executerSuppression(){
   if(!_supprId||!_supprType)return;
   const url = _supprType==='vehicule'
@@ -1210,7 +1291,7 @@ async function executerSuppression(){
   }
   _supprId=null; _supprType=null;
 }
- 
+
 /* ── Modification ── */
 async function ouvrirModifP(id){
   const data=await fetch(`/api/admin/proprietaires/${id}`).then(r=>r.json());
@@ -1243,7 +1324,7 @@ async function sauvegarderP(){
     setTimeout(()=>closeM("m-modif-p"),1200);loadP();}
   else{et.textContent=data.error;e.style.display="flex";}
 }
- 
+
 async function ouvrirModifV(id){
   const data=await fetch(`/api/admin/vehicules/${id}`).then(r=>r.json());
   document.getElementById("mv-id").value=id;
@@ -1254,6 +1335,7 @@ async function ouvrirModifV(id){
   document.getElementById("mv-couleur").value=data.couleur||"";
   document.getElementById("mv-annee").value=data.annee||"";
   document.getElementById("mv-device").value=data.device_id||"";
+  document.getElementById("mv-conducteur").value=data.conducteur_nom||"";
   document.getElementById("emv").style.display=document.getElementById("omv").style.display="none";
   document.getElementById("m-modif-v").classList.add("open");
 }
@@ -1269,7 +1351,8 @@ async function sauvegarderV(){
     type_vehicule:document.getElementById("mv-type").value,
     couleur:document.getElementById("mv-couleur").value.trim(),
     annee:document.getElementById("mv-annee").value,
-    device_id:document.getElementById("mv-device").value.trim()
+    device_id:document.getElementById("mv-device").value.trim(),
+    conducteur_nom:document.getElementById("mv-conducteur").value.trim()
   };
   const res=await fetch(`/api/admin/vehicules/${id}`,{method:"PUT",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -1278,12 +1361,12 @@ async function sauvegarderV(){
     setTimeout(()=>closeM("m-modif-v"),1200);loadV();}
   else{et.textContent=data.error;e.style.display="flex";}
 }
- 
+
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadStats();
 loadAlertes();
 </script>
- 
+
 <div class="mbg" id="m-suppr">
   <div class="modal" style="max-width:420px; text-align:center;">
     <div style="font-size:48px; color:var(--red); margin-bottom:16px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -1295,7 +1378,7 @@ loadAlertes();
     </div>
   </div>
 </div>
- 
+
 <div class="mbg" id="m-modif-p">
   <div class="modal">
     <div class="mh">
@@ -1319,7 +1402,7 @@ loadAlertes();
     </div>
   </div>
 </div>
- 
+
 <div class="mbg" id="m-modif-v">
   <div class="modal">
     <div class="mh">
@@ -1350,6 +1433,9 @@ loadAlertes();
       <div class="fg"><label>Année</label><input type="number" id="mv-annee"/></div>
     </div>
     <div class="fg"><label>Device ID (ESP32) *</label><input id="mv-device"/></div>
+    <div class="fg"><label>Nom complet du conducteur <span style="font-weight:400;color:var(--text3)">(optionnel)</span></label>
+      <input id="mv-conducteur" placeholder="Ousmane Ndiaye"/>
+    </div>
     <div class="ma">
       <button class="btn btn-danger" onclick="closeM('m-modif-v')">Annuler</button>
       <button class="btn btn-primary" onclick="sauvegarderV()"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
@@ -1357,11 +1443,11 @@ loadAlertes();
   </div>
 </div>
 </body></html>"""
- 
+
 # ═════════════════════════════════════════════════════════════
 #  PAGE USER
 # ═════════════════════════════════════════════════════════════
- 
+
 USER_PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1390,7 +1476,7 @@ USER_PAGE = """<!DOCTYPE html>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   height:100vh;display:flex;overflow:hidden;font-size:14px}
- 
+
 /* SIDEBAR */
 .sidebar{
   position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
@@ -1405,11 +1491,11 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   box-shadow:0 4px 12px rgba(79,195,247,0.3)}
 .s-logo-name{font-size:16px;font-weight:700;color:var(--primary-dark)}
 .s-logo-sub{font-size:11px;color:var(--primary);font-weight:600}
- 
+
 .s-user{margin:16px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px}
 .s-user-name{font-size:14px;font-weight:600;color:var(--text)}
 .s-user-role{font-size:11px;font-weight:600;color:var(--primary-dark);margin-top:2px}
- 
+
 .s-section{padding:16px 20px 8px;font-size:11px;font-weight:700;
   color:var(--text3);text-transform:uppercase;letter-spacing:1px}
 .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;
@@ -1418,7 +1504,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 .nav-item:hover{background:var(--surface2);color:var(--primary-dark)}
 .nav-item.active{background:var(--primary-dark);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(11,61,145,0.2)}
 .nav-ico{font-size:16px;width:24px;text-align:center;flex-shrink:0}
- 
+
 .veh-list{flex:1;overflow-y:auto;padding:8px 12px}
 .veh-card{padding:14px;border-radius:12px;cursor:pointer;position:relative;
   border:1px solid var(--border);background:var(--surface);margin-bottom:8px;transition:all 0.2s}
@@ -1443,14 +1529,14 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 .veh-mini-stats{display:flex;gap:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .veh-mini-stat{font-size:11px;color:var(--text2);font-weight:600;display:flex;align-items:center;gap:4px}
 .veh-mini-stat i{color:var(--text3);font-size:10px}
- 
+
 .s-bottom{padding:16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
 .btn-logout{width:100%;padding:12px;background:var(--surface);color:var(--text2);
   border:1px solid var(--border);border-radius:12px;cursor:pointer;
   font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;
   display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
 .btn-logout:hover{background:rgba(239,68,68,0.1);color:var(--red);border-color:rgba(239,68,68,0.2)}
- 
+
 /* ══ FLEET PANEL (Carte GPS — style Wialon/Samsara) ══ */
 .fleet-panel{width:320px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
   display:flex;flex-direction:column;height:100%;z-index:20;}
@@ -1468,7 +1554,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 .fleet-toggle-btn{display:none;position:absolute;top:20px;left:20px;z-index:1000;width:44px;height:44px;
   border-radius:12px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-md);
   align-items:center;justify-content:center;cursor:pointer;color:var(--primary-dark);font-size:16px;}
- 
+
 /* ── Detail card (fiche véhicule flottante sur la carte) ── */
 .detail-card{position:absolute;bottom:24px;left:24px;z-index:1000;width:320px;max-width:calc(100% - 48px);
   background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border:1px solid var(--border);
@@ -1494,8 +1580,8 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   color:var(--text2);font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;}
 .dc-foot button:hover{border-color:var(--primary-light);color:var(--primary-dark)}
- 
- 
+
+
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{height:70px;padding:0 24px;background:rgba(255,255,255,0.9);
   backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
@@ -1510,23 +1596,23 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .live-blink{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
 .upd{font-size:12px;color:var(--text3);margin-left:12px;font-weight:500;}
- 
+
 #map{flex:1; width:100%; height:100%; z-index:1;}
 .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:16px; background:var(--bg);}
 .es-ico{font-size:64px;color:var(--border)}
 .es-title{font-size:20px;font-weight:700;color:var(--primary-dark)}
 .es-sub{font-size:14px;color:var(--text2);text-align:center;padding:0 24px; max-width:400px;}
- 
+
 .usec{display:none;flex:1;overflow-y:auto;padding:32px; background:var(--bg);}
 .usec.active{display:block; animation:fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
- 
+
 /* Dash / Hist / Params */
 .stat-cards-container { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:32px; }
 .card-modern { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; position:relative; overflow:hidden; box-shadow:var(--shadow-sm); transition:transform 0.2s;}
 .card-modern:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
- 
+
 .h-filters{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
 .h-select{height:44px;padding:0 16px;background:var(--surface);border:1px solid var(--border);
   border-radius:12px;font-size:14px;font-family:'Poppins',sans-serif;color:var(--text);outline:none; box-shadow:var(--shadow-sm);}
@@ -1537,7 +1623,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   text-transform:uppercase;letter-spacing:0.5px;background:var(--surface2); border-bottom:2px solid var(--border)}
 .htable td{padding:16px 20px;font-size:14px;color:var(--text);border-bottom:1px solid var(--border)}
 .htable tr:hover td{background:var(--surface2)}
- 
+
 .pcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;box-shadow:var(--shadow-sm);}
 .ptitle{font-size:18px;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
 .psub{font-size:13px;color:var(--text2);margin-bottom:24px}
@@ -1548,10 +1634,10 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 .pdesc{font-size:12px;color:var(--text3);margin-top:4px}
 .pbadge{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;
   background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
- 
+
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;backdrop-filter:blur(3px);}
 .overlay.open{display:block}
- 
+
 /* MOBILE */
 @media(max-width:768px){
   body{overflow:auto;height:auto;display:block}
@@ -1562,19 +1648,19 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   .topbar{padding:0 16px;flex-shrink:0;z-index:50;position:relative; height:60px;}
   .tb-title{font-size:16px}
   .upd{display:none}
- 
+
   #tab-carte{height:calc(100vh - 60px);flex-direction:row;overflow:hidden;position:relative}
   #map-wrap{flex:1;min-height:0;overflow:hidden;position:relative}
- 
+
   .fleet-panel{position:fixed;top:60px;left:0;bottom:0;width:85%;max-width:320px;
     transform:translateX(-100%);transition:transform 0.3s ease;box-shadow:none;z-index:1500;}
   .fleet-panel.open{transform:translateX(0);box-shadow:8px 0 24px rgba(0,0,0,0.15)}
   .fleet-toggle-btn{display:flex}
   .detail-card{left:12px;right:12px;bottom:16px;width:auto;max-width:none}
   .dc-grid{grid-template-columns:1fr 1fr}
- 
+
   .infobar{display:none}
- 
+
   #btn-retour-carte{
     display:none; position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
     z-index:1000; background:var(--primary-dark); color:#fff; border:none; border-radius:24px;
@@ -1582,16 +1668,16 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
     box-shadow:0 8px 16px rgba(11,61,145,0.3); align-items:center; gap:8px; font-family:'Poppins',sans-serif;
   }
   #btn-retour-carte[data-active="true"]{display:flex}
- 
+
   .usec{padding:20px;height:calc(100vh - 60px);overflow-y:auto}
   .stat-cards-container{grid-template-columns:1fr; gap:16px;}
   .h-filters{flex-direction:column}
   .h-select{width:100%}
 }
 </style></head><body>
- 
+
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
- 
+
 <div class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-logo-row">
@@ -1621,7 +1707,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
     <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-power-off"></i> Déconnexion</button>
   </div>
 </div>
- 
+
 <div class="main">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
@@ -1633,10 +1719,10 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
       <span class="upd" id="tupd"><i class="fa-regular fa-clock"></i> —</span>
     </div>
   </div>
- 
+
   <div id="tab-dashboard" class="usec active">
     <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark);margin-bottom:24px">Vue d'ensemble</h2>
- 
+
     <div class="stat-cards-container" id="stat-cards">
       <div class="card-modern" style="border-top:4px solid var(--green);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -1660,15 +1746,15 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
         <div style="font-size:14px;color:var(--text2);font-weight:600;margin-top:8px;">Hors ligne</div>
       </div>
     </div>
- 
+
     <h3 style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:16px;">État de la flotte</h3>
     <div id="dash-list" style="display:flex;flex-direction:column;gap:12px">
       <div style="text-align:center;padding:40px;color:var(--text3);font-size:14px"><i class="fa-solid fa-spinner fa-spin"></i> Analyse en cours...</div>
     </div>
   </div>
- 
+
   <div id="tab-carte" style="flex:1;display:none;overflow:hidden; position:relative;">
- 
+
     <div class="fleet-panel" id="fleet-panel">
       <div class="fleet-search">
         <div class="iw"><i class="fa-solid fa-magnifying-glass ii"></i>
@@ -1688,7 +1774,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
         <div style="padding:14px;color:var(--text3);font-size:13px;text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
       </div>
     </div>
- 
+
     <div id="map-column" style="flex:1;display:flex;flex-direction:column;position:relative;min-width:0;">
       <div id="map-wrap" style="flex:1;display:none;position:relative">
         <div id="map"></div>
@@ -1725,7 +1811,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
           <i class="fa-solid fa-bars"></i> Menu
         </button>
       </div>
- 
+
       <div class="empty-state" id="empty">
         <div class="es-ico"><i class="fa-solid fa-map-location-dot"></i></div>
         <div class="es-title">Aucun véhicule sélectionné</div>
@@ -1733,7 +1819,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
       </div>
     </div>
   </div>
- 
+
   <div id="tab-historique" class="usec">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark)">Historique des trajets</h2>
@@ -1765,7 +1851,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
       </div>
     </div>
   </div>
- 
+
   <div id="tab-parametres" class="usec">
     <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark);margin-bottom:24px">Paramètres</h2>
     
@@ -1777,13 +1863,13 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
       <div class="prow"><div><div class="plbl">Téléphone</div><div class="pdesc" id="pct">—</div></div></div>
       <div class="prow"><div><div class="plbl">Membre depuis</div><div class="pdesc" id="pcd">—</div></div></div>
     </div>
- 
+
     <div class="pcard">
       <div class="ptitle">Mes véhicules</div>
       <div class="psub">Flotte active sous surveillance</div>
       <div id="pcv"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
     </div>
- 
+
     <div class="pcard">
       <div class="ptitle">Notifications & Alertes</div>
       <div class="psub">Soyez prévenu en cas de perte de signal prolongée</div>
@@ -1791,7 +1877,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
         <div style="font-size:13px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i> Vérification...</div>
       </div>
     </div>
- 
+
     <div class="pcard">
       <div class="ptitle">À propos du système</div>
       <div class="psub">Détails de l'application</div>
@@ -1802,11 +1888,11 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
     </div>
   </div>
 </div>
- 
+
 <script>
 let map=null,marker=null,poly=null,startMarker=null,selId=null,interval=null,meD=null,vehD=[];
 let vehStatusMap={}, fleetFilter="all";
- 
+
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("open");
@@ -1821,7 +1907,7 @@ function toggleFleetPanel(){
 function closeFleetPanel(){
   document.getElementById("fleet-panel").classList.remove("open");
 }
- 
+
 function showTab(n,el){
   document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
   if(el)el.classList.add("active");
@@ -1836,7 +1922,7 @@ function showTab(n,el){
   if(n==="parametres")loadParams();
   closeMenu();
 }
- 
+
 /* ── Tableau de bord ── */
 async function loadDashboard(){
   try{
@@ -1844,27 +1930,27 @@ async function loadDashboard(){
     data.forEach(v=>vehStatusMap[v.id]=v);
     updateFleetCardsStatus();
     updateDetailCardLive();
- 
+
     const nbMouvement = data.filter(v=>v.statut==='mouvement').length;
     const nbImmobile  = data.filter(v=>v.statut==='immobile').length;
     const nbSignal    = data.filter(v=>v.statut==='sans_signal').length;
- 
+
     document.getElementById("cnt-mouvement").textContent = nbMouvement;
     document.getElementById("cnt-immobile").textContent  = nbImmobile;
     document.getElementById("cnt-signal").textContent    = nbSignal;
- 
+
     const list = document.getElementById("dash-list");
     if(!data.length){
       list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;background:var(--surface);border-radius:16px;"><i class="fa-solid fa-car-side" style="font-size:32px;margin-bottom:12px;"></i><br>Aucun véhicule n\\'est actuellement assigné à votre compte.</div>';
       return;
     }
- 
+
     const config = {
       mouvement:  {icone:'<i class="fa-solid fa-truck-fast"></i>', label:'En mouvement', couleur:'var(--green)', bg:'rgba(16,185,129,0.1)', bd:'rgba(16,185,129,0.2)'},
       immobile:   {icone:'<i class="fa-solid fa-square-parking"></i>', label:'Immobile',      couleur:'var(--amber)',     bg:'rgba(245,158,11,0.1)', bd:'rgba(245,158,11,0.2)'},
       sans_signal:{icone:'<i class="fa-solid fa-location-crosshairs" style="opacity:0.5"></i>', label:'Hors ligne',   couleur:'var(--red)',  bg:'rgba(239,68,68,0.1)', bd:'rgba(239,68,68,0.2)'}
     };
- 
+
     list.innerHTML = data.map(v=>{
       const cfg = config[v.statut];
       const infoSignal = v.statut==='sans_signal'
@@ -1872,7 +1958,7 @@ async function loadDashboard(){
             ? `Hors ligne depuis ${Math.round(v.minutes_sans_signal)} min · Nous surveillons la situation`
             : 'Aucune donnée enregistrée pour le moment')
         : `<i class="fa-solid fa-gauge-high"></i> ${(v.vitesse||0).toFixed(0)} km/h &nbsp; <i class="fa-solid fa-satellite"></i> ${v.satellites||0} sats`;
- 
+
       return `<div onclick="showTab('carte',document.querySelectorAll('.nav-item')[1]); selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
         style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;
           background:var(--surface);border:1px solid var(--border);border-radius:16px;
@@ -1900,7 +1986,7 @@ async function loadDashboard(){
     console.log("Erreur dashboard:",e);
   }
 }
- 
+
 function initMap(){
   if(map)return;
   map=L.map("map",{zoomControl:false}).setView([14.8500,-15.8833],15);
@@ -1913,7 +1999,7 @@ function initMap(){
   }).addTo(map);
   poly=L.polyline([],{color:"#4FC3F7",weight:5,opacity:0.9,lineCap:"round",lineJoin:"round"}).addTo(map);
 }
- 
+
 async function loadVehicules(){
   const[vehs,m]=await Promise.all([
     fetch("/api/user/vehicules").then(r=>r.json()),
@@ -1922,7 +2008,7 @@ async function loadVehicules(){
   document.getElementById("uname").textContent=m.prenom+" "+m.nom;
   renderFleetPanel();
 }
- 
+
 /* ── Panneau flotte (Carte GPS) — style Wialon/Samsara ── */
 function setFleetFilter(f,btn){
   fleetFilter=f;
@@ -1930,7 +2016,7 @@ function setFleetFilter(f,btn){
   if(btn)btn.classList.add("active");
   renderFleetPanel();
 }
- 
+
 function renderFleetPanel(){
   const cards=document.getElementById("fleet-cards");
   const countEl=document.getElementById("fleet-count");
@@ -1972,7 +2058,7 @@ function renderFleetPanel(){
     </div>`).join("");
   updateFleetCardsStatus();
 }
- 
+
 function updateFleetCardsStatus(){
   const cfgLbl={mouvement:"En mouvement",immobile:"Immobile",sans_signal:"Hors ligne"};
   Object.values(vehStatusMap).forEach(v=>{
@@ -1993,7 +2079,7 @@ function updateFleetCardsStatus(){
     }
   });
 }
- 
+
 function updateDetailCardLive(){
   if(!selId)return;
   const v=vehStatusMap[selId];
@@ -2005,7 +2091,7 @@ function updateDetailCardLive(){
     badge.textContent=cfgLbl[v.statut]||"—";
   }
 }
- 
+
 function closeDetailCard(){
   document.getElementById("detail-card").style.display="none";
 }
@@ -2017,7 +2103,7 @@ function goToHistorique(){
   const sel=document.getElementById("uhv");
   if(sel && selId){sel.value=selId; loadUH();}
 }
- 
+
 async function selV(id,label,immat){
   selId=id;
   document.getElementById("ttl").textContent=immat+" — "+label;
@@ -2031,15 +2117,15 @@ async function selV(id,label,immat){
   const navItems = document.querySelectorAll(".nav-item");
   if(navItems[1]) navItems[1].classList.add("active");
   closeFleetPanel();
- 
+
   const v=vehD.find(x=>x.id===id);
   document.getElementById("dc-immat").textContent=immat;
   document.getElementById("dc-model").textContent=v?`${v.marque} ${v.modele}`:label;
   document.getElementById("detail-card").style.display="block";
   updateDetailCardLive();
- 
+
   renderFleetPanel();
- 
+
   initMap();
   if(poly)poly.setLatLngs([]);
   if(marker){map.removeLayer(marker);marker=null;}
@@ -2057,7 +2143,7 @@ async function selV(id,label,immat){
   if(interval)clearInterval(interval);
   refresh(); interval=setInterval(refresh,2000);
 }
- 
+
 async function refresh(){
   if(!selId)return;
   try{
@@ -2097,13 +2183,13 @@ async function refresh(){
     if(lbl)lbl.innerHTML="Live Tracker";
   }catch(e){}
 }
- 
+
 function initUH(){
   const sel=document.getElementById("uhv");
   sel.innerHTML='<option value="">Sélectionnez un véhicule...</option>'+
     vehD.map(v=>`<option value="${v.id}">${v.immatriculation} — ${v.marque} ${v.modele}</option>`).join("");
 }
- 
+
 async function loadUH(){
   const vid=document.getElementById("uhv").value;
   const lim=document.getElementById("uhl").value;
@@ -2124,7 +2210,7 @@ async function loadUH(){
     <td><i class="fa-solid fa-satellite" style="color:var(--text3);margin-right:6px"></i>${p.satellites||"—"}</td>
   </tr>`).join("");
 }
- 
+
 async function loadParams(){
   if(!meD)return;
   document.getElementById("pcn").textContent=meD.prenom+" "+meD.nom;
@@ -2146,7 +2232,7 @@ async function loadParams(){
     :'<div style="color:var(--text3);font-size:14px">Aucun véhicule assigné à votre compte.</div>';
   await refreshNotifStatus();
 }
- 
+
 /* ── PUSH NOTIFICATIONS ── */
 function urlBase64ToUint8Array(base64String){
   const padding='='.repeat((4-base64String.length%4)%4);
@@ -2156,7 +2242,7 @@ function urlBase64ToUint8Array(base64String){
   for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
   return arr;
 }
- 
+
 async function refreshNotifStatus(){
   const wrap=document.getElementById("notif-wrap");
   if(!wrap)return;
@@ -2187,7 +2273,7 @@ async function refreshNotifStatus(){
       Statut : ${abonne?'<span style="color:var(--green)"><i class="fa-solid fa-check-double"></i> Alertes activées</span>':'<span style="color:var(--text3)"><i class="fa-solid fa-minus"></i> Alertes désactivées</span>'}
     </div>`;
 }
- 
+
 async function activerNotifs(){
   const msg=document.getElementById("notif-msg");
   try{
@@ -2213,7 +2299,7 @@ async function activerNotifs(){
     if(msg)msg.innerHTML=`<span style="color:var(--red)"><i class="fa-solid fa-circle-exclamation"></i> Erreur : ${e.message}</span>`;
   }
 }
- 
+
 async function desactiverNotifs(){
   await fetch("/api/push/unsubscribe",{method:"POST"});
   try{
@@ -2225,7 +2311,7 @@ async function desactiverNotifs(){
   }catch(e){}
   await refreshNotifStatus();
 }
- 
+
 async function doLogout(){await fetch("/api/logout",{method:"POST"});window.location.href="/";}
 loadVehicules();
 loadDashboard();
