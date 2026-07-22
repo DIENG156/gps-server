@@ -11,6 +11,7 @@ import psycopg2, psycopg2.extras, os, json, threading, time, secrets
 from functools import wraps
 from pywebpush import webpush, WebPushException
 import urllib.request, urllib.error
+from datetime import datetime
  
 app = Flask(__name__)
 app.secret_key = "gps_tracker_secret_key_2026"
@@ -36,6 +37,12 @@ APP_URL          = os.environ.get("APP_URL", "http://localhost:5000")
 SEUIL_DATA_SIM_MO         = 100    # seuil critique déclenchant l'alerte admin
 DATA_INITIALE_MO          = 500    # quota par défaut attribué à une puce
 TAILLE_MOYENNE_POSITION_MO = 0.01  # estimation moyenne d'un envoi de position (≈10 Ko)
+
+# ── Détection des trajets & stationnements ("Trajets du jour") ──
+SEUIL_VITESSE_ARRET_KMH        = 3    # en dessous de cette vitesse, le véhicule est à l'arrêt
+SEUIL_STATIONNEMENT_MINUTES    = 60   # durée minimale d'un arrêt pour être un "stationnement"
+SEUIL_ARRIVEE_EN_COURS_MINUTES = 10   # si la dernière position a moins de X min, trajet "en cours"
+NOMINATIM_USER_AGENT = "GPS-Tracker-UADB/1.0 (contact: admin@gps.com)"
  
 # ─────────────────────────────────────────────────────────────
 #  BASE DE DONNÉES — PostgreSQL
@@ -111,8 +118,15 @@ def init_db_migrations():
     # Index pour accélérer les filtres par intervalle de temps sur les positions
     # (utilisé par le sélecteur de fenêtre de tracking : 15mn / 30mn / 1h / 2h)
     c.execute("CREATE INDEX IF NOT EXISTS idx_positions_vehicule_created ON positions (vehicule_id, created_at)")
+    # Cache de géocodage inverse (évite de re-solliciter Nominatim pour un lieu déjà connu)
+    c.execute("""CREATE TABLE IF NOT EXISTS geocodage_cache (
+        lat_arrondi REAL NOT NULL,
+        lng_arrondi REAL NOT NULL,
+        adresse TEXT NOT NULL,
+        created_at TEXT DEFAULT (NOW()::text),
+        PRIMARY KEY (lat_arrondi, lng_arrondi))""")
     conn.commit(); c.close(); conn.close()
-    print("[DB] Migrations additives appliquées ✅ (data_restante_mo, index positions)")
+    print("[DB] Migrations additives appliquées ✅ (data_restante_mo, index positions, geocodage_cache)")
  
 # ─────────────────────────────────────────────────────────────
 #  DÉCORATEURS
@@ -520,6 +534,158 @@ def get_last_position(vid):
     c.close(); conn.close()
     if not row: return jsonify({"error":"Aucune position"}), 404
     return jsonify(dict(row)), 200
+
+# ─────────────────────────────────────────────────────────────
+#  TRAJETS DU JOUR (PROPRIÉTAIRE) — départ/arrivée/stationnements
+# ─────────────────────────────────────────────────────────────
+
+def _parse_ts(ts):
+    """Parse le texte de created_at (issu de NOW()::text côté Postgres) en datetime,
+    en ignorant le fuseau horaire (tout est cohérent en UTC = heure du Sénégal)."""
+    if ts is None:
+        return datetime.utcnow()
+    s = str(ts).strip()
+    try:
+        return datetime.strptime(s[:19], "%Y-%m-%d %H:%M:%S")
+    except Exception:
+        return datetime.utcnow()
+
+def geocoder_position(lat, lng):
+    """Géocodage inverse via Nominatim (OpenStreetMap), avec cache DB.
+    Nominatim impose 1 requête/seconde max : le cache évite de la dépasser
+    en pratique (un véhicule stationne souvent aux mêmes endroits)."""
+    lat_r, lng_r = round(lat, 3), round(lng, 3)  # ~110m de précision
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT adresse FROM geocodage_cache WHERE lat_arrondi=%s AND lng_arrondi=%s", (lat_r, lng_r))
+    row = c.fetchone()
+    if row:
+        c.close(); conn.close()
+        return row["adresse"]
+
+    adresse = f"{lat:.4f}, {lng:.4f}"  # repli si le géocodage échoue
+    try:
+        url = f"https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat={lat}&lon={lng}&zoom=16"
+        req = urllib.request.Request(url, headers={"User-Agent": NOMINATIM_USER_AGENT})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        adr = data.get("address", {})
+        parties = [adr.get("suburb") or adr.get("neighbourhood") or adr.get("quarter"),
+                   adr.get("city") or adr.get("town") or adr.get("village") or adr.get("county")]
+        parties = [p for p in parties if p]
+        if parties:
+            adresse = ", ".join(parties)
+        elif data.get("display_name"):
+            adresse = data["display_name"]
+        time.sleep(1)  # respecte la limite Nominatim (1 req/sec)
+    except Exception as e:
+        print(f"[GEOCODAGE] Erreur : {e}")
+
+    c.execute("""INSERT INTO geocodage_cache (lat_arrondi, lng_arrondi, adresse) VALUES (%s,%s,%s)
+        ON CONFLICT (lat_arrondi, lng_arrondi) DO NOTHING""", (lat_r, lng_r, adresse))
+    conn.commit(); c.close(); conn.close()
+    return adresse
+
+def calculer_trajets_du_jour(vid):
+    """Découpe la journée d'un véhicule en trajets, séparés par des stationnements de +1h.
+    Retourne la liste des trajets (départ/arrivée/durée) + le temps total mobilité/stationnement."""
+    conn = get_db(); c = conn.cursor()
+    c.execute("""SELECT latitude, longitude, vitesse, created_at
+        FROM positions WHERE vehicule_id=%s AND created_at::timestamp >= CURRENT_DATE
+        ORDER BY created_at ASC, id ASC""", (vid,))
+    positions = [dict(p) for p in c.fetchall()]
+    c.close(); conn.close()
+
+    if not positions:
+        return {"trajets": [], "duree_mobilite_minutes": 0, "duree_stationnement_minutes": 0}
+
+    n = len(positions)
+
+    # 1) Séries de points immobiles (vitesse < seuil)
+    runs, debut_run = [], None
+    for i in range(n):
+        vitesse = positions[i]["vitesse"] or 0
+        if vitesse < SEUIL_VITESSE_ARRET_KMH:
+            if debut_run is None: debut_run = i
+        else:
+            if debut_run is not None:
+                runs.append((debut_run, i - 1)); debut_run = None
+    if debut_run is not None:
+        runs.append((debut_run, n - 1))
+
+    # 2) On ne garde que les arrêts d'au moins 1h → "stationnements"
+    stationnements = []
+    for (s, e) in runs:
+        duree_min = (_parse_ts(positions[e]["created_at"]) - _parse_ts(positions[s]["created_at"])).total_seconds() / 60
+        if duree_min >= SEUIL_STATIONNEMENT_MINUTES:
+            stationnements.append({"start_idx": s, "end_idx": e, "duree_minutes": duree_min})
+
+    # 3) Segments de trajet entre les stationnements
+    bornes, prec = [], 0
+    for st in stationnements:
+        bornes.append((prec, st["start_idx"])); prec = st["end_idx"]
+    bornes.append((prec, n - 1))
+
+    maintenant = datetime.utcnow()
+    trajets, numero, duree_mobilite_totale = [], 1, 0
+
+    for idx, (s, e) in enumerate(bornes):
+        if s >= e:
+            continue
+        depart_pos, arrivee_pos = positions[s], positions[e]
+        t_depart, t_arrivee = _parse_ts(depart_pos["created_at"]), _parse_ts(arrivee_pos["created_at"])
+        duree_minutes = (t_arrivee - t_depart).total_seconds() / 60
+        if duree_minutes < 3:
+            continue  # micro-segment négligeable (bruit GPS)
+        duree_mobilite_totale += duree_minutes
+
+        est_dernier = (idx == len(bornes) - 1)
+        en_cours = est_dernier and (maintenant - t_arrivee).total_seconds() / 60 < SEUIL_ARRIVEE_EN_COURS_MINUTES
+
+        stationnement_suivant = None
+        if idx < len(stationnements):
+            st = stationnements[idx]
+            st_lat, st_lng = positions[st["start_idx"]]["latitude"], positions[st["start_idx"]]["longitude"]
+            stationnement_suivant = {
+                "adresse": geocoder_position(st_lat, st_lng),
+                "duree_minutes": round(st["duree_minutes"])
+            }
+
+        trajets.append({
+            "numero": numero,
+            "depart": {
+                "lat": depart_pos["latitude"], "lng": depart_pos["longitude"],
+                "heure": t_depart.strftime("%H:%M"),
+                "adresse": geocoder_position(depart_pos["latitude"], depart_pos["longitude"])
+            },
+            "arrivee": {
+                "lat": arrivee_pos["latitude"], "lng": arrivee_pos["longitude"],
+                "heure": t_arrivee.strftime("%H:%M"),
+                "adresse": geocoder_position(arrivee_pos["latitude"], arrivee_pos["longitude"]),
+                "en_cours": en_cours
+            },
+            "duree_minutes": round(duree_minutes),
+            "trace": [[p["latitude"], p["longitude"]] for p in positions[s:e+1]],
+            "stationnement_suivant": stationnement_suivant
+        })
+        numero += 1
+
+    return {
+        "trajets": trajets,
+        "duree_mobilite_minutes": round(duree_mobilite_totale),
+        "duree_stationnement_minutes": round(sum(st["duree_minutes"] for st in stationnements))
+    }
+
+@app.route("/api/positions/<int:vid>/trajets-jour", methods=["GET"])
+@login_required
+def get_trajets_jour(vid):
+    conn = get_db(); c = conn.cursor()
+    if session.get("role") != "admin":
+        c.execute("SELECT id FROM vehicules WHERE id=%s AND proprietaire_id=%s", (vid, session["user_id"]))
+        if not c.fetchone():
+            c.close(); conn.close()
+            return jsonify({"error": "Accès refusé"}), 403
+    c.close(); conn.close()
+    return jsonify(calculer_trajets_du_jour(vid)), 200
  
 # ─────────────────────────────────────────────────────────────
 #  MODIFICATION PROPRIÉTAIRE & VÉHICULE
