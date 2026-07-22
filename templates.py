@@ -1667,6 +1667,31 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;backdrop-filter:blur(3px);}
 .overlay.open{display:block}
 
+/* ── Timeline Trajets ── */
+.trip-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.trip-summary .stat{padding:18px}
+.timeline{position:relative;padding-left:8px}
+.tl-item{display:flex;gap:16px;position:relative;padding-bottom:24px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:'';position:absolute;left:15px;top:32px;bottom:-8px;width:2px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;font-size:13px;z-index:1;border:3px solid var(--bg)}
+.tl-dot.tl-trajet{background:rgba(16,185,129,0.15);color:var(--green)}
+.tl-dot.tl-arret{background:rgba(245,158,11,0.15);color:var(--amber)}
+.tl-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:14px 16px;box-shadow:var(--shadow-sm)}
+.tl-card.en-cours{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(79,195,247,0.12)}
+.tl-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-title{font-size:14px;font-weight:700;color:var(--text)}
+.tl-duree{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.tl-duree.tl-trajet-bg{background:rgba(16,185,129,0.1);color:var(--green)}
+.tl-duree.tl-arret-bg{background:rgba(245,158,11,0.1);color:var(--amber)}
+.tl-detail{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.6}
+.tl-coords{font-family:monospace;font-size:11px;color:var(--text3)}
+.tl-badge-cours{font-size:10px;font-weight:700;color:var(--primary-dark);background:rgba(79,195,247,0.15);
+  padding:2px 8px;border-radius:20px;margin-left:6px;text-transform:uppercase}
+
 /* MOBILE */
 @media(max-width:768px){
   body{overflow:auto;height:auto;display:block}
@@ -1702,6 +1727,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   .stat-cards-container{grid-template-columns:1fr; gap:16px;}
   .h-filters{flex-direction:column}
   .h-select{width:100%}
+  .trip-summary{grid-template-columns:1fr}
 }
 </style></head><body>
 
@@ -1725,8 +1751,8 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   <div class="nav-item" onclick="showTab('carte',this)">
     <i class="fa-solid fa-map-location-dot nav-ico"></i> Carte GPS
   </div>
-  <div class="nav-item" onclick="showTab('historique',this)">
-    <i class="fa-solid fa-route nav-ico"></i> Historique
+  <div class="nav-item" onclick="showTab('trajets',this)">
+    <i class="fa-solid fa-route nav-ico"></i> Trajets
   </div>
   <div class="nav-item" onclick="showTab('parametres',this)">
     <i class="fa-solid fa-sliders nav-ico"></i> Paramètres
@@ -1841,13 +1867,13 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
             </div>
             <div class="dc-grid">
               <div class="dc-item"><div class="dc-item-lbl">Vitesse</div><div class="dc-item-val" id="dc-speed">—</div></div>
-              <div class="dc-item"><div class="dc-item-lbl">Satellites</div><div class="dc-item-val" id="dc-sat">—</div></div>
+              <div class="dc-item"><div class="dc-item-lbl">Segment actuel</div><div class="dc-item-val" id="dc-segment" style="font-size:12px">—</div></div>
               <div class="dc-item"><div class="dc-item-lbl">Latitude</div><div class="dc-item-val" id="dc-lat" style="font-size:12px;font-family:monospace">—</div></div>
               <div class="dc-item"><div class="dc-item-lbl">Longitude</div><div class="dc-item-val" id="dc-lng" style="font-size:12px;font-family:monospace">—</div></div>
             </div>
           </div>
           <div class="dc-foot">
-            <button onclick="goToHistorique()"><i class="fa-solid fa-route"></i> Historique</button>
+            <button onclick="goToTrajets()"><i class="fa-solid fa-route"></i> Trajets</button>
             <button onclick="recenterMap()"><i class="fa-solid fa-crosshairs"></i> Recentrer</button>
           </div>
         </div>
@@ -1864,34 +1890,31 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
     </div>
   </div>
 
-  <div id="tab-historique" class="usec">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark)">Historique des trajets</h2>
+  <div id="tab-trajets" class="usec">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark)">Trajets</h2>
     </div>
     <div class="h-filters">
-      <select class="h-select" id="uhv" onchange="loadUH()" style="min-width:250px;">
+      <select class="h-select" id="thv" onchange="loadTrajets()" style="min-width:250px;">
         <option value="">Sélectionnez un véhicule...</option>
       </select>
-      <select class="h-select" id="uhl" onchange="loadUH()">
-        <option value="50">50 dernières positions</option>
-        <option value="100">100 dernières positions</option>
-        <option value="200">200 dernières positions</option>
+      <select class="h-select" id="thw" onchange="loadTrajets()">
+        <option value="">Fenêtre standard (200 dernières positions)</option>
+        <option value="15">15 dernières minutes</option>
+        <option value="30">30 dernières minutes</option>
+        <option value="60">1 heure</option>
+        <option value="120">2 heures</option>
       </select>
     </div>
-    <div class="htable">
-      <div class="htable-wrap">
-        <table>
-          <thead><tr>
-            <th>#</th><th>Date / Heure</th><th>Latitude</th>
-            <th>Longitude</th><th>Vitesse</th><th>Signal</th>
-          </tr></thead>
-          <tbody id="uhtb">
-            <tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)">
-              <i class="fa-solid fa-list" style="font-size:24px; margin-bottom:12px; display:block;"></i>
-              Sélectionnez un véhicule pour afficher l'historique
-            </td></tr>
-          </tbody>
-        </table>
+    <div class="trip-summary" id="trip-summary" style="display:none">
+      <div class="stat" style="padding:18px;"><div class="stat-val" id="ts-nb" style="font-size:26px;">0</div><div class="stat-lbl" style="font-size:12px;margin-top:2px;">Trajets détectés</div></div>
+      <div class="stat" style="padding:18px;border-top:3px solid var(--green)"><div class="stat-val" id="ts-mobilite" style="font-size:26px;color:var(--green)">0</div><div class="stat-lbl" style="font-size:12px;margin-top:2px;">Durée mobilité</div></div>
+      <div class="stat" style="padding:18px;border-top:3px solid var(--amber)"><div class="stat-val" id="ts-stationnement" style="font-size:26px;color:var(--amber)">0</div><div class="stat-lbl" style="font-size:12px;margin-top:2px;">Durée stationnement</div></div>
+    </div>
+    <div id="timeline-wrap">
+      <div style="text-align:center;padding:60px;color:var(--text3);font-size:14px">
+        <i class="fa-solid fa-route" style="font-size:24px; margin-bottom:12px; display:block;"></i>
+        Sélectionnez un véhicule pour afficher ses trajets
       </div>
     </div>
   </div>
@@ -1934,8 +1957,9 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 </div>
 
 <script>
-let map=null,marker=null,poly=null,startMarker=null,selId=null,interval=null,meD=null,vehD=[];
+let map=null,marker=null,poly=null,selId=null,interval=null,meD=null,vehD=[];
 let vehStatusMap={}, fleetFilter="all";
+let segmentMarkers=[]; // markers départ/arrivée/arrêts affichés sur la carte pour le véhicule suivi
 
 /* Vraies photos par type de véhicule (au lieu d'icônes génériques) */
 const VEH_IMAGES={
@@ -1952,6 +1976,7 @@ function vehiculeImage(type){return VEH_IMAGES[type]||VEH_IMAGES.autre;}
    "15"/"30"/"60"/"120" = fenêtre glissante en minutes, mémorisée dans localStorage */
 let trackWindowMinutes = localStorage.getItem("gps_track_window") || "";
 let tracePoints = []; // {lat,lng,ts} utilisés uniquement en mode fenêtre glissante
+let dernierSegments = []; // dernier résultat de /trajets pour le véhicule suivi (segment en cours utilisé par la fiche)
 
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("open");
@@ -1978,7 +2003,7 @@ function showTab(n,el){
   if(btnRetour)delete btnRetour.dataset.active;
   if(n==="dashboard")loadDashboard();
   if(n==="carte")renderFleetPanel();
-  if(n==="historique")initUH();
+  if(n==="trajets")initTrajets();
   if(n==="parametres")loadParams();
   closeMenu();
 }
@@ -2017,7 +2042,7 @@ async function loadDashboard(){
         ? (v.minutes_sans_signal!==null
             ? `Hors ligne depuis ${Math.round(v.minutes_sans_signal)} min · Nous surveillons la situation`
             : 'Aucune donnée enregistrée pour le moment')
-        : `<i class="fa-solid fa-gauge-high"></i> ${(v.vitesse||0).toFixed(0)} km/h &nbsp; <i class="fa-solid fa-satellite"></i> ${v.satellites||0} sats`;
+        : `<i class="fa-solid fa-gauge-high"></i> ${(v.vitesse||0).toFixed(0)} km/h`;
 
       return `<div onclick="showTab('carte',document.querySelectorAll('.nav-item')[1]); selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')"
         style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;
@@ -2083,9 +2108,10 @@ function setTrackWindow(minutes, btn){
   localStorage.setItem("gps_track_window", minutes);
   document.querySelectorAll("#track-window .filter-pill").forEach(b=>b.classList.remove("active"));
   if(btn)btn.classList.add("active");
-  // Recharge immédiatement la trace du véhicule actuellement suivi, si un véhicule est sélectionné
+  // Recharge immédiatement la trace + les segments du véhicule actuellement suivi, si un véhicule est sélectionné
   if(selId){
     chargerHistoriqueTrace(selId);
+    chargerSegmentsCarte(selId);
   }
 }
 
@@ -2133,7 +2159,6 @@ function renderFleetPanel(){
       </div>
       <div class="veh-mini-stats" id="mstats${v.id}" style="display:none">
         <span class="veh-mini-stat"><i class="fa-solid fa-gauge-high"></i> <span id="mspd${v.id}">—</span> km/h</span>
-        <span class="veh-mini-stat"><i class="fa-solid fa-satellite"></i> <span id="msat${v.id}">—</span></span>
       </div>
     </div>`).join("");
   updateFleetCardsStatus();
@@ -2145,7 +2170,6 @@ function updateFleetCardsStatus(){
     const badge=document.getElementById("badge"+v.id);
     const mstats=document.getElementById("mstats"+v.id);
     const mspd=document.getElementById("mspd"+v.id);
-    const msat=document.getElementById("msat"+v.id);
     if(badge){
       badge.className="veh-status-badge st-"+v.statut;
       badge.textContent=cfgLbl[v.statut]||"—";
@@ -2153,7 +2177,6 @@ function updateFleetCardsStatus(){
     if(v.statut!=="sans_signal" && mstats){
       mstats.style.display="flex";
       if(mspd)mspd.textContent=(v.vitesse||0).toFixed(0);
-      if(msat)msat.textContent=v.satellites||"—";
     }else if(mstats){
       mstats.style.display="none";
     }
@@ -2178,10 +2201,26 @@ function closeDetailCard(){
 function recenterMap(){
   if(marker && map)map.setView(marker.getLatLng(),17);
 }
-function goToHistorique(){
-  showTab("historique", document.querySelectorAll(".nav-item")[2]);
-  const sel=document.getElementById("uhv");
-  if(sel && selId){sel.value=selId; loadUH();}
+function goToTrajets(){
+  showTab("trajets", document.querySelectorAll(".nav-item")[2]);
+  const sel=document.getElementById("thv");
+  if(sel && selId){sel.value=selId; loadTrajets();}
+}
+
+/* Icônes divIcon réutilisées pour les markers de segments sur la carte */
+function iconSegment(type, label, couleur){
+  return L.divIcon({
+    html:`<div style="width:26px;height:26px;border-radius:50%;background:${couleur};
+      border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,0.3);display:flex;
+      align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;">${label}</div>`,
+    iconSize:[26,26], iconAnchor:[13,13]
+  });
+}
+
+/* Nettoie les markers de segments (départ/arrêts/arrivée) précédemment posés */
+function nettoyerSegmentMarkers(){
+  segmentMarkers.forEach(m=>map.removeLayer(m));
+  segmentMarkers=[];
 }
 
 /* Charge (ou recharge) le tracé affiché sur la carte pour le véhicule vid,
@@ -2192,14 +2231,70 @@ async function chargerHistoriqueTrace(vid){
     : `/api/positions/${vid}?limit=200`;
   const hist = await fetch(url).then(r=>r.json());
   if(poly)poly.setLatLngs([]);
-  if(startMarker){map.removeLayer(startMarker);startMarker=null;}
   tracePoints = hist.map(p=>({lat:p.latitude,lng:p.longitude,ts:Date.parse(p.created_at)||Date.now()}));
   if(hist.length){
     poly.setLatLngs(tracePoints.map(p=>[p.lat,p.lng]));
-    const first=hist[0];
-    startMarker=L.circleMarker([first.latitude,first.longitude],{
-      radius:6,color:"#fff",weight:2,fillColor:"#10B981",fillOpacity:1
-    }).addTo(map).bindTooltip("Départ du trajet",{direction:"top"});
+  }
+}
+
+/* Charge les segments (trajets/arrêts) pour le véhicule vid, sur la même fenêtre,
+   et pose sur la carte : un marker "Départ" par trajet, un marker "Arrêt" par arrêt,
+   et un marker "Actuel" sur la toute dernière position si le dernier segment est en cours. */
+async function chargerSegmentsCarte(vid){
+  const url = trackWindowMinutes
+    ? `/api/positions/${vid}/trajets?minutes=${trackWindowMinutes}`
+    : `/api/positions/${vid}/trajets?limit=200`;
+  const data = await fetch(url).then(r=>r.json());
+  dernierSegments = data.segments || [];
+  nettoyerSegmentMarkers();
+
+  let numeroTrajet = 0;
+  dernierSegments.forEach(seg=>{
+    if(seg.type==="trajet"){
+      numeroTrajet++;
+      const mDepart=L.marker([seg.lat_debut,seg.lng_debut],{icon:iconSegment("trajet",numeroTrajet,"#10B981")})
+        .addTo(map).bindPopup(`<b>Départ trajet ${numeroTrajet}</b><br>${formatHeure(seg.debut)}<br><span style="font-family:monospace;font-size:11px">${seg.lat_debut.toFixed(6)}, ${seg.lng_debut.toFixed(6)}</span>`);
+      segmentMarkers.push(mDepart);
+      if(!seg.en_cours){
+        const mArrivee=L.marker([seg.lat_fin,seg.lng_fin],{icon:iconSegment("trajet","A","#0B3D91")})
+          .addTo(map).bindPopup(`<b>Arrivée trajet ${numeroTrajet}</b><br>${formatHeure(seg.fin)}<br><span style="font-family:monospace;font-size:11px">${seg.lat_fin.toFixed(6)}, ${seg.lng_fin.toFixed(6)}</span>`);
+        segmentMarkers.push(mArrivee);
+      }
+    } else {
+      const dureeTxt = formatDuree(seg.duree_minutes) + (seg.en_cours?" (en cours)":"");
+      const mArret=L.marker([seg.lat,seg.lng],{icon:iconSegment("arret","P","#F59E0B")})
+        .addTo(map).bindPopup(`<b>Stationnement</b><br>${formatHeure(seg.debut)} → ${seg.en_cours?"maintenant":formatHeure(seg.fin)}<br>Durée : ${dureeTxt}<br><span style="font-family:monospace;font-size:11px">${seg.lat.toFixed(6)}, ${seg.lng.toFixed(6)}</span>`);
+      segmentMarkers.push(mArret);
+    }
+  });
+
+  updateDetailCardSegment();
+}
+
+function formatHeure(ts){
+  if(!ts)return "—";
+  const d=new Date(ts.replace(" ","T"));
+  if(isNaN(d))return ts;
+  return d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+function formatDuree(minutes){
+  if(minutes==null)return "—";
+  const h=Math.floor(minutes/60), m=Math.round(minutes%60);
+  if(h>0)return `${h}h${m.toString().padStart(2,'0')}`;
+  return `${m} min`;
+}
+
+/* Met à jour le bloc "Segment actuel" de la fiche flottante, à partir du dernier
+   segment connu (trajet en cours ou stationnement en cours). */
+function updateDetailCardSegment(){
+  const el=document.getElementById("dc-segment");
+  if(!el || !dernierSegments.length)return;
+  const dernier=dernierSegments[dernierSegments.length-1];
+  if(!dernier.en_cours){ el.textContent="Terminé"; return; }
+  if(dernier.type==="trajet"){
+    el.textContent = `En trajet depuis ${formatHeure(dernier.debut)}`;
+  }else{
+    el.textContent = `Stationné depuis ${formatHeure(dernier.debut)} (${formatDuree(dernier.duree_minutes)})`;
   }
 }
 
@@ -2231,6 +2326,7 @@ async function selV(id,label,immat){
   setTimeout(()=>map.invalidateSize(),150);
   setTimeout(()=>map.invalidateSize(),400);
   await chargerHistoriqueTrace(id);
+  await chargerSegmentsCarte(id);
   if(interval)clearInterval(interval);
   refresh(); interval=setInterval(refresh,2000);
 }
@@ -2278,7 +2374,6 @@ async function refresh(){
     document.getElementById("dc-lat").textContent=p.latitude.toFixed(6)+"°";
     document.getElementById("dc-lng").textContent=p.longitude.toFixed(6)+"°";
     document.getElementById("dc-speed").textContent=(p.vitesse||0).toFixed(1)+" km/h";
-    document.getElementById("dc-sat").textContent=p.satellites||"—";
     document.getElementById("dc-updated").innerHTML=`<i class="fa-regular fa-clock"></i> `+new Date().toLocaleTimeString();
     document.getElementById("tupd").innerHTML= `<i class="fa-solid fa-rotate"></i> ` + new Date().toLocaleTimeString();
     const dot=document.getElementById("dot"+selId);
@@ -2288,31 +2383,74 @@ async function refresh(){
   }catch(e){}
 }
 
-function initUH(){
-  const sel=document.getElementById("uhv");
+/* Recharge périodiquement les segments (toutes les 30s) pour que le bloc
+   "Segment actuel" et les markers d'arrêts restent à jour sans surcharger le serveur. */
+setInterval(()=>{ if(selId) chargerSegmentsCarte(selId); }, 30000);
+
+function initTrajets(){
+  const sel=document.getElementById("thv");
+  const cur=sel.value;
   sel.innerHTML='<option value="">Sélectionnez un véhicule...</option>'+
     vehD.map(v=>`<option value="${v.id}">${v.immatriculation} — ${v.marque} ${v.modele}</option>`).join("");
+  if(selId){sel.value=selId; loadTrajets();}
+  else if(cur){sel.value=cur;}
 }
 
-async function loadUH(){
-  const vid=document.getElementById("uhv").value;
-  const lim=document.getElementById("uhl").value;
-  if(!vid)return;
-  const data=await fetch(`/api/positions/${vid}?limit=${lim}`).then(r=>r.json());
-  const tb=document.getElementById("uhtb");
-  if(!data.length){
-    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)"><img class="empty-img" src="https://images.unsplash.com/photo-1619468129361-605ebea04b44?auto=format&fit=crop&w=300&h=300&q=70" alt="">Aucune donnée pour ce véhicule</td></tr>';
+async function loadTrajets(){
+  const vid=document.getElementById("thv").value;
+  const fenetre=document.getElementById("thw").value;
+  const wrap=document.getElementById("timeline-wrap");
+  const summary=document.getElementById("trip-summary");
+  if(!vid){summary.style.display="none";return;}
+  const url = fenetre ? `/api/positions/${vid}/trajets?minutes=${fenetre}` : `/api/positions/${vid}/trajets?limit=200`;
+  const data = await fetch(url).then(r=>r.json());
+  const segments = data.segments || [];
+
+  if(!segments.length){
+    summary.style.display="none";
+    wrap.innerHTML='<div style="text-align:center;padding:60px;color:var(--text3);"><img class="empty-img" src="https://images.unsplash.com/photo-1619468129361-605ebea04b44?auto=format&fit=crop&w=300&h=300&q=70" alt=""><div style="font-size:14px;">Aucune donnée GPS pour cette période</div></div>';
     return;
   }
-  const rev=[...data].reverse();
-  tb.innerHTML=rev.map((p,i)=>`<tr>
-    <td style="color:var(--text3);font-weight:600">#${data.length-i}</td>
-    <td style="color:var(--text2);font-size:13px"><i class="fa-regular fa-clock" style="margin-right:6px"></i>${p.created_at||"—"}</td>
-    <td style="font-family:monospace;font-weight:600;color:var(--primary-dark)">${(p.latitude||0).toFixed(6)}</td>
-    <td style="font-family:monospace;font-weight:600;color:var(--primary-dark)">${(p.longitude||0).toFixed(6)}</td>
-    <td style="font-weight:600; color:${(p.vitesse||0)>80?'var(--red)':'var(--text)'}">${(p.vitesse||0).toFixed(1)} km/h</td>
-    <td><i class="fa-solid fa-satellite" style="color:var(--text3);margin-right:6px"></i>${p.satellites||"—"}</td>
-  </tr>`).join("");
+
+  summary.style.display="grid";
+  document.getElementById("ts-nb").textContent=data.nb_trajets||0;
+  document.getElementById("ts-mobilite").textContent=formatDuree(data.duree_mobilite_minutes);
+  document.getElementById("ts-stationnement").textContent=formatDuree(data.duree_stationnement_minutes);
+
+  let numeroTrajet=0;
+  wrap.innerHTML = `<div class="timeline">` + segments.map(seg=>{
+    if(seg.type==="trajet"){
+      numeroTrajet++;
+      const heureFin = seg.en_cours ? "en cours" : formatHeure(seg.fin);
+      return `<div class="tl-item">
+        <div class="tl-dot tl-trajet"><i class="fa-solid fa-car"></i></div>
+        <div class="tl-card ${seg.en_cours?'en-cours':''}">
+          <div class="tl-top">
+            <div class="tl-title">Trajet ${numeroTrajet} ${seg.en_cours?'<span class="tl-badge-cours">En cours</span>':''}</div>
+            <span class="tl-duree tl-trajet-bg">${formatDuree(seg.duree_minutes)}</span>
+          </div>
+          <div class="tl-detail">
+            Départ ${formatHeure(seg.debut)} <span class="tl-coords">(${seg.lat_debut.toFixed(5)}, ${seg.lng_debut.toFixed(5)})</span><br>
+            Arrivée ${heureFin} ${!seg.en_cours?`<span class="tl-coords">(${seg.lat_fin.toFixed(5)}, ${seg.lng_fin.toFixed(5)})</span>`:''}
+          </div>
+        </div>
+      </div>`;
+    } else {
+      return `<div class="tl-item">
+        <div class="tl-dot tl-arret"><i class="fa-solid fa-square-parking"></i></div>
+        <div class="tl-card ${seg.en_cours?'en-cours':''}">
+          <div class="tl-top">
+            <div class="tl-title">Stationnement ${seg.en_cours?'<span class="tl-badge-cours">En cours</span>':''}</div>
+            <span class="tl-duree tl-arret-bg">${formatDuree(seg.duree_minutes)}</span>
+          </div>
+          <div class="tl-detail">
+            De ${formatHeure(seg.debut)} à ${seg.en_cours?"maintenant":formatHeure(seg.fin)}<br>
+            Lieu <span class="tl-coords">(${seg.lat.toFixed(5)}, ${seg.lng.toFixed(5)})</span>
+          </div>
+        </div>
+      </div>`;
+    }
+  }).join("") + `</div>`;
 }
 
 async function loadParams(){
