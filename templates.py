@@ -445,8 +445,12 @@ tbody tr:last-child{border-bottom:none}
 /* ── Empty ── */
 .empty{padding:60px 20px;text-align:center}
 .empty-ico{font-size:50px;margin-bottom:16px;color:var(--border)}
+.empty-img{width:140px;height:140px;object-fit:cover;border-radius:50%;margin:0 auto 20px;
+  display:block;box-shadow:var(--shadow-md);border:4px solid var(--surface);}
 .empty-txt{font-size:16px;font-weight:600;color:var(--text2)}
 .empty-sub{font-size:13px;color:var(--text3);margin-top:6px}
+.veh-thumb{width:44px;height:44px;border-radius:12px;object-fit:cover;flex-shrink:0;
+  box-shadow:var(--shadow-sm);border:1px solid var(--border);}
 
 /* ── Véhicules regroupés par propriétaire (accordéon) ── */
 .veh-search{margin-bottom:20px}
@@ -637,12 +641,16 @@ tbody tr:last-child{border-bottom:none}
           <div class="stat-lbl">Surveillance réseau</div>
         </div>
       </div>
-      <div class="table-card" style="padding:40px; text-align:center;">
-        <i class="fa-solid fa-chart-line" style="font-size:40px; color:var(--primary-light); margin-bottom:20px;"></i>
-        <h3 style="font-size:20px; color:var(--primary-dark); margin-bottom:10px;">Bienvenue sur le Centre de Contrôle</h3>
-        <p style="font-size:14px;color:var(--text2);line-height:1.6; max-width:500px; margin:0 auto;">
-          Gérez votre flotte avec précision. Utilisez le menu latéral pour ajouter des clients, assigner des traceurs GPS, et analyser les données de déplacement.
-        </p>
+      <div class="table-card" style="padding:0; overflow:hidden; position:relative; min-height:240px; display:flex; align-items:center;">
+        <img src="https://images.unsplash.com/photo-1520594923568-1b5d82587f86?auto=format&fit=crop&w=1400&q=70" alt="Réseau routier"
+          style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.82) 42%, rgba(255,255,255,0.25) 100%);"></div>
+        <div style="position:relative; padding:40px; max-width:560px;">
+          <h3 style="font-size:22px; color:var(--primary-dark); margin-bottom:10px; font-weight:700;">Bienvenue sur le Centre de Contrôle</h3>
+          <p style="font-size:14px;color:var(--text2);line-height:1.6;">
+            Gérez votre flotte avec précision. Utilisez le menu latéral pour ajouter des clients, assigner des traceurs GPS, et analyser les données de déplacement.
+          </p>
+        </div>
       </div>
     </div>
 
@@ -919,6 +927,16 @@ tbody tr:last-child{border-bottom:none}
 const T={dashboard:"Tableau de bord",proprietaires:"Propriétaires",vehicules:"Flotte de Véhicules",
   historique:"Historique de Tracking",alertes:"Alertes Système",parametres:"Paramètres Système"};
 
+/* Vraies photos par type de véhicule (au lieu d'icônes génériques) */
+const VEH_IMAGES={
+  voiture:"https://images.unsplash.com/photo-1492967396498-f79507b65e89?auto=format&fit=crop&w=120&h=120&q=70",
+  moto:"https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=120&h=120&q=70",
+  camion:"https://images.unsplash.com/photo-1616432043562-3671ea2e5242?auto=format&fit=crop&w=120&h=120&q=70",
+  bus:"https://images.unsplash.com/photo-1514355453671-d0164a278218?auto=format&fit=crop&w=120&h=120&q=70",
+  autre:"https://images.unsplash.com/photo-1492967396498-f79507b65e89?auto=format&fit=crop&w=120&h=120&q=70"
+};
+function vehiculeImage(type){return VEH_IMAGES[type]||VEH_IMAGES.autre;}
+
 setInterval(()=>{document.getElementById("clk").textContent=new Date().toLocaleTimeString('fr-FR')},1000);
 
 function toggleMenu(){
@@ -966,7 +984,7 @@ async function loadAlertesSignal(){
     });
     document.getElementById("al-signal-count").textContent=data.length;
     if(!data.length){
-      tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-circle-check empty-ico" style="color:var(--green)"></i><div class="empty-txt">Aucune alerte — tous les traceurs émettent normalement</div></div></td></tr>';
+      tb.innerHTML='<tr><td colspan="6"><div class="empty"><img class="empty-img" src="https://images.unsplash.com/photo-1520594923568-1b5d82587f86?auto=format&fit=crop&w=300&h=300&q=70" alt=""><div class="empty-txt">Aucune alerte — tous les traceurs émettent normalement</div></div></td></tr>';
       return;
     }
     tb.innerHTML=data.map(v=>`<tr>
@@ -992,7 +1010,7 @@ async function loadAlertesSim(){
     });
     document.getElementById("al-sim-count").textContent=data.length;
     if(!data.length){
-      tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-circle-check empty-ico" style="color:var(--green)"></i><div class="empty-txt">Toutes les puces ont un quota data suffisant</div></div></td></tr>';
+      tb.innerHTML='<tr><td colspan="6"><div class="empty"><img class="empty-img" src="https://images.unsplash.com/photo-1520594923568-1b5d82587f86?auto=format&fit=crop&w=300&h=300&q=70" alt=""><div class="empty-txt">Toutes les puces ont un quota data suffisant</div></div></td></tr>';
       return;
     }
     tb.innerHTML=data.map(v=>`<tr>
@@ -1039,7 +1057,7 @@ async function loadP(){
   document.getElementById("pp-vehs").textContent=totalVehs;
   const tb=document.getElementById("tbp");
   if(!data.length){
-    tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fa-solid fa-users empty-ico"></i><div class="empty-txt">Aucun client trouvé</div></div></td></tr>';
+    tb.innerHTML='<tr><td colspan="7"><div class="empty"><img class="empty-img" src="https://images.unsplash.com/photo-1520594923568-1b5d82587f86?auto=format&fit=crop&w=300&h=300&q=70" alt=""><div class="empty-txt">Aucun client trouvé</div></div></td></tr>';
     return;
   }
   tb.innerHTML=data.map(p=>`<tr>
@@ -1111,7 +1129,7 @@ function renderVehiculesGroupes(){
   const wrap=document.getElementById("veh-groups");
   if(!wrap)return;
   if(!vehiculesData.length){
-    wrap.innerHTML='<div class="empty"><i class="fa-solid fa-car empty-ico"></i><div class="empty-txt">Flotte vide</div></div>';
+    wrap.innerHTML='<div class="empty"><img class="empty-img" src="https://images.unsplash.com/photo-1520594923568-1b5d82587f86?auto=format&fit=crop&w=300&h=300&q=70" alt=""><div class="empty-txt">Flotte vide</div></div>';
     return;
   }
   const term=(document.getElementById("veh-search-input")?.value||"").toLowerCase().trim();
@@ -1137,7 +1155,7 @@ function renderVehiculesGroupes(){
   }
 
   if(!liste.length){
-    wrap.innerHTML='<div class="empty"><i class="fa-solid fa-magnifying-glass empty-ico"></i><div class="empty-txt">Aucun résultat</div></div>';
+    wrap.innerHTML='<div class="empty"><img class="empty-img" src="https://images.unsplash.com/photo-1619468129361-605ebea04b44?auto=format&fit=crop&w=300&h=300&q=70" alt=""><div class="empty-txt">Aucun résultat</div></div>';
     return;
   }
 
@@ -1159,7 +1177,8 @@ function renderVehiculesGroupes(){
         ${g.vehicules.map(v=>`
           <div class="veh-mini-card">
             <div class="veh-mini-top">
-              <div>
+              <img class="veh-thumb" src="${vehiculeImage(v.type_vehicule)}" alt="${v.type_vehicule}"/>
+              <div style="flex:1">
                 <div class="veh-mini-immat">${v.immatriculation}</div>
                 <div class="veh-mini-model">${v.marque} ${v.modele} · <span style="text-transform:capitalize">${v.type_vehicule}</span></div>
               </div>
@@ -1229,7 +1248,7 @@ async function loadHist(){
   const tb=document.getElementById("tbh");
   if(!data.length){
     hs.style.display="none";
-    tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-route empty-ico"></i><div class="empty-txt">Aucune donnée GPS trouvée</div></div></td></tr>';
+    tb.innerHTML='<tr><td colspan="6"><div class="empty"><img class="empty-img" src="https://images.unsplash.com/photo-1619468129361-605ebea04b44?auto=format&fit=crop&w=300&h=300&q=70" alt=""><div class="empty-txt">Aucune donnée GPS trouvée</div></div></td></tr>';
     return;
   }
   hs.style.display="grid";
@@ -1605,8 +1624,14 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:16px; background:var(--bg);}
 .es-ico{font-size:64px;color:var(--border)}
+.es-img{width:160px;height:160px;object-fit:cover;border-radius:50%;margin-bottom:8px;
+  box-shadow:var(--shadow-md);border:4px solid var(--surface);}
 .es-title{font-size:20px;font-weight:700;color:var(--primary-dark)}
 .es-sub{font-size:14px;color:var(--text2);text-align:center;padding:0 24px; max-width:400px;}
+.empty-img{width:120px;height:120px;object-fit:cover;border-radius:50%;margin:0 auto 16px;
+  display:block;box-shadow:var(--shadow-md);border:4px solid var(--surface);}
+.veh-thumb{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;
+  box-shadow:var(--shadow-sm);border:1px solid var(--border);}
 
 .usec{display:none;flex:1;overflow-y:auto;padding:32px; background:var(--bg);}
 .usec.active{display:block; animation:fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);}
@@ -1725,7 +1750,15 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   </div>
 
   <div id="tab-dashboard" class="usec active">
-    <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark);margin-bottom:24px">Vue d'ensemble</h2>
+    <div style="position:relative; border-radius:16px; overflow:hidden; min-height:150px; margin-bottom:24px; display:flex; align-items:center; box-shadow:var(--shadow-sm);">
+      <img src="https://images.unsplash.com/photo-1520594923568-1b5d82587f86?auto=format&fit=crop&w=1400&q=70" alt="Réseau routier"
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.8) 45%, rgba(255,255,255,0.25) 100%);"></div>
+      <div style="position:relative; padding:28px 32px;">
+        <h2 style="font-size:22px;font-weight:700;color:var(--primary-dark);">Vue d'ensemble</h2>
+        <p style="font-size:13px;color:var(--text2);margin-top:6px;max-width:420px;">Suivez l'état de votre flotte en un coup d'œil.</p>
+      </div>
+    </div>
 
     <div class="stat-cards-container" id="stat-cards">
       <div class="card-modern" style="border-top:4px solid var(--green);">
@@ -1793,7 +1826,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
         <div class="detail-card" id="detail-card" style="display:none">
           <div class="dc-head">
             <div class="dc-head-info">
-              <div class="dc-ico"><i class="fa-solid fa-car" id="dc-vico"></i></div>
+              <img id="dc-vico" class="dc-ico" src="https://images.unsplash.com/photo-1492967396498-f79507b65e89?auto=format&fit=crop&w=100&h=100&q=70" alt="" style="object-fit:cover;"/>
               <div>
                 <div class="dc-immat" id="dc-immat">—</div>
                 <div class="dc-model" id="dc-model">—</div>
@@ -1824,7 +1857,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
       </div>
 
       <div class="empty-state" id="empty">
-        <div class="es-ico"><i class="fa-solid fa-map-location-dot"></i></div>
+        <img class="es-img" src="https://images.unsplash.com/photo-1619468129361-605ebea04b44?auto=format&fit=crop&w=320&h=320&q=70" alt=""/>
         <div class="es-title">Aucun véhicule sélectionné</div>
         <div class="es-sub">Choisissez un véhicule dans le panneau flotte pour démarrer le suivi en temps réel.</div>
       </div>
@@ -1904,6 +1937,16 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 let map=null,marker=null,poly=null,startMarker=null,selId=null,interval=null,meD=null,vehD=[];
 let vehStatusMap={}, fleetFilter="all";
 
+/* Vraies photos par type de véhicule (au lieu d'icônes génériques) */
+const VEH_IMAGES={
+  voiture:"https://images.unsplash.com/photo-1492967396498-f79507b65e89?auto=format&fit=crop&w=120&h=120&q=70",
+  moto:"https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=120&h=120&q=70",
+  camion:"https://images.unsplash.com/photo-1616432043562-3671ea2e5242?auto=format&fit=crop&w=120&h=120&q=70",
+  bus:"https://images.unsplash.com/photo-1514355453671-d0164a278218?auto=format&fit=crop&w=120&h=120&q=70",
+  autre:"https://images.unsplash.com/photo-1492967396498-f79507b65e89?auto=format&fit=crop&w=120&h=120&q=70"
+};
+function vehiculeImage(type){return VEH_IMAGES[type]||VEH_IMAGES.autre;}
+
 /* ── Fenêtre de tracking (durée de la trace affichée) ──
    "" = comportement standard (200 dernières positions, comme avant l'ajout de cette fonctionnalité)
    "15"/"30"/"60"/"120" = fenêtre glissante en minutes, mémorisée dans localStorage */
@@ -1958,7 +2001,7 @@ async function loadDashboard(){
 
     const list = document.getElementById("dash-list");
     if(!data.length){
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;background:var(--surface);border-radius:16px;"><i class="fa-solid fa-car-side" style="font-size:32px;margin-bottom:12px;"></i><br>Aucun véhicule n\\'est actuellement assigné à votre compte.</div>';
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;background:var(--surface);border-radius:16px;"><img class="empty-img" src="https://images.unsplash.com/photo-1520594923568-1b5d82587f86?auto=format&fit=crop&w=300&h=300&q=70" alt="">Aucun véhicule n\\'est actuellement assigné à votre compte.</div>';
       return;
     }
 
@@ -2077,7 +2120,8 @@ function renderFleetPanel(){
   cards.innerHTML=filtered.map(v=>`
     <div class="veh-card ${v.id===selId?'sel':''}" id="vc${v.id}" onclick="selV(${v.id},'${v.marque} ${v.modele}','${v.immatriculation}')">
       <div class="veh-top">
-        <div>
+        <img class="veh-thumb" src="${vehiculeImage(v.type_vehicule)}" alt=""/>
+        <div style="flex:1">
           <div class="veh-immat">${v.immatriculation}</div>
           <div class="veh-info">${v.marque} ${v.modele}</div>
         </div>
@@ -2176,6 +2220,7 @@ async function selV(id,label,immat){
   const v=vehD.find(x=>x.id===id);
   document.getElementById("dc-immat").textContent=immat;
   document.getElementById("dc-model").textContent=v?`${v.marque} ${v.modele}`:label;
+  document.getElementById("dc-vico").src=vehiculeImage(v?v.type_vehicule:"autre");
   document.getElementById("detail-card").style.display="block";
   updateDetailCardLive();
 
@@ -2256,7 +2301,7 @@ async function loadUH(){
   const data=await fetch(`/api/positions/${vid}?limit=${lim}`).then(r=>r.json());
   const tb=document.getElementById("uhtb");
   if(!data.length){
-    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)"><i class="fa-solid fa-clock-rotate-left" style="font-size:24px; margin-bottom:12px; display:block;"></i>Aucune donnée pour ce véhicule</td></tr>';
+    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text3)"><img class="empty-img" src="https://images.unsplash.com/photo-1619468129361-605ebea04b44?auto=format&fit=crop&w=300&h=300&q=70" alt="">Aucune donnée pour ce véhicule</td></tr>';
     return;
   }
   const rev=[...data].reverse();
