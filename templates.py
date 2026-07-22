@@ -1555,6 +1555,10 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
   border-radius:12px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-md);
   align-items:center;justify-content:center;cursor:pointer;color:var(--primary-dark);font-size:16px;}
 
+/* ── Sélecteur de fenêtre de tracking (durée de la trace) ── */
+.track-window{display:flex;gap:6px;padding:12px 16px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.track-window .filter-pill.active{background:var(--primary);border-color:var(--primary);color:#fff}
+
 /* ── Detail card (fiche véhicule flottante sur la carte) ── */
 .detail-card{position:absolute;bottom:24px;left:24px;z-index:1000;width:320px;max-width:calc(100% - 48px);
   background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border:1px solid var(--border);
@@ -1769,6 +1773,13 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
         <button class="filter-pill" data-f="sans_signal" onclick="setFleetFilter('sans_signal',this)">
           <i class="fa-solid fa-circle" style="color:var(--red);font-size:6px"></i> Hors ligne</button>
       </div>
+      <div class="track-window" id="track-window">
+        <button class="filter-pill active" data-w="" onclick="setTrackWindow('',this)" title="Comportement standard (200 dernières positions)">Standard</button>
+        <button class="filter-pill" data-w="15" onclick="setTrackWindow('15',this)">15 mn</button>
+        <button class="filter-pill" data-w="30" onclick="setTrackWindow('30',this)">30 mn</button>
+        <button class="filter-pill" data-w="60" onclick="setTrackWindow('60',this)">1h</button>
+        <button class="filter-pill" data-w="120" onclick="setTrackWindow('120',this)">2h</button>
+      </div>
       <div class="fleet-count" id="fleet-count">Chargement...</div>
       <div class="fleet-cards" id="fleet-cards">
         <div style="padding:14px;color:var(--text3);font-size:13px;text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
@@ -1893,6 +1904,12 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);
 let map=null,marker=null,poly=null,startMarker=null,selId=null,interval=null,meD=null,vehD=[];
 let vehStatusMap={}, fleetFilter="all";
 
+/* ── Fenêtre de tracking (durée de la trace affichée) ──
+   "" = comportement standard (200 dernières positions, comme avant l'ajout de cette fonctionnalité)
+   "15"/"30"/"60"/"120" = fenêtre glissante en minutes, mémorisée dans localStorage */
+let trackWindowMinutes = localStorage.getItem("gps_track_window") || "";
+let tracePoints = []; // {lat,lng,ts} utilisés uniquement en mode fenêtre glissante
+
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("open");
@@ -2012,15 +2029,34 @@ async function loadVehicules(){
 /* ── Panneau flotte (Carte GPS) — style Wialon/Samsara ── */
 function setFleetFilter(f,btn){
   fleetFilter=f;
-  document.querySelectorAll(".filter-pill").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".filter-pill").forEach(b=>{ if(b.dataset.f!==undefined) b.classList.remove("active"); });
   if(btn)btn.classList.add("active");
   renderFleetPanel();
+}
+
+/* ── Sélecteur de fenêtre de tracking (durée de la trace) ── */
+function setTrackWindow(minutes, btn){
+  trackWindowMinutes = minutes;
+  localStorage.setItem("gps_track_window", minutes);
+  document.querySelectorAll("#track-window .filter-pill").forEach(b=>b.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  // Recharge immédiatement la trace du véhicule actuellement suivi, si un véhicule est sélectionné
+  if(selId){
+    chargerHistoriqueTrace(selId);
+  }
+}
+
+function syncTrackWindowUI(){
+  document.querySelectorAll("#track-window .filter-pill").forEach(b=>{
+    b.classList.toggle("active", (b.dataset.w||"")===trackWindowMinutes);
+  });
 }
 
 function renderFleetPanel(){
   const cards=document.getElementById("fleet-cards");
   const countEl=document.getElementById("fleet-count");
   if(!cards)return;
+  syncTrackWindowUI();
   if(!vehD.length){
     cards.innerHTML='<div style="padding:20px;color:var(--text3);font-size:13px;text-align:center;">Aucun véhicule assigné</div>';
     if(countEl)countEl.textContent="0 véhicule";
@@ -2104,6 +2140,25 @@ function goToHistorique(){
   if(sel && selId){sel.value=selId; loadUH();}
 }
 
+/* Charge (ou recharge) le tracé affiché sur la carte pour le véhicule vid,
+   selon le réglage de fenêtre actif (trackWindowMinutes). */
+async function chargerHistoriqueTrace(vid){
+  const url = trackWindowMinutes
+    ? `/api/positions/${vid}?minutes=${trackWindowMinutes}`
+    : `/api/positions/${vid}?limit=200`;
+  const hist = await fetch(url).then(r=>r.json());
+  if(poly)poly.setLatLngs([]);
+  if(startMarker){map.removeLayer(startMarker);startMarker=null;}
+  tracePoints = hist.map(p=>({lat:p.latitude,lng:p.longitude,ts:Date.parse(p.created_at)||Date.now()}));
+  if(hist.length){
+    poly.setLatLngs(tracePoints.map(p=>[p.lat,p.lng]));
+    const first=hist[0];
+    startMarker=L.circleMarker([first.latitude,first.longitude],{
+      radius:6,color:"#fff",weight:2,fillColor:"#10B981",fillOpacity:1
+    }).addTo(map).bindTooltip("Départ du trajet",{direction:"top"});
+  }
+}
+
 async function selV(id,label,immat){
   selId=id;
   document.getElementById("ttl").textContent=immat+" — "+label;
@@ -2127,19 +2182,10 @@ async function selV(id,label,immat){
   renderFleetPanel();
 
   initMap();
-  if(poly)poly.setLatLngs([]);
   if(marker){map.removeLayer(marker);marker=null;}
-  if(startMarker){map.removeLayer(startMarker);startMarker=null;}
   setTimeout(()=>map.invalidateSize(),150);
   setTimeout(()=>map.invalidateSize(),400);
-  const hist=await fetch(`/api/positions/${id}?limit=200`).then(r=>r.json());
-  if(hist.length){
-    poly.setLatLngs(hist.map(p=>[p.latitude,p.longitude]));
-    const first=hist[0];
-    startMarker=L.circleMarker([first.latitude,first.longitude],{
-      radius:6,color:"#fff",weight:2,fillColor:"#10B981",fillOpacity:1
-    }).addTo(map).bindTooltip("Départ du trajet",{direction:"top"});
-  }
+  await chargerHistoriqueTrace(id);
   if(interval)clearInterval(interval);
   refresh(); interval=setInterval(refresh,2000);
 }
@@ -2170,7 +2216,20 @@ async function refresh(){
       iconSize:[28,28],iconAnchor:[14,14]});
     if(!marker){marker=L.marker(ll,{icon}).addTo(map);map.setView(ll,17);}
     else marker.setLatLng(ll);
-    poly.addLatLng(ll);
+
+    // Ajoute le nouveau point à la trace, puis, si une fenêtre de temps est active,
+    // purge les points devenus plus vieux que la fenêtre pour faire "glisser" le tracé.
+    const nowTs=Date.parse(p.created_at)||Date.now();
+    const dernierPoint=tracePoints[tracePoints.length-1];
+    if(!dernierPoint || dernierPoint.lat!==p.latitude || dernierPoint.lng!==p.longitude){
+      tracePoints.push({lat:p.latitude,lng:p.longitude,ts:nowTs});
+    }
+    if(trackWindowMinutes){
+      const seuil=Date.now()-(parseInt(trackWindowMinutes)*60*1000);
+      tracePoints=tracePoints.filter(pt=>pt.ts>=seuil);
+    }
+    poly.setLatLngs(tracePoints.map(pt=>[pt.lat,pt.lng]));
+
     document.getElementById("dc-lat").textContent=p.latitude.toFixed(6)+"°";
     document.getElementById("dc-lng").textContent=p.longitude.toFixed(6)+"°";
     document.getElementById("dc-speed").textContent=(p.vitesse||0).toFixed(1)+" km/h";
