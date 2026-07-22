@@ -108,8 +108,11 @@ def init_db_migrations():
     conn = get_db(); c = conn.cursor()
     c.execute(f"ALTER TABLE vehicules ADD COLUMN IF NOT EXISTS data_restante_mo REAL DEFAULT {DATA_INITIALE_MO}")
     c.execute("ALTER TABLE vehicules ADD COLUMN IF NOT EXISTS conducteur_nom TEXT")
+    # Index pour accélérer les filtres par intervalle de temps sur les positions
+    # (utilisé par le sélecteur de fenêtre de tracking : 15mn / 30mn / 1h / 2h)
+    c.execute("CREATE INDEX IF NOT EXISTS idx_positions_vehicule_created ON positions (vehicule_id, created_at)")
     conn.commit(); c.close(); conn.close()
-    print("[DB] Migrations additives appliquées ✅ (data_restante_mo)")
+    print("[DB] Migrations additives appliquées ✅ (data_restante_mo, index positions)")
  
 # ─────────────────────────────────────────────────────────────
 #  DÉCORATEURS
@@ -485,17 +488,27 @@ def receive_position():
 @login_required
 def get_positions(vid):
     limit = request.args.get("limit", 200, type=int)
+    minutes = request.args.get("minutes", type=int)
     conn = get_db(); c = conn.cursor()
     if session.get("role") != "admin":
         c.execute("SELECT id FROM vehicules WHERE id=%s AND proprietaire_id=%s",
             (vid, session["user_id"]))
         if not c.fetchone():
             c.close(); conn.close(); return jsonify({"error":"Accès refusé"}), 403
-    c.execute("SELECT * FROM positions WHERE vehicule_id=%s ORDER BY id DESC LIMIT %s", (vid, limit))
-    rows = c.fetchall()
+    if minutes:
+        # Fenêtre glissante par intervalle de temps (ex: 15/30/60/120 mn)
+        # utilisée par le sélecteur de tracking de l'onglet Carte GPS.
+        c.execute("""SELECT * FROM positions
+            WHERE vehicule_id=%s AND created_at::timestamp >= NOW() - (%s || ' minutes')::interval
+            ORDER BY id ASC""", (vid, minutes))
+        rows = c.fetchall()
+    else:
+        # Comportement historique inchangé : les N dernières positions
+        c.execute("SELECT * FROM positions WHERE vehicule_id=%s ORDER BY id DESC LIMIT %s", (vid, limit))
+        rows = c.fetchall()
+        rows.reverse()
     c.close(); conn.close()
     result = [dict(r) for r in rows]
-    result.reverse()
     return jsonify(result), 200
  
 @app.route("/api/positions/<int:vid>/last", methods=["GET"])
