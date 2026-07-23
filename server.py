@@ -40,7 +40,7 @@ TAILLE_MOYENNE_POSITION_MO = 0.01  # estimation moyenne d'un envoi de position (
 
 # ── Détection des trajets & stationnements ("Trajets du jour") ──
 SEUIL_VITESSE_ARRET_KMH        = 3    # en dessous de cette vitesse, le véhicule est à l'arrêt
-SEUIL_STATIONNEMENT_MINUTES    = 60   # durée minimale d'un arrêt pour être un "stationnement"
+SEUIL_STATIONNEMENT_MINUTES    = int(os.environ.get("SEUIL_STATIONNEMENT_MINUTES", "60"))  # durée min. d'un arrêt pour être un "stationnement"
 SEUIL_ARRIVEE_EN_COURS_MINUTES = 10   # si la dernière position a moins de X min, trajet "en cours"
 NOMINATIM_USER_AGENT = "GPS-Tracker-UADB/1.0 (contact: admin@gps.com)"
  
@@ -580,9 +580,14 @@ def geocoder_position(lat, lng):
     except Exception as e:
         print(f"[GEOCODAGE] Erreur : {e}")
 
-    c.execute("""INSERT INTO geocodage_cache (lat_arrondi, lng_arrondi, adresse) VALUES (%s,%s,%s)
-        ON CONFLICT (lat_arrondi, lng_arrondi) DO NOTHING""", (lat_r, lng_r, adresse))
-    conn.commit(); c.close(); conn.close()
+    try:
+        c.execute("""INSERT INTO geocodage_cache (lat_arrondi, lng_arrondi, adresse) VALUES (%s,%s,%s)
+            ON CONFLICT (lat_arrondi, lng_arrondi) DO NOTHING""", (lat_r, lng_r, adresse))
+        conn.commit()
+    except Exception as e:
+        print(f"[GEOCODAGE] Erreur cache : {e}")
+        conn.rollback()
+    c.close(); conn.close()
     return adresse
 
 def calculer_trajets_du_jour(vid):
@@ -685,7 +690,11 @@ def get_trajets_jour(vid):
             c.close(); conn.close()
             return jsonify({"error": "Accès refusé"}), 403
     c.close(); conn.close()
-    return jsonify(calculer_trajets_du_jour(vid)), 200
+    try:
+        return jsonify(calculer_trajets_du_jour(vid)), 200
+    except Exception as e:
+        print(f"[TRAJETS-JOUR] Erreur véhicule {vid} : {e}")
+        return jsonify({"error": "Erreur lors du calcul des trajets"}), 500
  
 # ─────────────────────────────────────────────────────────────
 #  MODIFICATION PROPRIÉTAIRE & VÉHICULE
